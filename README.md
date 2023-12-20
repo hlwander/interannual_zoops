@@ -1,2 +1,2 @@
-# zoops_timeseries_analysis
-ch.4 code - FCR+BVR zoops
+# interannual_zoops
+ch.4 code - analysis of BVR zoops across years and months
