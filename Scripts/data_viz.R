@@ -1,7 +1,7 @@
 #code to visualize seasonal and multiannual zoop patterns
 
 #read in packages
-pacman::p_load(tidyverse)
+pacman::p_load(tidyverse, NatParksPalettes)
 
 #read in zoop data from EDI
 inUrl1  <- "https://pasta-s.lternet.edu/package/data/eml/edi/1090/14/c7a04035b0a99adc489f5b6daec1cd52" 
@@ -78,20 +78,58 @@ zoops_final_post <- zoops_2019_2021 |>
   mutate(Taxon = ifelse(Taxon=="nauplius", "Nauplii",
                  ifelse(Taxon=="Trichocercidae", "Trichocerca", 
                  ifelse(Taxon=="Conochilidae", "Conochilus", Taxon)))) |> 
-  group_by(Reservoir, StartDepth_m, DateTime, Taxon) |> 
+  group_by(Reservoir, DateTime, StartDepth_m, Taxon) |> 
   summarise(Density_IndPerL = mean(Density_IndPerL))
 
 #combine all zoop data
 all_zoops <- bind_rows(zoops_final_pre, zoops_final_post) |> 
   mutate_all(~replace(., is.nan(.), NA)) |>  #replace NAN with NA
-  ungroup() |> select(-StartDepth_m) #dropping, but note that depths range from 7.5-11.5m....
+  ungroup() |> select(-StartDepth_m)   #dropping, but note that depths range from 7.5-11.5m....
+
+#new df with just total density, avg by month + calculate sd
+bvr_total_zoops <- all_zoops |> group_by(Reservoir, DateTime) |> 
+  summarise(Total = sum(Density_IndPerL[Taxon %in% c("Cladocera","Copeoda","Rotifera")])) |> 
+  ungroup() |> filter(Reservoir=="BVR") |> 
+  mutate(year = format(DateTime, "%Y"),
+         month = format(DateTime, "%m")) |> 
+  group_by(year, month) |> 
+  summarise(Total_avg = mean(Total),
+            Total_sd = sd(Total)) |> ungroup() |> 
+  filter(!year %in% "2022") #drop 2022
 
 #add doy and year column
 all_zoops$doy <- yday(all_zoops$DateTime)
 all_zoops$year <- year(all_zoops$DateTime)
 
+bvr_total_zoops$doy <- unique(all_zoops$DateTime[all_zoops$Reservoir=="BVR"])
+
+#look at doy on x and year by color
+ggplot(bvr_total_zoops, aes(as.Date(paste0("2023-",month,"-01")),
+                            Total_avg, color=as.factor(year))) + 
+  theme_bw() + xlab("Month") + ylab ("Zooplankton (#/L)") +
+  theme(text = element_text(size=14), 
+        axis.text = element_text(size=7, color="black"), 
+        legend.background = element_blank(), 
+        legend.key.height=unit(0.3,"line"),
+        legend.direction = "vertical",
+        axis.text.x = element_text(vjust = 0.5), 
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        legend.position = c(0.88,0.9), legend.spacing = unit(-0.5, 'cm'),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank()) +
+  geom_point() +
+  geom_line(size=1.2) + scale_x_date(date_breaks="2 month", date_labels="%b") +
+  geom_errorbar(aes(ymin = Total_avg -Total_sd, ymax = Total_avg+Total_sd)) +
+  scale_color_manual("",values=natparks.pals("Banff", 6)) 
+
+
 #look at doy on x and year by color
 ggplot(all_zoops, aes(doy, Density_IndPerL, color=as.factor(year))) + 
+  geom_point() + theme_bw() + geom_line() +
+  facet_wrap(~Taxon+Reservoir, scales="free_y", nrow=3) 
+
+ggplot(data=subset(all_zoops, Reservoir=="FCR" & Taxon=="Cladocera"),
+                   aes(doy, Density_IndPerL, color=as.factor(year))) + 
   geom_point() + theme_bw() + geom_line() +
   facet_wrap(~Taxon+Reservoir, scales="free_y", nrow=3) 
 
@@ -100,12 +138,82 @@ ggplot(all_zoops, aes(doy, Density_IndPerL, color=as.factor(year))) +
 ggplot(data=subset(all_zoops, Taxon %in% c("Cladocera", "Copepoda", "Rotifera")),
                    aes(doy, Density_IndPerL, color=as.factor(year))) + 
   geom_point() + theme_bw() + geom_line() +
-  facet_wrap(~Taxon+Reservoir, scales="free_y") 
+  facet_wrap(~Taxon+Reservoir, scales="free_y", nrow=3) 
+
+#3 taxa full timeseries
+ggplot(data=subset(all_zoops, Taxon %in% c("Cladocera", "Copepoda", "Rotifera") & Reservoir=="BVR"),
+       aes(DateTime, Density_IndPerL, color=as.factor(Taxon))) + 
+  geom_point() + theme_bw() + geom_line() +
+  facet_wrap(~Taxon, scales="free_y", nrow=3) 
+
+
+
 
 #------------------------------------------------------------------------------#
 #Pull in environmental data to make sure we have data associated with each zoop sample
 
+dates <- unique(all_zoops$DateTime)
+
+#read in ctd
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/200/13/27ceda6bc7fdec2e7d79a6e4fe16ffdf" 
+infile1 <- tempfile()
+try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
+
+ctd <-read.csv(infile1,header=T) |> 
+  mutate(DateTime = as.Date(DateTime)) |>
+  filter(DateTime >= "2014-04-04" & DateTime <= "2022-07-01" & 
+           Depth_m > 0 & Site ==50 & Reservoir %in% c("FCR", "BVR")) |> 
+  select(Reservoir, Site, DateTime, Depth_m, 
+         Temp_C, DO_mgL, DOsat_percent, Chla_ugL)
+
+#round ctd to nearest m
+ctd_final <- ctd |>
+  dplyr::mutate(rdepth = plyr::round_any(Depth_m, 1)) |>
+  dplyr::group_by(Reservoir, DateTime, rdepth) |>
+  dplyr::summarise(Temp_C = mean(Temp_C),
+                   DO_mgL = mean(DO_mgL),
+                   DOsat_percent = mean(DOsat_percent),
+                   Chla_ugL = mean(Chla_ugL)) |>
+  dplyr::rename(Depth_m = rdepth) |> 
+  dplyr::filter(Depth_m %in% ifelse(Reservoir=="BVR", c(1,10),
+                                    c(1,9)))
+
+#read in chem from edi
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/199/11/509f39850b6f95628d10889d66885b76" 
+infile1 <- tempfile()
+try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
+
+chem <-read.csv(infile1,header=T) |> 
+  dplyr::mutate(DateTime = as.Date(DateTime)) |>
+  dplyr::filter(DateTime >= "2014-04-04" & DateTime <= "2022-07-01" & 
+          Site ==50 & Reservoir %in% c("FCR", "BVR")) |> 
+  dplyr::select(Reservoir, DateTime, Depth_m, Rep,
+         TN_ugL, TP_ugL,NH4_ugL ,NO3NO2_ugL, SRP_ugL) |> 
+  dplyr::group_by(DateTime, Reservoir) |> 
+  dplyr::filter(Depth_m %in% ifelse(Reservoir=="BVR", c(0.1,last(Depth_m[Reservoir=="BVR"])),
+                                    c(0.1,last(Depth_m[Reservoir=="FCR"])))) |> 
+  dplyr::filter(Depth_m <=0.1 | Depth_m > 7) #drop data when only one random depth was analyzed
 
 
+#plot surface (1m) and bottom (9 or 10m) variables
+ggplot(ctd_final, aes(DateTime, Temp_C, color=as.factor(Depth_m))) +
+  geom_point() + geom_line() + theme_bw() + facet_wrap(~Reservoir, nrow=2)
 
+ggplot(ctd_final, aes(DateTime, DO_mgL, color=as.factor(Depth_m))) +
+  geom_point() + geom_line() + theme_bw() + facet_wrap(~Reservoir, nrow=2)
+
+ggplot(ctd_final, aes(DateTime, DOsat_percent, color=as.factor(Depth_m))) +
+  geom_point() + geom_line() + theme_bw() + facet_wrap(~Reservoir, nrow=2)
+
+ggplot(ctd_final, aes(DateTime, Chla_ugL, color=as.factor(Depth_m))) +
+  geom_point() + geom_line() + theme_bw() + 
+  facet_wrap(~Reservoir, nrow=2, scales="free_y")
+
+ggplot(chem, aes(DateTime, TN_ugL, color=as.factor(Depth_m))) +
+  geom_point() + geom_line() + theme_bw() + 
+  facet_wrap(~Reservoir, nrow=2, scales="free_y")
+
+ggplot(chem, aes(DateTime, TP_ugL, color=as.factor(Depth_m))) +
+  geom_point() + geom_line() + theme_bw() + 
+  facet_wrap(~Reservoir, nrow=2, scales="free_y")
 
