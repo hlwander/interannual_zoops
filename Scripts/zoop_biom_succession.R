@@ -52,8 +52,8 @@ zoops_final_pre <- zoops_pre |>
 #list common taxa between pre and post
 taxa <- c("Bosmina", "Daphnia", "Ceriodaphnia",
           "Cyclopoida","Calanoida", "nauplius", 
-          "Conochilidae","Keratella", "Rotifera",
-          "Trichocercidae","Kellicottia", "Lecane",
+          "Conochilus","Keratella", "Rotifera",
+          "Trichocerca","Kellicottia", "Lecane",
           "Cladocera", "Copepoda")
 
 #average reps when appropriate

@@ -6,7 +6,7 @@ pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,
                sf,vegan,FSA,rcompanion,NatParksPalettes,ggrepel)
 
 #read in zoop data from EDI
-inUrl1  <-"https://pasta-s.lternet.edu/package/data/eml/edi/1090/16/c7a04035b0a99adc489f5b6daec1cd52"
+inUrl1  <-"https://pasta-s.lternet.edu/package/data/eml/edi/1090/23/9eb6db370194bd3b2824726d89a008a6"
 infile1 <-  tempfile()
 try(download.file(inUrl1,infile1,method="curl"))
 if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
@@ -70,7 +70,7 @@ zoops_final_post <- zoops_2019_2021 |>
   mutate(DateTime = as.Date(DateTime)) |> 
   mutate(Taxon = ifelse(Taxon=="nauplius", "Nauplii",Taxon)) |> 
   group_by(Reservoir, DateTime, StartDepth_m, Taxon) |> 
-  summarise(Density_IndPerL = mean(Density_IndPerL))
+  summarise(Density_IndPerL = mean(Density_IndPerL, na.rm=T))
 
 #combine all zoop data
 all_zoops <- bind_rows(zoops_final_pre, zoops_final_post) |> 
@@ -86,12 +86,13 @@ all_zoops$data <- ifelse(all_zoops$DateTime<="2019-01-01","pre","post")
 taxa <- unique(all_zoops$Taxon)
 
 #taxa as cols, dates as rows, average by month
-all_zoops_nmds <- all_zoops |> 
+all_zoops_nmds_new <- all_zoops |> 
   select(DateTime, data, Taxon, Density_IndPerL) |> 
   filter(Taxon %in% taxa) |> 
   pivot_wider(names_from = Taxon, values_from = Density_IndPerL) |> 
   mutate(year = format(DateTime, "%Y"),
          month = format(DateTime, "%m")) |> 
+#  mutate_all(~replace(., is.na(.), 0)) |>  #replace NA with 0
   ungroup() |> group_by(year, month, data) |> 
   summarise(Bosmina = mean(Bosmina),
             Ceriodaphnia = mean(Ceriodaphnia),
@@ -139,7 +140,7 @@ set.seed(1)
 NMDS_bray_first <- vegan::metaMDS(zoop_bray, distance='bray', k=4, trymax=20, 
                             autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_first$stress
-# 0.06
+# 0.057
 
 #plot
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
@@ -201,7 +202,7 @@ month$plot + geom_point() + theme_bw() +
 #ggsave("Figures/first_stage_NMDS_2v1_months.jpg", width=5, height=3)
 
 #track months in each year and connect
-jpeg("Figures/first_stage_NMDS_2v1_2021.jpg")
+#jpeg("Figures/first_stage_NMDS_2v1_2021.jpg")
 
 par(mfrow = c(2, 3))
 par(cex = 0.6)
@@ -246,7 +247,7 @@ mtext("NMDS2", side = 2, outer = TRUE, cex = 0.8, line = 2.2,
 #legend("topright", legend=c('2014','2015','2016','2019','2020','2021'),
 #       pt.bg=c(viridis::viridis(5, option="D")) ,bty = "n", cex=1.2, pch=21) 
 
-dev.off()
+#dev.off()
 
 #------------------------------------------------------------------------------#
 #calculate dispersion between years vs. months - monte carlo approach
@@ -318,7 +319,7 @@ ggboxplot(disp_df, x = "group", y = "value",
                       fill = "group", palette = c("#A4C6B8", "#5E435D"),
                       order = c("year_disp", "month_disp"),
                       ylab = "Dispersion") +
-  theme(text = element_text(size=7),
+  theme(text = element_text(size=9),
         plot.margin = unit(c(0.2,0,-0.5,0), 'lines')) +
   annotate("text",label=c("a","b"), x=c(1.1,2.1),
            y=c(mean(disp_df$value[disp_df$group=="year_disp"]) + 
@@ -393,7 +394,7 @@ month_box <- ggboxplot(within_month_dist, x = "group", y = "dist",
         plot.margin = unit(c(0,0.2,0,-0.4), 'lines'),
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8),
         axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
-  annotate("text",label=c("b","ab","a","a","ab"), x=c(1.2, 2.2, 3.2, 4.2, 5.2), size=4,
+  annotate("text",label=c("a","ab","b","b","ab"), x=c(1.2, 2.2, 3.2, 4.2, 5.2), size=4,
            y=c(0.63, 0.47, 0.4, 0.46, 0.47)) +
   annotate("text", x=1.3, y=1, label= "b: months",
            fontface = "italic", size=3) +

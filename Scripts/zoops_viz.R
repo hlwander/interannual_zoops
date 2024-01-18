@@ -4,10 +4,9 @@
 pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,sf)
 
 #read in zoop data from EDI
-inUrl1  <- "https://pasta-s.lternet.edu/package/data/eml/edi/1090/14/c7a04035b0a99adc489f5b6daec1cd52" 
+inUrl1  <-  "https://pasta-s.lternet.edu/package/data/eml/edi/1090/19/c7a04035b0a99adc489f5b6daec1cd52" 
 infile1 <-  tempfile()
-try(download.file(inUrl1,infile1,method="curl"))
-if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
+download.file(inUrl1,infile1,method="curl")
 
 zoops <- read.csv(infile1, header=T) |>
   filter(CollectionMethod=="Tow" & Reservoir %in% c("BVR") &
@@ -44,7 +43,7 @@ zoops_pre <- zoops_2016_2018 |>
     Lecane = sum(Density_IndPerL[
       Taxon %in% c("Lecane")]),
     Rotifera = sum(Density_IndPerL[
-      Taxon %in% c("Total Rotifers")]),
+      Taxon %in% c("Total rotifers")]),
     Cladocera = sum(Density_IndPerL[
       Taxon %in% c("Bosmina","D. catawba", "Chydorus","D. ambigua",
                    "Diaphanosoma","Ceriodaphnia")]),
@@ -64,9 +63,9 @@ zoops_final_pre <- zoops_pre |>
 
 #list common taxa between pre and post
 taxa <- c("Bosmina", "Daphnia", "Ceriodaphnia",
-          "Cyclopoida","Calanoida", "nauplius", 
-          "Conochilidae","Keratella", "Rotifera",
-          "Trichocercidae","Kellicottia", "Lecane",
+          "Cyclopoida","Calanoida", "Nauplius", 
+          "Conochilus","Keratella", "Rotifera",
+          "Trichocerca","Kellicottia", "Lecane",
           "Cladocera", "Copepoda")
 
 #average reps when appropriate
@@ -75,8 +74,8 @@ zoops_final_post <- zoops_2019_2021 |>
   filter(hour(DateTime) %in% c(9,10,11,12,13,14)) |> #drop nighttime samples
   filter(Taxon %in% c(taxa)) |> 
   mutate(DateTime = as.Date(DateTime)) |> 
-  mutate(Taxon = ifelse(Taxon=="nauplius", "Nauplii",
-                        ifelse(Taxon=="Trichocercidae", "Trichocerca", 
+  mutate(Taxon = ifelse(Taxon == "Nauplius", "Nauplii",
+         ifelse(Taxon=="Trichocercidae", "Trichocerca", 
                                ifelse(Taxon=="Conochilidae", "Conochilus", Taxon)))) |> 
   group_by(Reservoir, DateTime, StartDepth_m, Taxon) |> 
   summarise(Density_IndPerL = mean(Density_IndPerL))

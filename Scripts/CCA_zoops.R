@@ -59,8 +59,8 @@ zoops_final_pre <- zoops_pre |>
 #list common taxa between pre and post
 taxa <- c("Bosmina", "Daphnia", "Ceriodaphnia",
           "Cyclopoida","Calanoida", "nauplius", 
-          "Conochilidae","Keratella", "Lecane",
-          "Trichocercidae","Kellicottia")
+          "Conochilus","Keratella", "Lecane",
+          "Trichocerca","Kellicottia")
 
 #average reps when appropriate
 zoops_final_post <- zoops_2019_2021 |> 
