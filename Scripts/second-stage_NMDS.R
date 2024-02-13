@@ -5,104 +5,35 @@
 pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,
                sf,vegan,FSA,rcompanion,NatParksPalettes,ggrepel)
 
-#read in zoop data from EDI
-inUrl1  <-"https://pasta-s.lternet.edu/package/data/eml/edi/1090/23/9eb6db370194bd3b2824726d89a008a6"
-infile1 <-  tempfile()
-try(download.file(inUrl1,infile1,method="curl"))
-if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
-
-zoops <- read.csv(infile1, header=T) |>
-  filter(CollectionMethod=="Tow" & Reservoir %in% c("BVR") &
-           StartDepth_m > 7.1) |> 
-  select(-c(Site,EndDepth_m,CollectionMethod))
-
-#split data into pre 2019 and post
-zoops_2016_2018 <- zoops[as.Date(zoops$DateTime)<"2019-01-01",]
-zoops_2019_2021 <- zoops[as.Date(zoops$DateTime)>="2019-01-01",]
-
-#add daphnia (D. catawba, D. ambigua), calanoida (diaptomus) for 2014-2018 data
-zoops_pre <- zoops_2016_2018 |> 
-  group_by(Reservoir, DateTime, StartDepth_m) |> 
-  summarise(Daphnia = sum(Density_IndPerL[
-    Taxon %in% c("D. catawba","D. ambigua")]),
-    Calanoida = sum(Density_IndPerL[
-      Taxon %in% c("Diaptomus")]),
-    Cyclopoida = sum(Density_IndPerL[
-      Taxon %in% c("Cyclopoids")]),
-    Nauplii = sum(Density_IndPerL[
-      Taxon %in% c("Nauplii")]),
-    Bosmina = sum(Density_IndPerL[
-      Taxon %in% c("Bosmina")]),
-    Ceriodaphnia = sum(Density_IndPerL[
-      Taxon %in% c("Ceriodaphnia")]),
-    Conochilus = sum(Density_IndPerL[
-      Taxon %in% c("Conochilus")]),
-    Keratella = sum(Density_IndPerL[
-      Taxon %in% c("Keratella")]),
-    Trichocerca = sum(Density_IndPerL[
-      Taxon %in% c("Trichocerca")]),
-    Kellicottia = sum(Density_IndPerL[
-      Taxon %in% c("Kellicottia")]),
-    Lecane = sum(Density_IndPerL[
-      Taxon %in% c("Lecane")]))
-
-#convert back to long
-zoops_final_pre <- zoops_pre |> 
-  group_by(Reservoir, DateTime, StartDepth_m) |> 
-  pivot_longer(cols=Daphnia:Lecane,
-               names_to = c("Taxon"),
-               values_to = "Density_IndPerL") |> 
-  filter(hour(DateTime) %in% c(9,10,11,12,13,14)) |> #drop nighttime samples
-  mutate(DateTime = as.Date(DateTime)) |> 
-  mutate(Density_IndPerL = Density_IndPerL * (1/0.031))  #10m bvr neteff from 2016 (n=2) - note that 7m neteff was also 0.31
-#avg from 2020 and 2021 is 0.021...
-
-#list common taxa between pre and post
-taxa <- c("Daphnia","Calanoida","Cyclopoida","nauplius",
-          "Bosmina","Ceriodaphnia","Conochilus","Keratella",
-          "Trichocerca","Kellicottia")
-
-#average reps when appropriate
-zoops_final_post <- zoops_2019_2021 |> 
-  mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S", tz="UTC")) |> 
-  filter(hour(DateTime) %in% c(9,10,11,12,13,14)) |> #drop nighttime samples
-  filter(Taxon %in% c(taxa)) |> 
-  mutate(DateTime = as.Date(DateTime)) |> 
-  mutate(Taxon = ifelse(Taxon=="nauplius", "Nauplii",Taxon)) |> 
-  group_by(Reservoir, DateTime, StartDepth_m, Taxon) |> 
-  summarise(Density_IndPerL = mean(Density_IndPerL, na.rm=T))
-
-#combine all zoop data
-all_zoops <- bind_rows(zoops_final_pre, zoops_final_post) |> 
-  mutate_all(~replace(., is.nan(.), NA)) |>  #replace NAN with NA
-  ungroup() |> select(-StartDepth_m) #dropping, but note that depths range from 7.5-11.5m....
-
-#add column for pre vs post
-all_zoops$data <- ifelse(all_zoops$DateTime<="2019-01-01","pre","post")
+#read in all_zoops df
+all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE)
+#all_zoops_biom <- read.csv("Output/all_zoops_biom.csv",header = TRUE)
 
 #------------------------------------------------------------------------------#
 #NMDS 
-
-taxa <- unique(all_zoops$Taxon)
+taxa <- unique(all_zoops_dens$Taxon)
 
 #taxa as cols, dates as rows, average by month
-all_zoops_nmds_new <- all_zoops |> 
-  select(DateTime, data, Taxon, Density_IndPerL) |> 
+all_zoops_nmds <- all_zoops_dens |> 
+  select(DateTime, Taxon, Density_IndPerL) |> 
   filter(Taxon %in% taxa) |> 
+  mutate(DateTime = as.Date(DateTime)) |> 
   pivot_wider(names_from = Taxon, values_from = Density_IndPerL) |> 
   mutate(year = format(DateTime, "%Y"),
          month = format(DateTime, "%m")) |> 
-#  mutate_all(~replace(., is.na(.), 0)) |>  #replace NA with 0
-  ungroup() |> group_by(year, month, data) |> 
+  mutate_all(~replace(., is.na(.), 0)) |>  #replace NA with 0
+  ungroup() |> group_by(year, month) |> 
   summarise(Bosmina = mean(Bosmina),
             Ceriodaphnia = mean(Ceriodaphnia),
             Daphnia = mean(Daphnia),
             Calanoida = mean(Calanoida),
             Cyclopoida = mean(Cyclopoida),
             Nauplii = mean(Nauplii),
+            Ascomorpha = mean(Ascomorpha),
             Conochilus = mean(Conochilus),
             Keratella = mean(Keratella),
             Kellicottia = mean(Kellicottia),
+            Polyarthra = mean(Polyarthra),
             Trichocerca = mean(Trichocerca)) |> 
   ungroup()
 
@@ -140,7 +71,7 @@ set.seed(1)
 NMDS_bray_first <- vegan::metaMDS(zoop_bray, distance='bray', k=4, trymax=20, 
                             autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_first$stress
-# 0.057
+# 0.073
 
 #plot
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
@@ -171,7 +102,7 @@ year$plot + geom_point() + theme_bw() +
   scale_fill_manual("",values=viridis::viridis(6, option="D"))+
   scale_color_manual("",values=viridis::viridis(6, option="D"),
                      label=c('2014','2015',"2016","2019","2020","2021")) 
-#ggsave("Figures/first_stage_NMDS_2v1_years.jpg", width=5, height=3)
+#ggsave("Figures/first_stage_NMDS_2v1_years_dens.jpg", width=5, height=3)
 
 month <- ggordiplots::gg_ordiplot(ord, all_zoops_nmds$month,
                                  kind = "ehull", ellipse=FALSE, hull = TRUE, 
@@ -199,11 +130,10 @@ month$plot + geom_point() + theme_bw() +
   scale_fill_manual("",values=viridis::viridis(5, option="F"))+
   scale_color_manual("",values=viridis::viridis(5, option="F"),
                      label=c('May',"June","July","August","September")) 
-#ggsave("Figures/first_stage_NMDS_2v1_months.jpg", width=5, height=3)
+#ggsave("Figures/first_stage_NMDS_2v1_months_dens.jpg", width=5, height=3)
 
 #track months in each year and connect
-#jpeg("Figures/first_stage_NMDS_2v1_2021.jpg")
-
+#jpeg("Figures/first_stage_NMDS_2v1_dens.jpg")
 par(mfrow = c(2, 3))
 par(cex = 0.6)
 par(mar = c(0, 0, 0, 0), oma = c(4, 4, 0.5, 0.5))
@@ -283,7 +213,7 @@ for (i in 1:500){
     slice_sample(n=5)
   
   #only select data cols
-  zoop_dens_sub <- zoop_sub |> ungroup() |> select(-c(year,month,data))
+  zoop_dens_sub <- zoop_sub |> ungroup() |> select(-c(year,month))
   
   #hellinger transformation
   zoop_dens_sub_trans <- labdsv::hellinger(zoop_dens_sub)
@@ -323,14 +253,14 @@ ggboxplot(disp_df, x = "group", y = "value",
         plot.margin = unit(c(0.2,0,-0.5,0), 'lines')) +
   annotate("text",label=c("a","b"), x=c(1.1,2.1),
            y=c(mean(disp_df$value[disp_df$group=="year_disp"]) + 
-                 sd(disp_df$value[disp_df$group=="year_disp"]),
+                 sd(disp_df$value[disp_df$group=="year_disp"])/2,
                mean(disp_df$value[disp_df$group=="month_disp"]) + 
                  sd(disp_df$value[disp_df$group=="month_disp"]))) +
   guides(fill = "none") +
   scale_x_discrete(name ="", 
                    labels=c("year_disp"="year",
                             "month_disp"="month"))
-#ggsave("Figures/among_variability_boxplots.jpg", width=3, height=4)
+#ggsave("Figures/among_variability_boxplots_dens.jpg", width=3, height=4)
 
 #create table for kw test results
 kw_results <- data.frame("Scale" = c("Year", "Month"),
@@ -342,7 +272,7 @@ kw_results <- data.frame("Scale" = c("Year", "Month"),
                          "df" = c(kw_disp$parameter, " "),
                          "χ2" = c(round(kw_disp$statistic,3), " "),
                          "p-value" = c(kw_disp$p.value, " "))
-#write.csv(kw_results, "Output/Euclidean_distances_bootstrapped_kw_results.csv", row.names = FALSE)
+#write.csv(kw_results, "Output/Euclidean_distances_bootstrapped_kw_results_dens.csv", row.names = FALSE)
 
 #dfs to calculate significance within years, and months
 within_year_dist <- data.frame("group" = c(rep("2014",5),rep("2015",5),rep("2016",5),
@@ -395,13 +325,13 @@ month_box <- ggboxplot(within_month_dist, x = "group", y = "dist",
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8),
         axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
   annotate("text",label=c("a","ab","b","b","ab"), x=c(1.2, 2.2, 3.2, 4.2, 5.2), size=4,
-           y=c(0.63, 0.47, 0.4, 0.46, 0.47)) +
+           y=c(0.63, 0.47, 0.46, 0.46, 0.49)) +
   annotate("text", x=1.3, y=1, label= "b: months",
            fontface = "italic", size=3) +
   guides (fill = "none")
 
 within_scales <- egg::ggarrange(year_box, month_box, nrow=1, widths = c(2, 1.9))
-#ggsave("Figures/within_variability_boxplots.jpg", within_scales, width=5, height=4)
+#ggsave("Figures/within_variability_boxplots_dens.jpg", within_scales, width=5, height=4)
 
 #create table for within scale kw test results
 kw_results_disp <- data.frame("Group" = c("2014", "2015", "2016", "2019", 
@@ -433,7 +363,7 @@ kw_results_disp <- data.frame("Group" = c("2014", "2015", "2016", "2019",
                               "df" = c(rep(" ",2), kw_year$parameter, rep(" ",5), kw_month$parameter, rep(" ",2)),
                               "χ2" = c(rep(" ",2), kw_year$statistic, rep(" ",5), kw_month$statistic, rep(" ",2)),
                               "p-value" = c(rep(" ",2), kw_year$p.value, rep(" ",5), kw_month$p.value, rep(" ",2)))
-#write.csv(kw_results_disp, "Output/within_group_dispersion_kw_results.csv",row.names = FALSE)
+#write.csv(kw_results_disp, "Output/within_group_dispersion_kw_results_dens.csv",row.names = FALSE)
 
 #------------------------------------------------------------------------------#
 #create distance matrices for all years (first stage pairwise dissimilarities)
@@ -506,7 +436,7 @@ year$plot + geom_point() + theme_bw() +
       scale_fill_manual("",values=viridis::viridis(6, option="D"),
                         label=c('2014','2015',"2016","2019","2020","2021")) +
       scale_color_manual("",values=rep("gray",6) )
-#ggsave("Figures/second_stage_NMDS_2v1.jpg", width=5, height=3) 
+#ggsave("Figures/second_stage_NMDS_2v1_dens.jpg", width=6, height=3) 
 
 
 #ANOSIM test on second-stage similarities

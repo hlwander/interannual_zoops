@@ -25,9 +25,9 @@ ctd <-read.csv(infile1,header=T) |>
   filter(DateTime %in% dates_list & 
            Depth_m > 0 & Site ==50 & Reservoir %in% c("BVR")) |> 
   select(Reservoir, Site, DateTime, Depth_m, 
-         Temp_C, DO_mgL, DOsat_percent) #removing chl a bc fp and ctd aren't so comparable
+         Temp_C, DO_mgL, DOsat_percent) #removing chl a bc fp and ctd aren't so comparable so can't fill in missing days
 
-#round ctd to nearest m (need to see if I can use ysi bc some missing months w/ ctd)
+#round ctd to nearest m (also use ysi bc some missing months w/ ctd)
 ctd_final <- ctd |>
   dplyr::mutate(rdepth = plyr::round_any(Depth_m, 1)) |>
   dplyr::mutate(month = month(DateTime),
@@ -48,7 +48,7 @@ missing_dates <- c(seq(as.Date("2015-08-01"), as.Date("2015-08-31"), by="days"),
                    seq(as.Date("2020-05-01"), as.Date("2020-05-31"), by="days"),
                    seq(as.Date("2021-08-01"), as.Date("2021-09-30"), by="days"))
 
-#see of we can sub missing ctd data with ysi data
+#sub missing ctd data with ysi data
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/6e5a0344231de7fcebbe6dc2bed0a1c3" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1,method="curl"))
@@ -119,6 +119,53 @@ chem <-read.csv(infile1,header=T) |>
 #average the 10m tp from earlier in aug with the 9m tp from a later aug date so no NA (aug 2021)
 chem$TP_ugL_hypo[is.nan(chem$TP_ugL_hypo)] <-  mean(c(26.4, 23.5))
 
+#convert fp from wide to long
+chem_long <- chem |>
+  pivot_longer(cols = c(TN_ugL_epi,TP_ugL_epi,NH4_ugL_epi,NO3NO2_ugL_epi,SRP_ugL_epi), 
+               names_to = "variable")  
+
+#plot chem over time
+ggplot(data=subset(chem_long, !variable %in% c("TN_ugL_epi")), 
+       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
+                    color = variable)) +
+  geom_vline(xintercept = as.Date("2014-01-01")) +
+  geom_vline(xintercept = as.Date("2015-01-01")) +
+  geom_vline(xintercept = as.Date("2016-01-01")) +
+  geom_vline(xintercept = as.Date("2017-01-01")) +
+  geom_vline(xintercept = as.Date("2019-01-01")) +
+  geom_vline(xintercept = as.Date("2020-01-01")) +
+  geom_vline(xintercept = as.Date("2021-01-01")) +
+  geom_point() + geom_line() + theme_bw() + xlab("Date") +
+  annotate("text", x=as.Date("2014-07-01"), y=23, label= "2014") +
+  annotate("text", x=as.Date("2015-07-01"), y=23, label= "2015") +
+  annotate("text", x=as.Date("2016-07-01"), y=23, label= "2016") +
+  annotate("text", x=as.Date("2019-07-01"), y=23, label= "2019") +
+  annotate("text", x=as.Date("2020-07-01"), y=23, label= "2020") +
+  annotate("text", x=as.Date("2021-07-01"), y=23, label= "2021") +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("Banff", 4), 
+                     labels=c("NH4_ugL","NO3NO2_ugL","SRP_ugL","TP_ugL"))
+ggsave("Figures/chem_timeseries_notn.jpg", width=6, height=3) 
+
+#and now tn
+ggplot(data=subset(chem_long, variable %in% c("TN_ugL_epi")), 
+       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
+           color = variable)) +
+  geom_vline(xintercept = as.Date("2014-01-01")) +
+  geom_vline(xintercept = as.Date("2015-01-01")) +
+  geom_vline(xintercept = as.Date("2016-01-01")) +
+  geom_vline(xintercept = as.Date("2017-01-01")) +
+  geom_vline(xintercept = as.Date("2019-01-01")) +
+  geom_vline(xintercept = as.Date("2020-01-01")) +
+  geom_vline(xintercept = as.Date("2021-01-01")) +
+  geom_point() + geom_line() + theme_bw() + xlab("Date") +
+  annotate("text", x=as.Date("2014-07-01"), y=400, label= "2014") +
+  annotate("text", x=as.Date("2015-07-01"), y=400, label= "2015") +
+  annotate("text", x=as.Date("2016-07-01"), y=400, label= "2016") +
+  annotate("text", x=as.Date("2019-07-01"), y=400, label= "2019") +
+  annotate("text", x=as.Date("2020-07-01"), y=400, label= "2020") +
+  annotate("text", x=as.Date("2021-07-01"), y=400, label= "2021") 
+ggsave("Figures/chem_timeseries_tn.jpg", width=6, height=3) 
+
 #read in met data
 #inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/389/7/02d36541de9088f2dd99d79dc3a7a853" 
 #infile1 <- tempfile()
@@ -138,7 +185,6 @@ chem$TP_ugL_hypo[is.nan(chem$TP_ugL_hypo)] <-  mean(c(26.4, 23.5))
 #                   WindSpeed = mean(WindSpeed_Average_m_s),
 #                   Rain_mm = mean(Rain_Total_mm),
 #                   PAR_umolm2s = mean(PAR_umolm2s_Average))
-
 #------------------------------------------------------------------------------#
 #make an environmental driver df
 env_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("month", "year")])
@@ -146,6 +192,83 @@ env_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("month", "yea
 #export env csv
 write.csv(env_drivers, "./Output/env.csv", row.names=FALSE)
 
+#------------------------------------------------------------------------------#
+#read in fp data
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/272/8/0359840d24028e6522f8998bd41b544e" 
+infile1 <- tempfile()
+try(download.file(inUrl1,infile1,method="curl"))
+
+fp <- read.csv(infile1) |> 
+  dplyr::mutate(DateTime = as.Date(DateTime)) |>
+  dplyr::filter(DateTime %in% dates_list & 
+                  Site ==50 & Reservoir %in% c("BVR")) |> 
+  dplyr::mutate(rdepth = plyr::round_any(Depth_m, 1)) |>
+  dplyr::mutate(month = month(DateTime),
+                year = year(DateTime)) |>
+  dplyr::select(-Depth_m) |> 
+  dplyr::rename(Depth_m = rdepth) |> 
+  select(!c(CastID,Temp_C:Flag_RFU_470nm)) |> 
+  dplyr::group_by(month, year) |> 
+  dplyr::filter(Depth_m %in% c(1)) |> #only doing epi bc hypo isn't so useful
+  dplyr::summarise(Green_ugL = mean(GreenAlgae_ugL, na.rm=T),
+                   Bluegreen_ugL = mean(Bluegreens_ugL, na.rm=T),
+                   Brown_ugL = mean(BrownAlgae_ugL, na.rm=T),
+                   Mixed_ugL = mean(MixedAlgae_ugL, na.rm=T),
+                   Total_ugL = mean(TotalConc_ugL, na.rm=T),
+                   Yellow_ugL = mean(YellowSubstances_ugL, na.rm=T))
+
+#save phyto df
+write.csv(fp, "Output/phytos.csv", row.names=FALSE)
+
+#convert fp from wide to long
+fp_long <- fp |>
+  pivot_longer(cols = Green_ugL:Yellow_ugL, 
+               names_to = "variable")  
+
+#plot phytos over time
+ggplot(fp_long, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
+                    color = variable)) +
+  geom_vline(xintercept = as.Date("2014-01-01")) +
+  geom_vline(xintercept = as.Date("2015-01-01")) +
+  geom_vline(xintercept = as.Date("2016-01-01")) +
+  geom_vline(xintercept = as.Date("2017-01-01")) +
+  geom_vline(xintercept = as.Date("2019-01-01")) +
+  geom_vline(xintercept = as.Date("2020-01-01")) +
+  geom_vline(xintercept = as.Date("2021-01-01")) +
+  geom_point() + geom_line() + theme_bw() + xlab("Date") +
+  annotate("text", x=as.Date("2014-07-01"), y=23, label= "2014") +
+  annotate("text", x=as.Date("2015-07-01"), y=23, label= "2015") +
+  annotate("text", x=as.Date("2016-07-01"), y=23, label= "2016") +
+  annotate("text", x=as.Date("2019-07-01"), y=23, label= "2019") +
+  annotate("text", x=as.Date("2020-07-01"), y=23, label= "2020") +
+  annotate("text", x=as.Date("2021-07-01"), y=23, label= "2021") +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("SmokyMtns", 6), 
+                     labels=c("Bluegreen_ugL","Brown_ugL","Green_ugL",
+                              "Mixed_ugL","Total_ugL","Yellow_ugL"))
+ggsave("Figures/phyto_succession.jpg", width=6, height=3) 
+
+#remove green, brown, and total to see what other groups are doing
+ggplot(data=subset(fp_long, variable %in% c("Mixed_ugL","Yellow_ugL","Bluegreen_ugL")),
+       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
+                    color = variable)) +
+  geom_vline(xintercept = as.Date("2014-01-01")) +
+  geom_vline(xintercept = as.Date("2015-01-01")) +
+  geom_vline(xintercept = as.Date("2016-01-01")) +
+  geom_vline(xintercept = as.Date("2017-01-01")) +
+  geom_vline(xintercept = as.Date("2019-01-01")) +
+  geom_vline(xintercept = as.Date("2020-01-01")) +
+  geom_vline(xintercept = as.Date("2021-01-01")) +
+  geom_point() + geom_line() + theme_bw() + xlab("Date") +
+  annotate("text", x=as.Date("2014-07-01"), y=6.1, label= "2014") +
+  annotate("text", x=as.Date("2015-07-01"), y=6.1, label= "2015") +
+  annotate("text", x=as.Date("2016-07-01"), y=6.1, label= "2016") +
+  annotate("text", x=as.Date("2019-07-01"), y=6.1, label= "2019") +
+  annotate("text", x=as.Date("2020-07-01"), y=6.1, label= "2020") +
+  annotate("text", x=as.Date("2021-07-01"), y=6.1, label= "2021") +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("BryceCanyon",3), 
+                     labels=c("Bluegreen_ugL","Mixed_ugL","Yellow_ugL"))
+ggsave("Figures/phyto_succession_no_brown_or_greens.jpg", width=6, height=3) 
+  
 #------------------------------------------------------------------------------#
 #quick plots to visualize data
 ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), Temp_C_epi)) +

@@ -65,7 +65,7 @@ ysi%>%
 interp_do = data.frame(x = NA, y = NA, z = NA, Reservoir = NA)
 years = c(2014:2016,2019:2021) 
 
-for(i in 1:length(years)){ #not sure why, but this loop doesn't work...
+for(i in 1:length(years)){ 
   do_bvr<- all_do  |> 
     mutate(Year = year(DateTime))  |> 
     filter(Year == years[i],
@@ -82,7 +82,6 @@ for(i in 1:length(years)){ #not sure why, but this loop doesn't work...
 interp_do$groups <- cut(interp_do$z,    
                         breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16))
 
-
 #DO heatmap
 do_temp <- interp_do  |> 
   mutate(x = as.Date(x, origin = "1970-01-01"),
@@ -95,8 +94,7 @@ do_temp <- interp_do  |>
                     values=c("#CC3300","#FF9900","#CCFF00","#66FF66","#66FF99","#33FFFF","#3399FF","#0066CC"))+
   scale_x_date(expand = c(0,0))+
   theme(panel.border = element_rect(fill = NA))
-  
-  ggsave(do_temp, paste0("/Figures/BVR_DO_heatmap_", years[i], ".jpg"), 
-                   width = 4, height = 2.5, res = 300)
+
+  ggsave(sprintf("Figures/BVR_DO_heatmap_%s.jpg", years[i]), width=6, height=6)
 
 }

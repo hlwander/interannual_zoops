@@ -1,4 +1,4 @@
-#zoop biomass succession figs
+#zoop size succession figs
 
 #read in packages
 pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, sf, lubridate)
@@ -20,83 +20,81 @@ zoops_2019_2021 <- zoops[as.Date(zoops$DateTime)>="2019-01-01",]
 #add daphnia (D. catawba, D. ambigua), calanoida (diaptomus) for 2014-2018 data
 zoops_pre <- zoops_2016_2018 |> 
   group_by(Reservoir, DateTime, StartDepth_m) |> 
-  summarise(Daphnia_biom = sum(Biomass_ugL[
+  summarise(Daphnia_size = mean(MeanLength_mm[
     Taxon %in% c("D. catawba","D. ambigua")],na.rm=T),
-    Daphnia_sd = sd(Biomass_ugL[
+    Daphnia_sd = sd(MeanLength_mm[
       Taxon %in% c("D. catawba","D. ambigua")],na.rm=T),
-    Calanoida_biom = sum(Biomass_ugL[
+    Calanoida_size = mean(MeanLength_mm[
       Taxon %in% c("Diaptomus")],na.rm=T),
-    Calanoida_sd = sd(Biomass_ugL[
+    Calanoida_sd = sd(MeanLength_mm[
       Taxon %in% c("Diaptomus")],na.rm=T),
-    Cyclopoida_biom = sum(Biomass_ugL[
+    Cyclopoida_size = mean(MeanLength_mm[
       Taxon %in% c("Cyclopoids")],na.rm=T),
-    Cyclopoida_sd = sd(Biomass_ugL[
+    Cyclopoida_sd = sd(MeanLength_mm[
       Taxon %in% c("Cyclopoids")],na.rm=T),
-    Nauplii_biom = sum(Biomass_ugL[
+    Nauplii_size = mean(MeanLength_mm[
       Taxon %in% c("Nauplii")],na.rm=T),
-    Nauplii_sd = sd(Biomass_ugL[
+    Nauplii_sd = sd(MeanLength_mm[
       Taxon %in% c("Nauplii")],na.rm=T),
-    Bosmina_biom = sum(Biomass_ugL[
+    Bosmina_size = mean(MeanLength_mm[
       Taxon %in% c("Bosmina")],na.rm=T),
-    Bosmina_sd = sd(Biomass_ugL[
+    Bosmina_sd = sd(MeanLength_mm[
       Taxon %in% c("Bosmina")],na.rm=T),
-    #Chydorus = sum(Biomass_ugL[
+    #Chydorus = mean(MeanLength_mm[
     #  Taxon %in% c("Chydorus")]),
-    Ceriodaphnia_biom = sum(Biomass_ugL[
+    Ceriodaphnia_size = mean(MeanLength_mm[
       Taxon %in% c("Ceriodaphnia")],na.rm=T),
-    Ceriodaphnia_sd = sd(Biomass_ugL[
+    Ceriodaphnia_sd = sd(MeanLength_mm[
       Taxon %in% c("Ceriodaphnia")],na.rm=T),
-    #Diaphanosoma = sum(Biomass_ugL[
+    #Diaphanosoma = mean(MeanLength_mm[
     #  Taxon %in% c("Diaphanosoma")]),
-    Ascomorpha_biom = sum(Biomass_ugL[
+    Ascomorpha_size = mean(MeanLength_mm[
       Taxon %in% c("Ascomorpha")],na.rm=T),
-    Ascomorpha_sd = sd(Biomass_ugL[
+    Ascomorpha_sd = sd(MeanLength_mm[
       Taxon %in% c("Ascomorpha")],na.rm=T),
-    #Asplanchna = sum(Biomass_ugL[
+    #Asplanchna = mean(MeanLength_mm[
     #  Taxon %in% c("Asplanchna")]),
-    Conochilus_biom = sum(Biomass_ugL[
+    Conochilus_size = mean(MeanLength_mm[
       Taxon %in% c("Conochilus")],na.rm=T),
-    Conochilus_sd = sd(Biomass_ugL[
+    Conochilus_sd = sd(MeanLength_mm[
       Taxon %in% c("Conochilus")],na.rm=T),
-    Keratella_biom = sum(Biomass_ugL[
+    Keratella_size = mean(MeanLength_mm[
       Taxon %in% c("Keratella")],na.rm=T),
-    Keratella_sd = sd(Biomass_ugL[
+    Keratella_sd = sd(MeanLength_mm[
       Taxon %in% c("Keratella")],na.rm=T),
-    Trichocerca_biom = sum(Biomass_ugL[
+    Trichocerca_size = mean(MeanLength_mm[
       Taxon %in% c("Trichocerca")],na.rm=T),
-    Trichocerca_sd = sd(Biomass_ugL[
+    Trichocerca_sd = sd(MeanLength_mm[
       Taxon %in% c("Trichocerca")],na.rm=T),
-    Kellicottia_biom = sum(Biomass_ugL[
+    Kellicottia_size = mean(MeanLength_mm[
       Taxon %in% c("Kellicottia")],na.rm=T),
-    Kellicottia_sd = sd(Biomass_ugL[
+    Kellicottia_sd = sd(MeanLength_mm[
       Taxon %in% c("Kellicottia")],na.rm=T),
-    # Lecane = sum(Biomass_ugL[
+    # Lecane = mean(MeanLength_mm[
     #   Taxon %in% c("Lecane")]),
-    Polyarthra_biom = sum(Biomass_ugL[
+    Polyarthra_size = mean(MeanLength_mm[
       Taxon %in% c("Polyarthra")],na.rm=T),
-    Polyarthra_sd = sd(Biomass_ugL[
+    Polyarthra_sd = sd(MeanLength_mm[
       Taxon %in% c("Polyarthra")],na.rm=T),
-    Rotifera_biom = sum(Biomass_ugL[
+    Rotifera_size = mean(MeanLength_mm[
       Taxon %in% c("Total rotifers")],na.rm=T),
-    Rotifera_sd = sd(Biomass_ugL[
+    Rotifera_sd = sd(MeanLength_mm[
       Taxon %in% c("Total rotifers")],na.rm=T),
-    Cladocera_biom = sum(Biomass_ugL[
+    Cladocera_size = mean(MeanLength_mm[
       Taxon %in% c("Bosmina","D. catawba", "Chydorus","D. ambigua",
                    "Diaphanosoma","Ceriodaphnia")],na.rm=T),
-    Cladocera_sd = sd(Biomass_ugL[
+    Cladocera_sd = sd(MeanLength_mm[
       Taxon %in% c("Bosmina","D. catawba", "Chydorus","D. ambigua",
                    "Diaphanosoma","Ceriodaphnia")],na.rm=T),
-    Copepoda_biom = sum(Biomass_ugL[
+    Copepoda_size = mean(MeanLength_mm[
       Taxon %in% c("Diaptomus","Nauplii", "Cyclopoids")],na.rm=T),
-    Copepoda_sd = sd(Biomass_ugL[
+    Copepoda_sd = sd(MeanLength_mm[
       Taxon %in% c("Diaptomus","Nauplii", "Cyclopoids")],na.rm=T)) |> 
   pivot_longer(-c(Reservoir,DateTime,StartDepth_m),
                names_to = c("Taxon", ".value"),
                names_sep="_" )  |> 
   filter(hour(DateTime) %in% c(9,10,11,12,13,14)) |> #drop nighttime samples
-  mutate(DateTime = as.Date(DateTime)) |> 
-  mutate(biom = biom * (1/0.031))  #10m bvr neteff from 2016 (n=2) - note that 7m neteff was also 0.031
-#avg from 2020 and 2021 is 0.021...
+  mutate(DateTime = as.Date(DateTime)) 
 
 #list common taxa between pre and post
 taxa <- c("Bosmina", "Daphnia", "Ceriodaphnia",
@@ -115,8 +113,8 @@ zoops_post <- zoops_2019_2021 |>
   mutate(DateTime = as.Date(DateTime)) |> 
   mutate(Taxon = ifelse(Taxon == "Nauplius", "Nauplii", Taxon)) |> 
   group_by(Reservoir, DateTime, StartDepth_m, Taxon) |> 
-  summarise(biom = mean(Biomass_ugL,na.rm=T),
-            sd = sd(Biomass_ugL,na.rm=T))
+  summarise(size = mean(MeanLength_mm,na.rm=T),
+            sd = sd(MeanLength_mm,na.rm=T))
 
 #combine all zoop data
 all_zoops <- bind_rows(zoops_pre, zoops_post) |> 
@@ -124,84 +122,73 @@ all_zoops <- bind_rows(zoops_pre, zoops_post) |>
   ungroup() |> select(-StartDepth_m) #dropping, but note that depths range from 7.5-11.5m....
 
 #write all_zoops
-write.csv(all_zoops, paste0("Output/all_zoops_biom.csv"),row.names = FALSE)
+write.csv(all_zoops, paste0("Output/all_zoops_size.csv"),row.names = FALSE)
 
 #add column for pre vs post
 all_zoops$data <- ifelse(all_zoops$DateTime<="2019-01-01","pre","post")
 
 #------------------------------------------------------------------------------#
-# new df for total zoop biom
+# new df for total zoop size
 zoops_total <- all_zoops |> 
   group_by(DateTime) |> 
-  summarise(Total = sum(biom[Taxon %in% c("Cladocera","Copeoda","Rotifera")],na.rm=T),
+  summarise(Total = mean(size[Taxon %in% c("Cladocera","Copeoda","Rotifera")],na.rm=T),
             sd = mean(sd[Taxon %in% c("Cladocera","Copeoda","Rotifera")],na.rm=T)) |> 
   ungroup() |> 
   mutate(year = format(DateTime, "%Y"),
          month = format(DateTime, "%m")) |> 
   group_by(year, month) |>
   summarise(Total_avg = mean(Total,na.rm=T),
-            Total_sd = mean(sd,na.rm=T)) |> 
-  ungroup() |> 
-  mutate(Biom_std =(Total_avg - min(Total_avg,na.rm=T)) / 
-           (max(Total_avg,na.rm=T) - min(Total_avg,na.rm=T)))
+            Total_sd = mean(sd,na.rm=T)) 
 
-# 3 group zoop biom
+# 3 group zoop size
 zoops_3_groups <- all_zoops |> group_by(Taxon, DateTime) |> 
   filter(Taxon %in% c("Cladocera","Copepoda","Rotifera")) |> 
   mutate(year = format(DateTime, "%Y"),
          month = format(DateTime, "%m")) |> 
   ungroup() |> group_by(year, month) |> 
-  summarise(Cladocera_avg = mean(biom[Taxon=="Cladocera"],na.rm=T),
+  summarise(Cladocera_avg = mean(size[Taxon=="Cladocera"],na.rm=T),
             Cladocera_sd = mean(sd[Taxon=="Cladocera"],na.rm=T),
-            Copepoda_avg = mean(biom[Taxon=="Copepoda"],na.rm=T),
+            Copepoda_avg = mean(size[Taxon=="Copepoda"],na.rm=T),
             Copepoda_sd = mean(sd[Taxon=="Copepoda"],na.rm=T),
-            Rotifera_avg = mean(biom[Taxon=="Rotifera"],na.rm=T),
+            Rotifera_avg = mean(size[Taxon=="Rotifera"],na.rm=T),
             Rotifera_sd = mean(sd[Taxon=="Rotifera"],na.rm=T)) |> 
   pivot_longer(-c(year,month),
                names_to = c("Taxon", ".value"),
-               names_sep="_" )  |> 
-  ungroup() |> group_by(Taxon) |>
-  mutate(min_biom = min(avg,na.rm=T),
-         max_biom = max(avg,na.rm=T)) |> 
-  mutate(standardized_biom = (avg - min_biom) / (max_biom - min_biom))
+               names_sep="_" ) 
 
-# 12 group zoop biom
+# 12 group zoop size
 zoops_12_groups <- all_zoops |> group_by(Taxon, DateTime) |> 
   filter(!Taxon %in% c("Cladocera","Copepoda","Rotifera")) |> 
   mutate(year = format(DateTime, "%Y"),
          month = format(DateTime, "%m")) |> 
   group_by(year, month) |> 
-  summarise(Daphnia_avg = mean(biom[Taxon=="Daphnia"],na.rm=T),
+  summarise(Daphnia_avg = mean(size[Taxon=="Daphnia"],na.rm=T),
             Daphnia_sd = mean(sd[Taxon=="Daphnia"],na.rm=T),
-            Calanoida_avg = mean(biom[Taxon=="Calanoida"],na.rm=T),
+            Calanoida_avg = mean(size[Taxon=="Calanoida"],na.rm=T),
             Calanoida_sd = mean(sd[Taxon=="Calanoida"],na.rm=T),
-            Cyclopoida_avg = mean(biom[Taxon=="Cyclopoida"],na.rm=T),
+            Cyclopoida_avg = mean(size[Taxon=="Cyclopoida"],na.rm=T),
             Cyclopoida_sd = mean(sd[Taxon=="Cyclopoida"],na.rm=T),
-            Nauplii_avg = mean(biom[Taxon=="Nauplii"],na.rm=T),
+            Nauplii_avg = mean(size[Taxon=="Nauplii"],na.rm=T),
             Nauplii_sd = mean(sd[Taxon=="Nauplii"],na.rm=T),
-            Bosmina_avg = mean(biom[Taxon=="Bosmina"],na.rm=T),
+            Bosmina_avg = mean(size[Taxon=="Bosmina"],na.rm=T),
             Bosmina_sd = mean(sd[Taxon=="Bosmina"],na.rm=T),
-            Ceriodaphnia_avg = mean(biom[Taxon=="Ceriodaphnia"],na.rm=T),
+            Ceriodaphnia_avg = mean(size[Taxon=="Ceriodaphnia"],na.rm=T),
             Ceriodaphnia_sd = mean(sd[Taxon=="Ceriodaphnia"],na.rm=T),
-            Ascomorpha_avg = mean(biom[Taxon=="Ascomorpha"],na.rm=T),
+            Ascomorpha_avg = mean(size[Taxon=="Ascomorpha"],na.rm=T),
             Ascomorpha_sd = mean(sd[Taxon=="Ascomorpha"],na.rm=T),
-            Conochilus_avg = mean(biom[Taxon=="Conochilus"],na.rm=T),
+            Conochilus_avg = mean(size[Taxon=="Conochilus"],na.rm=T),
             Conochilus_sd = mean(sd[Taxon=="Conochilus"],na.rm=T),
-            Keratella_avg = mean(biom[Taxon=="Keratella"],na.rm=T),
+            Keratella_avg = mean(size[Taxon=="Keratella"],na.rm=T),
             Keratella_sd = mean(sd[Taxon=="Keratella"],na.rm=T),
-            Trichocerca_avg = mean(biom[Taxon=="Trichocerca"],na.rm=T),
+            Trichocerca_avg = mean(size[Taxon=="Trichocerca"],na.rm=T),
             Trichocerca_sd = mean(sd[Taxon=="Trichocerca"],na.rm=T),
-            Kellicottia_avg = mean(biom[Taxon=="Kellicottia"],na.rm=T),
+            Kellicottia_avg = mean(size[Taxon=="Kellicottia"],na.rm=T),
             Kellicottia_sd = mean(sd[Taxon=="Kellicottia"],na.rm=T),
-            Polyarthra_avg = mean(biom[Taxon=="Polyarthra"],na.rm=T),
+            Polyarthra_avg = mean(size[Taxon=="Polyarthra"],na.rm=T),
             Polyarthra_sd = mean(sd[Taxon=="Polyarthra"],na.rm=T)) |> 
   pivot_longer(-c(year,month),
                names_to = c("Taxon", ".value"),
-               names_sep="_" )  |> 
-  ungroup() |> group_by(Taxon) |>
-  mutate(min_biom = min(avg,na.rm=T),
-         max_biom = max(avg,na.rm=T)) |> 
-  mutate(standardized_biom = (avg - min_biom) / (max_biom - min_biom))
+               names_sep="_" )
 
 #------------------------------------------------------------------------------#
 #plots
@@ -214,15 +201,15 @@ ggplot(zoops_total, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),Total_
   geom_vline(xintercept = as.Date("2020-01-01")) +
   geom_vline(xintercept = as.Date("2021-01-01")) +
   geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=2000, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=2000, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=2000, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=2000, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=2000, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=2000, label= "2021") +
+  annotate("text", x=as.Date("2014-07-01"), y=0.8, label= "2014") +
+  annotate("text", x=as.Date("2015-07-01"), y=0.8, label= "2015") +
+  annotate("text", x=as.Date("2016-07-01"), y=0.8, label= "2016") +
+  annotate("text", x=as.Date("2019-07-01"), y=0.8, label= "2019") +
+  annotate("text", x=as.Date("2020-07-01"), y=0.8, label= "2020") +
+  annotate("text", x=as.Date("2021-07-01"), y=0.8, label= "2021") +
   geom_errorbar(aes(ymin = Total_avg -Total_sd, ymax = Total_avg+Total_sd), 
                 color="#009999") 
-ggsave("Figures/zoop_total_biom.jpg", width=6, height=3) 
+ggsave("Figures/zoop_total_size.jpg", width=6, height=3) 
 
 ggplot(zoops_3_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
                            avg, color=Taxon)) +
@@ -234,15 +221,15 @@ ggplot(zoops_3_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
   geom_vline(xintercept = as.Date("2020-01-01")) +
   geom_vline(xintercept = as.Date("2021-01-01")) +
   geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=5000, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=5000, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=5000, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=5000, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=5000, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=5000, label= "2021") +
+  annotate("text", x=as.Date("2014-07-01"), y=1, label= "2014") +
+  annotate("text", x=as.Date("2015-07-01"), y=1, label= "2015") +
+  annotate("text", x=as.Date("2016-07-01"), y=1, label= "2016") +
+  annotate("text", x=as.Date("2019-07-01"), y=1, label= "2019") +
+  annotate("text", x=as.Date("2020-07-01"), y=1, label= "2020") +
+  annotate("text", x=as.Date("2021-07-01"), y=1, label= "2021") +
   geom_errorbar(aes(ymin = avg -sd, ymax = avg+sd)) +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("Saguaro", 3))
-ggsave("Figures/zoop_3taxa_biom.jpg", width=6, height=3) 
+ggsave("Figures/zoop_3taxa_size.jpg", width=6, height=3) 
 
 ggplot(zoops_12_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
                             avg, color=Taxon)) +
@@ -254,91 +241,38 @@ ggplot(zoops_12_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
   geom_vline(xintercept = as.Date("2020-01-01")) +
   geom_vline(xintercept = as.Date("2021-01-01")) +
   geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=5000, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=5000, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=5000, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=5000, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=5000, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=5000, label= "2021") +
+  annotate("text", x=as.Date("2014-07-01"), y=1, label= "2014") +
+  annotate("text", x=as.Date("2015-07-01"), y=1, label= "2015") +
+  annotate("text", x=as.Date("2016-07-01"), y=1, label= "2016") +
+  annotate("text", x=as.Date("2019-07-01"), y=1, label= "2019") +
+  annotate("text", x=as.Date("2020-07-01"), y=1, label= "2020") +
+  annotate("text", x=as.Date("2021-07-01"), y=1, label= "2021") +
   geom_errorbar(aes(ymin = avg -sd, ymax = avg+sd)) +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("Torres", 12))
-ggsave("Figures/zoop_12taxa_biom.jpg", width=6, height=3) 
+ggsave("Figures/zoop_12taxa_size.jpg", width=6, height=3) 
 
 #------------------------------------------------------------------------------#
-#standardized biomass
-ggplot(zoops_total, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),Biom_std)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point(color="darkblue") + geom_line(color="darkblue") + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=1.1, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=1.1, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=1.1, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=1.1, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=1.1, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=1.1, label= "2021") 
-ggsave("Figures/zoop_total_std_biom.jpg", width=6, height=3) 
-
-ggplot(zoops_3_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
-                           standardized_biom, color=Taxon)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=1.1, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=1.1, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=1.1, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=1.1, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=1.1, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=1.1, label= "2021") +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Saguaro", 3))
-ggsave("Figures/zoop_3taxa_std_biom.jpg", width=6, height=3) 
-
-ggplot(zoops_12_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
-                            standardized_biom, color=Taxon)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=1.1, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=1.1, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=1.1, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=1.1, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=1.1, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=1.1, label= "2021") +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Torres", 12))
-ggsave("Figures/zoop_12taxa_std_biom.jpg", width=6, height=3) 
-
-#------------------------------------------------------------------------------#
-#biomass vs. doy
+#size vs. doy
 ggplot(zoops_total, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                        Biom_std, color=year)) +
+                        Total_avg, color=year)) +
   geom_point() + geom_line() + theme_bw() + xlab("doy") +
+  geom_errorbar(aes(ymin = Total_avg -Total_sd, ymax = Total_avg+Total_sd)) +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("KingsCanyon", 6))
-ggsave("Figures/zoop_total_std_biom_vs_doy.jpg", width=6, height=3) 
+ggsave("Figures/zoop_size_vs_doy.jpg", width=6, height=3) 
 
 ggplot(zoops_3_groups, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                           standardized_biom, color=year)) +
+                           avg, color=year)) +
   facet_wrap(~Taxon, nrow=3)+
   geom_point() + geom_line() + theme_bw() + xlab("doy") +
+  geom_errorbar(aes(ymin = avg -sd, ymax = avg+sd)) +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("KingsCanyon", 6))
-ggsave("Figures/zoop_3taxa_std_biom_vs_doy.jpg", width=6, height=3) 
+ggsave("Figures/zoop_3taxa_size_vs_doy.jpg", width=6, height=3) 
 
 ggplot(zoops_12_groups, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                            standardized_biom, color=year)) +
+                            avg, color=year)) +
   facet_wrap(~Taxon, nrow=4)+
   geom_point() + geom_line() + theme_bw() + xlab("doy") +
+  geom_errorbar(aes(ymin = avg -sd, ymax = avg+sd)) +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("KingsCanyon", 6))
-ggsave("Figures/zoop_12taxa_std_biom_vs_doy.jpg", width=6, height=3) 
+ggsave("Figures/zoop_12taxa_size_vs_doy.jpg", width=6, height=3) 
+
