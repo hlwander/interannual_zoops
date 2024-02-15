@@ -15,10 +15,10 @@ taxa <- unique(all_zoops_dens$Taxon)
 
 #taxa as cols, dates as rows, average by month
 all_zoops_nmds <- all_zoops_dens |> 
-  select(DateTime, Taxon, Density_IndPerL) |> 
+  select(DateTime, Taxon, dens) |> 
   filter(Taxon %in% taxa) |> 
   mutate(DateTime = as.Date(DateTime)) |> 
-  pivot_wider(names_from = Taxon, values_from = Density_IndPerL) |> 
+  pivot_wider(names_from = Taxon, values_from = dens) |> 
   mutate(year = format(DateTime, "%Y"),
          month = format(DateTime, "%m")) |> 
   mutate_all(~replace(., is.na(.), 0)) |>  #replace NA with 0
@@ -26,15 +26,13 @@ all_zoops_nmds <- all_zoops_dens |>
   summarise(Bosmina = mean(Bosmina),
             Ceriodaphnia = mean(Ceriodaphnia),
             Daphnia = mean(Daphnia),
-            Calanoida = mean(Calanoida),
             Cyclopoida = mean(Cyclopoida),
             Nauplii = mean(Nauplii),
             Ascomorpha = mean(Ascomorpha),
             Conochilus = mean(Conochilus),
             Keratella = mean(Keratella),
             Kellicottia = mean(Kellicottia),
-            Polyarthra = mean(Polyarthra),
-            Trichocerca = mean(Trichocerca)) |> 
+            Polyarthra = mean(Polyarthra)) |> 
   ungroup()
 
 #only keep may-sep samples and drop 2022
@@ -44,7 +42,7 @@ all_zoops_nmds <- all_zoops_nmds |>
 #only 5 months per year bc needs to be equal for pairwise correlation matrix
 
 #select only data cols
-zoops_dens <- all_zoops_nmds |> select(Bosmina:Trichocerca)
+zoops_dens <- all_zoops_nmds |> select(Bosmina:Polyarthra)
 
 #hellinger transform data
 zoop_dens_trans <- labdsv::hellinger(zoops_dens)
@@ -65,13 +63,13 @@ goeveg::dimcheckMDS(zoop_bray, distance = "bray",
                     k = 6, trymax = 20, autotransform = TRUE)
 #dev.off()
 
-set.seed(1)
+set.seed(11)
 
 #now do NMDS w/ 4 dimensions 
 NMDS_bray_first <- vegan::metaMDS(zoop_bray, distance='bray', k=4, trymax=20, 
                             autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_first$stress
-# 0.073
+# 0.074
 
 #plot
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
@@ -155,10 +153,10 @@ for (i in 1:6) {
          NMDS_bray_first$points[(all_zoops_nmds$year == 
                                    unique(all_zoops_nmds$year)[i]),2], 
          col=viridis::viridis(6, option="D")[i],
-         pch = as.character(1:5), font=2, cex=2)
+         pch = as.character(1:5), font=2, cex=3)
   
   mtext(c("2014","2015","2016","2019","2020","2021")[i], side = 3, line = -2, 
-         adj = 0.05, cex = 0.8, col = "black")
+         adj = 0.05, cex = 1.2, col = "black")
    if (i %in% c(4, 5, 6))
      axis(1, col = "black", col.axis = "black")
    if (i %in% c(1, 4))
@@ -169,9 +167,9 @@ for (i in 1:6) {
            pch=c(as.character(1:5)) ,bty = "n", cex=1.5) 
 }
 
-mtext("NMDS1", side = 1, outer = TRUE, cex = 0.8, line = 2.2,
+mtext("NMDS1", side = 1, outer = TRUE, cex = 1.2, line = 2.2,
        col = "black")
-mtext("NMDS2", side = 2, outer = TRUE, cex = 0.8, line = 2.2,
+mtext("NMDS2", side = 2, outer = TRUE, cex = 1.2, line = 2.2,
          col = "black")
   
 #legend("topright", legend=c('2014','2015','2016','2019','2020','2021'),
@@ -241,8 +239,8 @@ disp_df <- var_results[,grepl("disp",colnames(var_results))] |>
   pivot_longer(everything(), names_to="group")
 
 #now kw test
-kw_disp <- kruskal.test(value ~ group, data = disp_df) #significant
-#month and year are different from each other
+kw_disp <- kruskal.test(value ~ group, data = disp_df) #ns
+#month and year are NOT different from each other
 
 #plot
 ggboxplot(disp_df, x = "group", y = "value", 
@@ -251,11 +249,11 @@ ggboxplot(disp_df, x = "group", y = "value",
                       ylab = "Dispersion") +
   theme(text = element_text(size=9),
         plot.margin = unit(c(0.2,0,-0.5,0), 'lines')) +
-  annotate("text",label=c("a","b"), x=c(1.1,2.1),
-           y=c(mean(disp_df$value[disp_df$group=="year_disp"]) + 
-                 sd(disp_df$value[disp_df$group=="year_disp"])/2,
-               mean(disp_df$value[disp_df$group=="month_disp"]) + 
-                 sd(disp_df$value[disp_df$group=="month_disp"]))) +
+  #annotate("text",label=c("a","b"), x=c(1.1,2.1),
+  #         y=c(mean(disp_df$value[disp_df$group=="year_disp"]) + 
+  #               sd(disp_df$value[disp_df$group=="year_disp"])/2,
+  #             mean(disp_df$value[disp_df$group=="month_disp"]) + 
+  #               sd(disp_df$value[disp_df$group=="month_disp"]))) +
   guides(fill = "none") +
   scale_x_discrete(name ="", 
                    labels=c("year_disp"="year",
@@ -325,7 +323,7 @@ month_box <- ggboxplot(within_month_dist, x = "group", y = "dist",
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8),
         axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
   annotate("text",label=c("a","ab","b","b","ab"), x=c(1.2, 2.2, 3.2, 4.2, 5.2), size=4,
-           y=c(0.63, 0.47, 0.46, 0.46, 0.49)) +
+           y=c(0.63, 0.47, 0.46, 0.46, 0.50)) +
   annotate("text", x=1.3, y=1, label= "b: months",
            fontface = "italic", size=3) +
   guides (fill = "none")
@@ -395,13 +393,13 @@ goeveg::dimcheckMDS(stage2, distance = "bray",
                     k = 4, trymax = 20, autotransform = TRUE)
 #dev.off()
 
-set.seed(1)
+set.seed(11)
 
 #now do NMDS w/ 4 dimensions for consistency
 NMDS_bray_second <- vegan::metaMDS(stage2, distance='bray', k=4, trymax=20, 
                             autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_second$stress
-# 0.02
+# 0.017
 
 #--------------------------------------------------------------------------#
 #NMDS plot - second-stage
@@ -419,6 +417,7 @@ year$plot + geom_point() + theme_bw() +
                  fill=viridis::viridis(6, option="D")) +
       theme(text = element_text(size=14), 
             axis.text = element_text(size=7, color="black"), 
+            axis.title = element_text(size=6),
             legend.background = element_blank(), 
             legend.key.height=unit(0.3,"line"),
             legend.box.margin=margin(-10,-10,-10,-10),
@@ -436,7 +435,7 @@ year$plot + geom_point() + theme_bw() +
       scale_fill_manual("",values=viridis::viridis(6, option="D"),
                         label=c('2014','2015',"2016","2019","2020","2021")) +
       scale_color_manual("",values=rep("gray",6) )
-#ggsave("Figures/second_stage_NMDS_2v1_dens.jpg", width=6, height=3) 
+#ggsave("Figures/second_stage_NMDS_2v1_dens.jpg", width=2.3, height=2) 
 
 
 #ANOSIM test on second-stage similarities
@@ -458,7 +457,7 @@ zoops_plus_drivers <- bind_cols(all_zoops_nmds, env_drivers[
   !colnames(env_drivers) %in% c("month", "year")])
 
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord$sites, zoops_plus_drivers[,c(14:27)]) 
+fit_env <- envfit(ord$sites, zoops_plus_drivers[,c(13:26)]) 
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
