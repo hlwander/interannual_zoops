@@ -58,7 +58,7 @@ zoop_bray <- as.matrix(vegan::vegdist(zoop_dens_trans, method='bray'))
 #first-stage NMDS
 
 #scree plot to choose dimension 
-#jpeg("figures/scree.jpg") 
+#jpeg("figures/scree_first_stage.jpg") 
 goeveg::dimcheckMDS(zoop_bray, distance = "bray", 
                     k = 6, trymax = 20, autotransform = TRUE)
 #dev.off()
@@ -183,14 +183,14 @@ mtext("NMDS2", side = 2, outer = TRUE, cex = 1.2, line = 2.2,
 #order zoop epi tows by year and month
 all_zoops_nmds <- all_zoops_nmds |> dplyr::arrange(year, month)
 
-#convert ED matrix back into distance structure for next steps
-zoop_euc <- vegdist(zoop_dens_trans, method='euclidean', 
+#convert matrix back into distance structure for next steps
+zoop_bray <- vegdist(zoop_dens_trans, method='bray', 
                     upper = TRUE)
 
 #Now calculate the centroids of each polygon AND the avg distance of each point to its polygon centroid
-centroids_year <- betadisper(zoop_euc, group = as.factor(all_zoops_nmds$year), 
+centroids_year <- betadisper(zoop_bray, group = as.factor(all_zoops_nmds$year), 
                               type="centroid")
-centroids_month <- betadisper(zoop_euc, group = as.factor(all_zoops_nmds$month), 
+centroids_month <- betadisper(zoop_bray, group = as.factor(all_zoops_nmds$month), 
                               type="centroid")
 
 #calculate dispersion as average distance of each point to polygon centroid
@@ -216,14 +216,14 @@ for (i in 1:500){
   #hellinger transformation
   zoop_dens_sub_trans <- labdsv::hellinger(zoop_dens_sub)
   
-  #convert ED matrix back into distance structure for next steps
-  zoop_euc_sub <- vegdist(zoop_dens_sub_trans, method='euclidean', 
+  #convert matrix back into distance structure for next steps
+  zoop_bray_sub <- vegdist(zoop_dens_sub_trans, method='bray', 
                           upper = TRUE)
   
   #Now calculate the centroids of each polygon AND the avg distance of each point to its polygon centroid
-  centroids_year_sub <- betadisper(zoop_euc_sub, group = as.factor(zoop_sub$year), 
+  centroids_year_sub <- betadisper(zoop_bray_sub, group = as.factor(zoop_sub$year), 
                                     type="centroid")
-  centroids_month_sub <-  betadisper(zoop_euc_sub, group = as.factor(zoop_sub$month), 
+  centroids_month_sub <-  betadisper(zoop_bray_sub, group = as.factor(zoop_sub$month), 
                                     type="centroid")
   
   #distance calcs
@@ -270,7 +270,7 @@ kw_results <- data.frame("Scale" = c("Year", "Month"),
                          "df" = c(kw_disp$parameter, " "),
                          "χ2" = c(round(kw_disp$statistic,3), " "),
                          "p-value" = c(kw_disp$p.value, " "))
-#write.csv(kw_results, "Output/Euclidean_distances_bootstrapped_kw_results_dens.csv", row.names = FALSE)
+#write.csv(kw_results, "Output/Bray_distances_bootstrapped_kw_results_dens.csv", row.names = FALSE)
 
 #dfs to calculate significance within years, and months
 within_year_dist <- data.frame("group" = c(rep("2014",5),rep("2015",5),rep("2016",5),

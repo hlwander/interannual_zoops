@@ -438,7 +438,8 @@ zoops_3_groups_years <- all_zoops |>
   ungroup() |> group_by(Taxon,year) |>
   mutate(min_dens = min(avg),
          max_dens = max(avg)) |> 
-  mutate(standardized_dens = (avg - min_dens) / (max_dens - min_dens))
+  mutate(standardized_dens = (avg - min_dens) / (max_dens - min_dens)) |> 
+  mutate(month = as.numeric(month))
 
 ggplot(zoops_3_groups_years, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
                            standardized_dens, color=year)) +
@@ -455,7 +456,8 @@ zoops_3_groups_years$Taxon <- factor(zoops_3_groups_years$Taxon,
                               #levels = c("Cladocera","Copepoda","Rotifera"))
 
 #shaded line plot time
-ggplot(zoops_3_groups_years, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
+ggplot(data=subset(zoops_3_groups_years, month %in% c(5,6,7,8,9)), 
+       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
                                  standardized_dens, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
             position = "identity", 
@@ -488,10 +490,5 @@ ggplot(zoops_3_groups_years, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-ggsave("Figures/BVR_succession_3groups.jpg", width=6, height=4) 
-
-ggplot(data=subset(zoops_3_groups_years, year==2019), 
-       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
-                                 standardized_dens, color=Taxon)) +
-  geom_area(position = "identity")
+ggsave("Figures/BVR_succession_3groups_subset.jpg", width=6, height=4) 
 

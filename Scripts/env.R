@@ -1,7 +1,7 @@
 #code to visualize seasonal and multiannual zoop patterns
 
 #read in packages
-pacman::p_load(tidyverse, NatParksPalettes,rLakeAnalyzer)
+pacman::p_load(tidyverse, NatParksPalettes, rLakeAnalyzer)
 
 #------------------------------------------------------------------------------#
 #Pull in environmental data for 2014-2021
@@ -313,4 +313,119 @@ ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), SRP_u
 ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), SRP_ugL_hypo)) +
   geom_point() + geom_line() + theme_bw() + xlab("Date")
                           
+#-----------------------------------------------------------------------------#
+#standardize for each year and variable (n=30 1s)
+phytos_std <- fp_long |> 
+  filter(!variable %in% c("Total_ugL")) |> 
+  group_by(year, month) |> 
+  summarise(Green = mean(value[variable=="Green_ugL"]),
+            Bluegreen = mean(value[variable=="Bluegreen_ugL"]),
+            Brown = mean(value[variable=="Brown_ugL"]),
+            Mixed = mean(value[variable=="Mixed_ugL"]),
+            Yellow = mean(value[variable=="Yellow_ugL"])) |> 
+  pivot_longer(-c(year,month),
+               names_to = c("variable"))  |> 
+  ungroup() |> group_by(variable,year) |>
+  mutate(min_val = min(value),
+         max_val = max(value)) |> 
+  mutate(standardized_abund = (value - min_val) / (max_val - min_val))
+
+#playing around with order/layering of taxa
+phytos_std$variable <- factor(phytos_std$variable,
+                                     levels = c("Yellow","Mixed","Bluegreen","Brown","Green"))
+                                     #levels = c("Green","Brown","Bluegreen","Mixed","Yellow"))
+
+#phyto succession shaded line plot
+ggplot(phytos_std, 
+       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
+           standardized_abund, color=variable)) +
+  geom_area(aes(color = variable, fill = variable),
+            position = "identity", 
+            alpha=0.7) +
+  facet_wrap(~year, scales = "free_x")+
+  scale_color_manual(values = NatParksPalettes::natparks.pals("Volcanoes", 5))+
+  scale_fill_manual(values = NatParksPalettes::natparks.pals("Volcanoes", 5)) +
+                    #breaks = c("Cladocera","Copepoda","Rotifera"))+
+  scale_x_date(expand = c(0,0),
+               labels = scales::date_format("%b",tz="EST5EDT")) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,1))+
+  xlab("") + ylab("standardized density") +
+  guides(color= "none",
+         fill = guide_legend(ncol=1)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.key = element_blank(),
+        legend.background = element_blank(),
+        legend.position = "right",
+        legend.direction = "vertical",
+        text = element_text(size=8), 
+        axis.text.y = element_text(size = 8),
+        panel.border = element_rect(colour = "black", fill = NA),
+        strip.text.x = element_text(face = "bold",hjust = 0),
+        axis.text.x = element_text(angle=90),
+        strip.background.x = element_blank(),
+        axis.title.y = element_text(size = 9),
+        plot.margin = unit(c(0, 1, 0, 0), "cm"),
+        panel.background = element_rect(
+          fill = "white"),
+        panel.spacing = unit(0.5, "lines"))
+ggsave("Figures/BVR_phyto_succession.jpg", width=6, height=4) 
+
+#standardize for each year and variable (n=30 1s)
+chem_std <- chem_long |> 
+  group_by(year, month) |> 
+  summarise(TN = mean(value[variable=="TN_ugL_epi"]),
+            TP = mean(value[variable=="TP_ugL_epi"]),
+            NH4 = mean(value[variable=="NH4_ugL_epi"]),
+            NO3NO2 = mean(value[variable=="NO3NO2_ugL_epi"]),
+            SRP = mean(value[variable=="SRP_ugL_epi"])) |> 
+  pivot_longer(-c(year,month),
+               names_to = c("variable"))  |> 
+  ungroup() |> group_by(variable,year) |>
+  mutate(min_val = min(value),
+         max_val = max(value)) |> 
+  mutate(standardized_value = (value - min_val) / (max_val - min_val))
+
+#playing around with order/layering of taxa
+phytos_std$variable <- factor(phytos_std$variable,
+                              levels = c("Yellow","Mixed","Bluegreen","Brown","Green"))
+#levels = c("Green","Brown","Bluegreen","Mixed","Yellow"))
+
+#phyto succession shaded line plot
+ggplot(chem_std, 
+       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
+           standardized_value, color=variable)) +
+  geom_area(aes(color = variable, fill = variable),
+            position = "identity", 
+            alpha=0.7) +
+  facet_wrap(~year, scales = "free_x")+
+  scale_color_manual(values = NatParksPalettes::natparks.pals("DeathValley", 5))+
+  scale_fill_manual(values = NatParksPalettes::natparks.pals("DeathValley", 5)) +
+  #breaks = c("Cladocera","Copepoda","Rotifera"))+
+  scale_x_date(expand = c(0,0),
+               labels = scales::date_format("%b",tz="EST5EDT")) +
+  scale_y_continuous(expand = c(0,0), limits = c(0,1))+
+  xlab("") + ylab("standardized density") +
+  guides(color= "none",
+         fill = guide_legend(ncol=1)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.key = element_blank(),
+        legend.background = element_blank(),
+        legend.position = "right",
+        legend.direction = "vertical",
+        text = element_text(size=8), 
+        axis.text.y = element_text(size = 8),
+        panel.border = element_rect(colour = "black", fill = NA),
+        strip.text.x = element_text(face = "bold",hjust = 0),
+        axis.text.x = element_text(angle=90),
+        strip.background.x = element_blank(),
+        axis.title.y = element_text(size = 9),
+        plot.margin = unit(c(0, 1, 0, 0), "cm"),
+        panel.background = element_rect(
+          fill = "white"),
+        panel.spacing = unit(0.5, "lines"))
+ggsave("Figures/BVR_chem_succession.jpg", width=6, height=4) 
 
