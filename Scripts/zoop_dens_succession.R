@@ -460,15 +460,15 @@ ggplot(data=subset(zoops_3_groups_years, month %in% c(5,6,7,8,9)),
        aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
                                  standardized_dens, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
-            position = "identity", 
+            position = "stack", stat = "identity",
             alpha=0.7) +
-  facet_wrap(~year, scales = "free_x")+
+  facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals("KingsCanyon", 3))+
   scale_fill_manual(values = NatParksPalettes::natparks.pals("KingsCanyon", 3),
                     breaks = c("Cladocera","Copepoda","Rotifera"))+
   scale_x_date(expand = c(0,0),
                    labels = scales::date_format("%b",tz="EST5EDT")) +
-  scale_y_continuous(expand = c(0,0), limits = c(0,1))+
+  scale_y_continuous(expand = c(0,0))+
   xlab("") + ylab("standardized density") +
   guides(color= "none",
          fill = guide_legend(ncol=1)) +
@@ -490,5 +490,78 @@ ggplot(data=subset(zoops_3_groups_years, month %in% c(5,6,7,8,9)),
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-ggsave("Figures/BVR_succession_3groups_subset.jpg", width=6, height=4) 
+ggsave("Figures/BVR_succession_3groups_subset_stacked.jpg", width=6, height=4) 
+
+#-----------------------------------------------------------------------------#
+#read in phyto csv
+all_phytos_std <- read.csv("Output/phytos.csv") |> 
+  select(month, year, Total_ugL) |> 
+  group_by(year) |> 
+  mutate(min_val = min(Total_ugL),
+         max_val = max(Total_ugL)) |> 
+  mutate(phyto_abund = (Total_ugL - min_val) / (max_val - min_val)) |> 
+  select(month, year, phyto_abund) |> 
+  arrange(year, month)
+  
+all_zoops_std <- all_zoops |> 
+  mutate(year = format(DateTime, "%Y"),
+         month = format(DateTime, "%m")) |> 
+  mutate(month = as.numeric(month),
+         year = as.numeric(year)) |> 
+  filter(month %in% c(5,6,7,8,9)) |> 
+  group_by(DateTime) |> 
+  mutate(Total = sum(dens[Taxon %in% c("Cladocera","Copeoda","Rotifera")])) |> 
+  group_by(year, month) |>
+  summarise(Total_avg = mean(Total,na.rm=T)) |> 
+  ungroup() |>   group_by(year) |> 
+  mutate(min_val = min(Total_avg),
+         max_val = max(Total_avg)) |> 
+  mutate(zoop_dens = (Total_avg - min_val) / (max_val - min_val)) |> 
+  select(month, year, zoop_dens)
+
+#combine zoops and phytos
+zoops_phytos <- left_join(all_zoops_std, all_phytos_std) |> 
+  pivot_longer(-c(month,year),
+               names_to = "variable")
+
+#read in secchi data
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/81f396b3e910d3359907b7264e689052" 
+infile1 <- tempfile()
+try(download.file(inUrl1,infile1,method="curl"))
+
+secchi <-read.csv(infile1) |> 
+  mutate(DateTime = as.Date(DateTime)) |> 
+  filter(Reservoir == "BVR" & Site == 50 &
+           DateTime %in% dates_list) |> 
+  distinct() |> 
+  mutate(year = format(DateTime, "%Y"),
+         month = format(DateTime, "%m")) |> 
+  mutate(month = as.numeric(month),
+         year = as.numeric(year)) |> 
+  group_by(year, month) |>
+  summarise(secchi_avg = mean(Secchi_m,na.rm=T)) |> 
+  ungroup() |>  group_by(year) |> 
+  mutate(min_val = min(secchi_avg),
+         max_val = max(secchi_avg)) |> 
+  mutate(secchi_std = (secchi_avg - min_val) / (max_val - min_val)) |> 
+  select(month, year, secchi_std) 
+
+#classic PEG model fig - phytos + zoops 
+ggplot(zoops_phytos, aes(as.Date("2023-12-31") + yday(as.Date(
+  paste0(year,"-",month,"-01"), "%Y-%m-%d")), value, color=variable)) + 
+  geom_point() + geom_line() + theme_bw() + xlab("Month") +
+  facet_wrap(~year) +
+  geom_area(aes(color=variable, fill = variable), 
+            position="identity", alpha = 0.7) +
+  scale_color_manual(values = c("#809848", "#2E0014")) +
+  scale_fill_manual(values = c("#809848", "#2E0014")) +
+  geom_point(data=secchi, aes(as.Date("2023-12-31") + yday(as.Date(
+    paste0(year,"-",month,"-01"), "%Y-%m-%d")), secchi_std,
+    group=as.numeric(year)), col="red") +
+  geom_line(data=secchi, aes(as.Date("2023-12-31") + yday(as.Date(
+    paste0(year,"-",month,"-01"), "%Y-%m-%d")), secchi_std,
+    group=as.numeric(year)), col="red")
+
+ggsave("Figures/phyto_zoop_annual_peg_plus_secchi.jpg", width=6, height=4)
+
 

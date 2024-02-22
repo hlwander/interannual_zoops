@@ -1,7 +1,8 @@
 #code to visualize seasonal and multiannual zoop patterns
 
 #read in packages
-pacman::p_load(tidyverse, NatParksPalettes, rLakeAnalyzer)
+pacman::p_load(tidyverse, NatParksPalettes, rLakeAnalyzer,
+               EDIutils, xml2, gsheet)
 
 #------------------------------------------------------------------------------#
 #Pull in environmental data for 2014-2021
@@ -38,8 +39,7 @@ ctd_final <- ctd |>
   dplyr::filter(Depth_m %in% c(1,last(Depth_m))) |> 
   dplyr::summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
                    Temp_C_hypo = mean(Temp_C[Depth_m!=1], na.rm=T),
-                   DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T),
-                   DO_mgL_hypo = mean(DO_mgL[Depth_m!=1], na.rm=T))
+                   DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T))
 
 
 #missing Aug 2015, May 2019, May 2020, Aug + Sep 2021
@@ -56,37 +56,71 @@ try(download.file(inUrl1,infile1,method="curl"))
 ysi <- read.csv(infile1,header=T) |> 
   mutate(DateTime = as.Date(DateTime)) |>
   filter(DateTime %in% missing_dates & 
-           Depth_m %in%  c(1,11) & 
+           Depth_m > 0 &
            Site ==50 & Reservoir %in% c("BVR")) |> 
   select(Reservoir, Site, DateTime, Depth_m, 
-         Temp_C, DO_mgL) |> 
+         Temp_C, DO_mgL)
+
+ysi_final <- ysi |> 
+  filter(Depth_m %in%  c(1,11)) |> 
   mutate(month = month(DateTime),
                 year = year(DateTime)) |> 
   group_by(month, year) |>          
   summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
             Temp_C_hypo = mean(Temp_C[Depth_m==11], na.rm=T),
-            DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T),
-            DO_mgL_hypo = mean(DO_mgL[Depth_m==11], na.rm=T)) 
+            DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T)) 
   
 #combine ctd and ysi
-profiles <- bind_rows(ctd_final, ysi) |> arrange(month, year) 
+profiles <- bind_rows(ctd_final, ysi_final) |> arrange(month, year) 
 
 #select every 0.5m from casts for thermocline calc below
-ctd_final_temp <- ctd |>
+ctd_final_temp_do <- ctd |>
   dplyr::mutate(rdepth = plyr::round_any(Depth_m, 0.5)) |>
   dplyr::group_by(DateTime, rdepth, Reservoir, Site) |>
-  dplyr::summarise(value = mean(Temp_C)) |>
+  dplyr::summarise(temp = mean(Temp_C),
+                   DO = mean(DO_mgL)) |>
   dplyr::rename(depth = rdepth) 
 
 #calculate thermocline depth (missing some profiles...)
-ctd_thermo_depth <- ctd_final_temp |> 
+ctd_thermo_depth <- ctd_final_temp_do |> 
   group_by(DateTime) |> 
-  summarise(therm_depth = thermo.depth(value,depth)) |> 
+  summarise(therm_depth = thermo.depth(temp,depth)) |> 
   mutate(month = month(DateTime),
                  year = year(DateTime)) |> 
   ungroup() |>
   group_by(month, year) |> 
   summarise(therm_depth = mean(therm_depth))
+
+ctd_anoxic_depth <- ctd_final_temp_do |> 
+  group_by(DateTime) |> 
+  mutate(AD = first(depth[DO <= 2])) |> 
+  mutate(month = month(DateTime),
+         year = year(DateTime)) |> 
+  group_by(month, year) |> 
+  summarise(anoxic_depth = mean(AD,na.rm=T))
+
+ysi_anoxic_depth <- ysi |> 
+  group_by(DateTime) |> 
+  mutate(AD = first(Depth_m[DO_mgL <= 2])) |> 
+  mutate(month = month(DateTime),
+         year = year(DateTime)) |> 
+  group_by(month, year) |> 
+  summarise(anoxic_depth = mean(AD,na.rm=T))
+
+anoxic_depth <- bind_rows(ctd_anoxic_depth, ysi_anoxic_depth) |> 
+  arrange(month, year)
+
+#plot anoxic depth
+ggplot(anoxic_depth, aes(as.Date(paste0(year,"-",month,"-01"),
+                                 "%Y-%m-%d"),anoxic_depth)) +
+  geom_line() + geom_point() +theme_bw() + xlab("")
+
+ggplot(anoxic_depth, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
+                         anoxic_depth, color=as.factor(year))) +
+  geom_point() + geom_line() + theme_bw() + xlab("doy") +
+  scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("Acadia", 6))
+ggsave("Figures/anoxic_depth_vs_doy.jpg", width=6, height=3) 
 
 #read in chem from edi
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/199/11/509f39850b6f95628d10889d66885b76" 
@@ -166,6 +200,28 @@ ggplot(data=subset(chem_long, variable %in% c("TN_ugL_epi")),
   annotate("text", x=as.Date("2021-07-01"), y=400, label= "2021") 
 ggsave("Figures/chem_timeseries_tn.jpg", width=6, height=3) 
 
+#read in water level (THIS LINK WILL NEED TO BE UPDATED ONCE QAQC IS DONE)
+gsheet_url <- 'https://docs.google.com/spreadsheets/d/1DDF-KZPuGBOjO2rB-owdod14N9bRs00XSZmmaASO7g8/edit#gid=0'
+
+water_level <- gsheet::gsheet2tbl(gsheet_url) |> 
+  select(Date, WaterLevel_m) |> 
+  mutate(WaterLevel_m = as.numeric(WaterLevel_m)) |> 
+  filter(Date >= "2014-01-01" & Date < "2022-01-01") |> 
+  mutate(month = month(Date),
+         year = year(Date)) |> 
+  group_by(month, year) |> 
+  summarise(waterlevel = mean(WaterLevel_m,na.rm=T)) |> 
+  filter(month %in% c(5,6,7,8,9),
+         year %in% c(2014:2016,2019:2021)) |> 
+  arrange(month,year)
+
+ggplot(water_level, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
+                         waterlevel, color=as.factor(year))) +
+  geom_point() + geom_line() + theme_bw() + xlab("doy") +
+  scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("Glacier", 6))
+ggsave("Figures/waterlevel_vs_doy.jpg", width=6, height=3) 
+
 #read in met data
 #inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/389/7/02d36541de9088f2dd99d79dc3a7a853" 
 #infile1 <- tempfile()
@@ -187,8 +243,12 @@ ggsave("Figures/chem_timeseries_tn.jpg", width=6, height=3)
 #                   PAR_umolm2s = mean(PAR_umolm2s_Average))
 #------------------------------------------------------------------------------#
 #make an environmental driver df
-env_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("month", "year")])
-  
+env_drivers <- bind_cols(chem, anoxic_depth[!colnames(anoxic_depth) %in% 
+                                              c("month", "year")],
+                         profiles[!colnames(profiles) %in% c("month", "year")],
+                         water_level[!colnames(water_level) %in% 
+                                       c("month", "year")])
+
 #export env csv
 write.csv(env_drivers, "./Output/env.csv", row.names=FALSE)
 
@@ -214,15 +274,14 @@ fp <- read.csv(infile1) |>
                    Bluegreen_ugL = mean(Bluegreens_ugL, na.rm=T),
                    Brown_ugL = mean(BrownAlgae_ugL, na.rm=T),
                    Mixed_ugL = mean(MixedAlgae_ugL, na.rm=T),
-                   Total_ugL = mean(TotalConc_ugL, na.rm=T),
-                   Yellow_ugL = mean(YellowSubstances_ugL, na.rm=T))
+                   Total_ugL = mean(TotalConc_ugL, na.rm=T))
 
 #save phyto df
 write.csv(fp, "Output/phytos.csv", row.names=FALSE)
 
 #convert fp from wide to long
 fp_long <- fp |>
-  pivot_longer(cols = Green_ugL:Yellow_ugL, 
+  pivot_longer(cols = Green_ugL:Total_ugL, 
                names_to = "variable")  
 
 #plot phytos over time
@@ -244,11 +303,11 @@ ggplot(fp_long, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
   annotate("text", x=as.Date("2021-07-01"), y=23, label= "2021") +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("SmokyMtns", 6), 
                      labels=c("Bluegreen_ugL","Brown_ugL","Green_ugL",
-                              "Mixed_ugL","Total_ugL","Yellow_ugL"))
+                              "Mixed_ugL","Total_ugL"))
 ggsave("Figures/phyto_succession.jpg", width=6, height=3) 
 
 #remove green, brown, and total to see what other groups are doing
-ggplot(data=subset(fp_long, variable %in% c("Mixed_ugL","Yellow_ugL","Bluegreen_ugL")),
+ggplot(data=subset(fp_long, variable %in% c("Mixed_ugL","Bluegreen_ugL")),
        aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
                     color = variable)) +
   geom_vline(xintercept = as.Date("2014-01-01")) +
@@ -269,6 +328,25 @@ ggplot(data=subset(fp_long, variable %in% c("Mixed_ugL","Yellow_ugL","Bluegreen_
                      labels=c("Bluegreen_ugL","Mixed_ugL","Yellow_ugL"))
 ggsave("Figures/phyto_succession_no_brown_or_greens.jpg", width=6, height=3) 
   
+#------------------------------------------------------------------------------#
+#read in secchi data
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/81f396b3e910d3359907b7264e689052" 
+infile1 <- tempfile()
+try(download.file(inUrl1,infile1,method="curl"))
+
+secchi <-read.csv(infile1) |> 
+  mutate(DateTime = as.Date(DateTime)) |> 
+  filter(Reservoir == "BVR" & Site == 50 &
+           DateTime %in% dates_list) |> 
+  distinct() |> 
+  mutate(year = format(DateTime, "%Y"))
+  
+ggplot(secchi, aes(as.Date("2019-12-31") + yday(DateTime), Secchi_m, color=year)) + 
+  geom_line() + geom_point() + theme_bw() + xlab("") +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("Cuyahoga", 6)) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") 
+ggsave("Figures/secchi_vs_doy.jpg", width=6, height=4)
+
 #------------------------------------------------------------------------------#
 #quick plots to visualize data
 ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), Temp_C_epi)) +
@@ -321,8 +399,7 @@ phytos_std <- fp_long |>
   summarise(Green = mean(value[variable=="Green_ugL"]),
             Bluegreen = mean(value[variable=="Bluegreen_ugL"]),
             Brown = mean(value[variable=="Brown_ugL"]),
-            Mixed = mean(value[variable=="Mixed_ugL"]),
-            Yellow = mean(value[variable=="Yellow_ugL"])) |> 
+            Mixed = mean(value[variable=="Mixed_ugL"])) |> 
   pivot_longer(-c(year,month),
                names_to = c("variable"))  |> 
   ungroup() |> group_by(variable,year) |>
@@ -332,7 +409,7 @@ phytos_std <- fp_long |>
 
 #playing around with order/layering of taxa
 phytos_std$variable <- factor(phytos_std$variable,
-                                     levels = c("Yellow","Mixed","Bluegreen","Brown","Green"))
+                                     levels = c("Mixed","Bluegreen","Brown","Green"))
                                      #levels = c("Green","Brown","Bluegreen","Mixed","Yellow"))
 
 #phyto succession shaded line plot
@@ -340,15 +417,17 @@ ggplot(phytos_std,
        aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
            standardized_abund, color=variable)) +
   geom_area(aes(color = variable, fill = variable),
-            position = "identity", 
+            position = "stack", stat="identity",
             alpha=0.7) +
-  facet_wrap(~year, scales = "free_x")+
-  scale_color_manual(values = NatParksPalettes::natparks.pals("Volcanoes", 5))+
-  scale_fill_manual(values = NatParksPalettes::natparks.pals("Volcanoes", 5)) +
+  facet_wrap(~year, scales = "free")+
+  #scale_color_manual(values = NatParksPalettes::natparks.pals("Volcanoes", 4))+
+  #scale_fill_manual(values = NatParksPalettes::natparks.pals("Volcanoes", 4)) +
+  scale_color_manual(values = c("#9C1D4B","#147B80","#8A5414","#6EB579"))+
+  scale_fill_manual(values = c("#9C1D4B","#147B80","#8A5414","#6EB579")) +
                     #breaks = c("Cladocera","Copepoda","Rotifera"))+
   scale_x_date(expand = c(0,0),
                labels = scales::date_format("%b",tz="EST5EDT")) +
-  scale_y_continuous(expand = c(0,0), limits = c(0,1))+
+  scale_y_continuous(expand = c(0,0))+
   xlab("") + ylab("standardized density") +
   guides(color= "none",
          fill = guide_legend(ncol=1)) +
@@ -370,7 +449,7 @@ ggplot(phytos_std,
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-ggsave("Figures/BVR_phyto_succession.jpg", width=6, height=4) 
+ggsave("Figures/BVR_phyto_succession_stacked.jpg", width=6, height=4) 
 
 #standardize for each year and variable (n=30 1s)
 chem_std <- chem_long |> 
@@ -386,11 +465,6 @@ chem_std <- chem_long |>
   mutate(min_val = min(value),
          max_val = max(value)) |> 
   mutate(standardized_value = (value - min_val) / (max_val - min_val))
-
-#playing around with order/layering of taxa
-phytos_std$variable <- factor(phytos_std$variable,
-                              levels = c("Yellow","Mixed","Bluegreen","Brown","Green"))
-#levels = c("Green","Brown","Bluegreen","Mixed","Yellow"))
 
 #phyto succession shaded line plot
 ggplot(chem_std, 

@@ -443,7 +443,7 @@ ano_year = anosim(stage2, all_zoops_nmds$year, distance = "bray", permutations =
 #p > 0.05 so no sig difference among years
 
 ano_month = anosim(stage2, all_zoops_nmds$month, distance = "bray", permutations = 9999)
-#p < 0.01 so there is a difference between months!
+#p < 0.01 so there is a difference among months!
 
 #------------------------------------------------------------------------------#
 #read in env csv
@@ -457,7 +457,7 @@ zoops_plus_drivers <- bind_cols(all_zoops_nmds, env_drivers[
   !colnames(env_drivers) %in% c("month", "year")])
 
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord$sites, zoops_plus_drivers[,c(13:26)]) 
+fit_env <- envfit(ord$sites, zoops_plus_drivers[,c(13:27)]) 
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
