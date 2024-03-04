@@ -10,12 +10,40 @@ download.file(inUrl1,infile1,method="curl")
 
 zoops <- read.csv(infile1, header=T) |>
   filter(CollectionMethod=="Tow" & Reservoir %in% c("BVR") &
-           StartDepth_m > 7.1) |> 
+           StartDepth_m > 7.1 & EndDepth_m == 0.1) |> 
   select(-c(Site,EndDepth_m,CollectionMethod))
 
 #split data into pre 2019 and post
 zoops_2016_2018 <- zoops[as.Date(zoops$DateTime)<"2019-01-01",]
 zoops_2019_2021 <- zoops[as.Date(zoops$DateTime)>="2019-01-01",]
+
+#-----------------------------------------------------------------------#
+# IMPORTANT - There are n=7 total rotifer densities that are INCORRECT  #
+# In this section, I'm manually updating these values, but note that    #
+# we will eventually need to change these data in the next EDI pub      #
+#-----------------------------------------------------------------------#
+# 14May2014, 29May2014, 4Jun2014, 2Jul2014, 23Jul2014, 13Aug2014, 4Sep2014
+
+zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-05-14 10:40:00" & 
+                                zoops_2016_2018$Taxon=="Total rotifers"] <- 66.19
+
+zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-05-29 11:10:00" & 
+                                zoops_2016_2018$Taxon=="Total rotifers"] <- 20.71
+
+zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-06-04 12:00:00" & 
+                                zoops_2016_2018$Taxon=="Total rotifers"] <- 48.35
+
+zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-07-02 10:50:00" & 
+                                zoops_2016_2018$Taxon=="Total rotifers"] <- 11.33
+
+zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-07-23 11:45:00" & 
+                                  zoops_2016_2018$Taxon=="Total rotifers"] <- 63.14
+
+zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-08-13 10:05:00" & 
+                                  zoops_2016_2018$Taxon=="Total rotifers"] <- 23.91
+
+zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-09-04 09:45:00" & 
+                                  zoops_2016_2018$Taxon=="Total rotifers"] <- 43.55
 
 #add daphnia (D. catawba, D. ambigua), calanoida (diaptomus) for 2014-2018 data
 zoops_pre <- zoops_2016_2018 |> 
@@ -277,125 +305,7 @@ zoops_10_groups <- all_zoops |>
   mutate(standardized_dens = (avg - min_dens) / (max_dens - min_dens))
 
 #------------------------------------------------------------------------------#
-#plots
-ggplot(zoops_total, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),Total_avg)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=12000, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=12000, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=12000, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=12000, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=12000, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=12000, label= "2021") +
-  geom_errorbar(aes(ymin = Total_avg -Total_sd, ymax = Total_avg+Total_sd), 
-                color="#009999") 
-ggsave("Figures/zoop_total_dens.jpg", width=6, height=3) 
-
-ggplot(zoops_3_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
-                           avg, color=Taxon)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=15000, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=15000, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=15000, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=15000, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=15000, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=15000, label= "2021") +
-  geom_errorbar(aes(ymin = avg -sd, ymax = avg+sd)) +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Saguaro", 3))
-ggsave("Figures/zoop_3taxa_dens.jpg", width=6, height=3) 
-
-ggplot(zoops_10_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
-                           avg, color=Taxon)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=12000, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=12000, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=12000, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=12000, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=12000, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=12000, label= "2021") +
-  geom_errorbar(aes(ymin = avg -sd, ymax = avg+sd)) +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Torres", 12))
-ggsave("Figures/zoop_10taxa_dens.jpg", width=6, height=3) 
-
-#------------------------------------------------------------------------------#
-#standardized density
-ggplot(zoops_total, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),Dens_std)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point(color="darkblue") + geom_line(color="darkblue") + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=1.1, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=1.1, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=1.1, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=1.1, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=1.1, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=1.1, label= "2021") 
-ggsave("Figures/zoop_total_std_dens.jpg", width=6, height=3) 
-
-ggplot(zoops_3_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
-                           standardized_dens, color=Taxon)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=1.1, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=1.1, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=1.1, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=1.1, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=1.1, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=1.1, label= "2021") +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Saguaro", 3))
-ggsave("Figures/zoop_3taxa_std_dens.jpg", width=6, height=3) 
-
-ggplot(zoops_10_groups, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
-                            standardized_dens, color=Taxon)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=1.1, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=1.1, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=1.1, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=1.1, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=1.1, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=1.1, label= "2021") +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Torres", 12))
-ggsave("Figures/zoop_10taxa_std_dens.jpg", width=6, height=3) 
-
-#------------------------------------------------------------------------------#
-#density vs. doy
+# standardized density vs. doy
 ggplot(zoops_total, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
                         Dens_std, color=year)) +
   geom_point() + geom_line() + theme_bw() + xlab("doy") +
@@ -450,11 +360,8 @@ ggsave("Figures/zoop_3taxa_std_dens_by_year_vs_doy.jpg", width=6, height=3)
 
 #playing around with order/layering of taxa
 zoops_3_groups_years$Taxon <- factor(zoops_3_groups_years$Taxon,
-                              #levels = c("Rotifera","Cladocera","Copepoda"))
                               levels = c("Rotifera","Copepoda","Cladocera"))
-                              #levels = c("Copepoda","Rotifera","Cladocera"))
-                              #levels = c("Cladocera","Copepoda","Rotifera"))
-
+                             
 #shaded line plot time
 ggplot(data=subset(zoops_3_groups_years, month %in% c(5,6,7,8,9)), 
        aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
@@ -563,5 +470,3 @@ ggplot(zoops_phytos, aes(as.Date("2023-12-31") + yday(as.Date(
     group=as.numeric(year)), col="red")
 
 ggsave("Figures/phyto_zoop_annual_peg_plus_secchi.jpg", width=6, height=4)
-
-

@@ -26,7 +26,7 @@ ctd <-read.csv(infile1,header=T) |>
   filter(DateTime %in% dates_list & 
            Depth_m > 0 & Site ==50 & Reservoir %in% c("BVR")) |> 
   select(Reservoir, Site, DateTime, Depth_m, 
-         Temp_C, DO_mgL, DOsat_percent) #removing chl a bc fp and ctd aren't so comparable so can't fill in missing days
+         Temp_C, DO_mgL) #removing chl a bc fp and ctd aren't so comparable so can't fill in missing days
 
 #round ctd to nearest m (also use ysi bc some missing months w/ ctd)
 ctd_final <- ctd |>
@@ -38,8 +38,8 @@ ctd_final <- ctd |>
   dplyr::group_by(month, year) |> 
   dplyr::filter(Depth_m %in% c(1,last(Depth_m))) |> 
   dplyr::summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
-                   Temp_C_hypo = mean(Temp_C[Depth_m!=1], na.rm=T),
-                   DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T))
+                   Temp_C_hypo = mean(Temp_C[Depth_m!=1], na.rm=T))
+                   #DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T))
 
 
 #missing Aug 2015, May 2019, May 2020, Aug + Sep 2021
@@ -67,8 +67,7 @@ ysi_final <- ysi |>
                 year = year(DateTime)) |> 
   group_by(month, year) |>          
   summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
-            Temp_C_hypo = mean(Temp_C[Depth_m==11], na.rm=T),
-            DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T)) 
+            Temp_C_hypo = mean(Temp_C[Depth_m==11], na.rm=T)) 
   
 #combine ctd and ysi
 profiles <- bind_rows(ctd_final, ysi_final) |> arrange(month, year) 
@@ -91,6 +90,7 @@ ctd_thermo_depth <- ctd_final_temp_do |>
   group_by(month, year) |> 
   summarise(therm_depth = mean(therm_depth))
 
+#calculate anoxic depth
 ctd_anoxic_depth <- ctd_final_temp_do |> 
   group_by(DateTime) |> 
   mutate(AD = first(depth[DO <= 2])) |> 
@@ -111,16 +111,157 @@ anoxic_depth <- bind_rows(ctd_anoxic_depth, ysi_anoxic_depth) |>
   arrange(month, year)
 
 #plot anoxic depth
-ggplot(anoxic_depth, aes(as.Date(paste0(year,"-",month,"-01"),
-                                 "%Y-%m-%d"),anoxic_depth)) +
-  geom_line() + geom_point() +theme_bw() + xlab("")
-
 ggplot(anoxic_depth, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
                          anoxic_depth, color=as.factor(year))) +
   geom_point() + geom_line() + theme_bw() + xlab("doy") +
   scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("Acadia", 6))
 ggsave("Figures/anoxic_depth_vs_doy.jpg", width=6, height=3) 
+
+#download bathymetry
+infile <- tempfile()
+try(download.file("https://pasta.lternet.edu/package/data/eml/edi/1254/1/f7fa2a06e1229ee75ea39eb586577184",
+                  infile, method="curl"))
+if (is.na(file.size(infile))) download.file(historic_file,infile,method="auto")
+
+bathymetry <- readr::read_csv(infile, show_col_types = F)  |>
+  dplyr::select(Reservoir, Depth_m, SA_m2) |>
+  dplyr::filter(Reservoir == "BVR")
+
+#read in water level (THIS LINK WILL NEED TO BE UPDATED ONCE QAQC IS DONE)
+#gsheet_url <- 'https://docs.google.com/spreadsheets/d/1DDF-KZPuGBOjO2rB-owdod14N9bRs00XSZmmaASO7g8/edit#gid=0'
+
+#using daily wl file for now
+
+water_level <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |> 
+  select(Date, WaterLevel_m) |> 
+  mutate(WaterLevel_m = as.numeric(WaterLevel_m)) |> 
+  filter(Date >= "2014-01-01" & Date < "2022-01-01") |> 
+  mutate(month = month(Date),
+         year = year(Date)) |> 
+  group_by(month, year) |> 
+  summarise(waterlevel = mean(WaterLevel_m,na.rm=T)) |> 
+  filter(month %in% c(5,6,7,8,9),
+         year %in% c(2014:2016,2019:2021)) |> 
+  arrange(month,year) |> ungroup() |> 
+  group_by(year) |> 
+  mutate(diff = max(waterlevel) - min(waterlevel)) |> 
+  ungroup()
+
+ggplot(water_level, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
+                        waterlevel, color=as.factor(year))) +
+  geom_point() + geom_line() + theme_bw() + xlab("doy") +
+  scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("Glacier", 6))
+ggsave("Figures/waterlevel_vs_doy.jpg", width=6, height=3) 
+
+wl <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |> 
+  select(Date, WaterLevel_m) |> 
+  mutate(WaterLevel_m = as.numeric(WaterLevel_m)) |> 
+  mutate(Date = as.Date(Date)) |> 
+  filter(Date >= "2014-01-01" & Date < "2022-01-01" &
+           month(Date) %in% c(5,6,7,8,9))
+
+#add res column to wl df
+wl$Reservoir <- "BVR"
+
+#rename columns
+ctd_final_temp_do <- ctd_final_temp_do |> 
+  rename(Depth_m = depth,
+         Temp_C = temp)
+
+#clean up ysi
+ysi_clean <- ysi |> 
+  select(Reservoir,DateTime, Depth_m,Temp_C) |> 
+  filter(!is.na(Temp_C))
+
+#combine ctd and ysi dfs 
+temp_final <-ctd_final_temp_do |> 
+  select(DateTime, Depth_m,Temp_C) |> 
+  full_join(ysi_clean, multiple = 'all', 
+            by = c('DateTime', 'Depth_m',"Temp_C")) |>
+  arrange(DateTime, Depth_m) |> 
+  select(-c(Reservoir.x,Reservoir.y))
+  
+
+#only select wl on days where we have temp obs
+wl <- wl |> filter(Date %in% unique(temp_final$DateTime))
+
+#combine temp_final and wl
+temp_final_wl <- temp_final |> 
+  dplyr::rename(Date = DateTime) |> 
+  dplyr::full_join(wl, multiple = 'all', by = 'Date') |> 
+  dplyr::filter(!is.na(Temp_C))
+
+#Create a dataframe with bathymetry at each date
+flexible_bathy <- temp_final_wl |> # takes the depth at each day
+  dplyr::rename(depth = Depth_m) |> 
+  dplyr::distinct(Date, WaterLevel_m, Reservoir) |>
+  dplyr::full_join(bathymetry, multiple = 'all', by = 'Reservoir') |>
+  dplyr::group_by(Date) |>
+  dplyr::mutate(Depth_m = Depth_m - (max(Depth_m) - mean(unique(WaterLevel_m))),
+                WaterLevel_m = mean(WaterLevel_m)) |>
+  dplyr::filter(Depth_m>=0) |>
+  dplyr::distinct()
+
+#initialize SS df
+schmidts <- data.frame("Date" = unique(temp_final_wl$Date),
+                        "SS" = NA,
+                        "BF" = NA)
+
+#for loop for physcial metrics
+for(i in 1:length(unique(flexible_bathy$Date))) {
+  baths <- flexible_bathy |>
+    dplyr::filter(Date==unique(flexible_bathy$Date)[i])
+  
+  temps <- temp_final_wl |>
+    dplyr::filter(Date == unique(flexible_bathy$Date)[i],
+                  # cannot have an observation at a depth shallower than the
+                  # shallowest bathymetry (returns NA below) so these are filtered out
+                  Depth_m >= min(baths$Depth_m))
+  
+  
+  #calculate schmidt stability
+  schmidts[i,2] <- rLakeAnalyzer::schmidt.stability(wtr = temps$Temp_C,
+                                                  depths = temps$Depth_m,
+                                                  bthA = baths$SA_m2,
+                                                  bthD = baths$Depth_m,
+                                                  sal = rep(0,length(temps$Temp_C)))
+  
+}
+
+#new wide df of temp for all dates
+temp_final_wl_wide <- temp_final_wl |>
+  pivot_wider(names_from = Depth_m, values_from = Temp_C,
+              names_glue = "wtr_{Depth_m}") |> 
+  select(-c(WaterLevel_m, Reservoir))
+
+#calculate max buoyancy frequency 
+bf <- rLakeAnalyzer::ts.buoyancy.freq(wtr = temp_final_wl_wide, 
+                                          at.thermo = T, na.rm=T) 
+
+schmidts[,3] <- bf$n2
+
+#now calculate month/yearly means
+physics <- schmidts |> 
+  dplyr::mutate(month = month(Date),
+                year = year(Date)) |> 
+  dplyr::group_by(month, year) |> 
+  dplyr::summarise(SS = mean(SS),
+                   BF = mean(BF, na.rm=T))
+  
+#plot metrics over time
+ggplot(physics, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
+                        SS, color=as.factor(year))) +
+  geom_point() + geom_line() + theme_bw() + xlab("doy") +
+  scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("DeathValley", 6))
+
+ggplot(physics, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
+                    BF, color=as.factor(year))) +
+  geom_point() + geom_line() + theme_bw() + xlab("doy") +
+  scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("WindCave", 6))
 
 #read in chem from edi
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/199/11/509f39850b6f95628d10889d66885b76" 
@@ -134,20 +275,20 @@ chem <-read.csv(infile1,header=T) |>
   dplyr::mutate(month = month(DateTime),
                 year = year(DateTime)) |> 
   dplyr::select(Reservoir, Depth_m, Rep,
-         TN_ugL, TP_ugL,NH4_ugL ,NO3NO2_ugL, SRP_ugL, month, year) |> 
+         TN_ugL, TP_ugL, month, year) |> #NH4_ugL ,NO3NO2_ugL, SRP_ugL,
   dplyr::group_by(month, year) |> 
   dplyr::filter(Depth_m <=0.1 | Depth_m > 7) |>   #drop data when only one random depth was analyzed
   dplyr::filter(Depth_m %in%  c(0.1,max(Depth_m))) |> 
   dplyr::summarise(TN_ugL_epi = mean(TN_ugL[Depth_m==0.1], na.rm=T),
                    TN_ugL_hypo = mean(TN_ugL[Depth_m!=0.1], na.rm=T),
                    TP_ugL_epi = mean(TP_ugL[Depth_m==0.1], na.rm=T),
-                   TP_ugL_hypo = mean(TP_ugL[Depth_m!=0.1], na.rm=T),
-                   NH4_ugL_epi = mean(NH4_ugL[Depth_m==0.1], na.rm=T),
-                   NH4_ugL_hypo = mean(NH4_ugL[Depth_m!=0.1], na.rm=T),
-                   NO3NO2_ugL_epi = mean(NO3NO2_ugL[Depth_m==0.1], na.rm=T),
-                   NO3NO2_ugL_hypo = mean(NO3NO2_ugL[Depth_m!=0.1], na.rm=T),
-                   SRP_ugL_epi = mean(SRP_ugL[Depth_m==0.1], na.rm=T),
-                   SRP_ugL_hypo = mean(SRP_ugL[Depth_m!=0.1], na.rm=T)) |> 
+                   TP_ugL_hypo = mean(TP_ugL[Depth_m!=0.1], na.rm=T)) |> #,
+                   #NH4_ugL_epi = mean(NH4_ugL[Depth_m==0.1], na.rm=T),
+                   #NH4_ugL_hypo = mean(NH4_ugL[Depth_m!=0.1], na.rm=T),
+                   #NO3NO2_ugL_epi = mean(NO3NO2_ugL[Depth_m==0.1], na.rm=T),
+                   #NO3NO2_ugL_hypo = mean(NO3NO2_ugL[Depth_m!=0.1], na.rm=T),
+                   #SRP_ugL_epi = mean(SRP_ugL[Depth_m==0.1], na.rm=T),
+                   #SRP_ugL_hypo = mean(SRP_ugL[Depth_m!=0.1], na.rm=T)) |> 
   dplyr::arrange(month, year)
 
 #average the 10m tp from earlier in aug with the 9m tp from a later aug date so no NA (aug 2021)
@@ -155,7 +296,7 @@ chem$TP_ugL_hypo[is.nan(chem$TP_ugL_hypo)] <-  mean(c(26.4, 23.5))
 
 #convert fp from wide to long
 chem_long <- chem |>
-  pivot_longer(cols = c(TN_ugL_epi,TP_ugL_epi,NH4_ugL_epi,NO3NO2_ugL_epi,SRP_ugL_epi), 
+  pivot_longer(cols = c(TN_ugL_epi,TP_ugL_epi), 
                names_to = "variable")  
 
 #plot chem over time
@@ -200,27 +341,26 @@ ggplot(data=subset(chem_long, variable %in% c("TN_ugL_epi")),
   annotate("text", x=as.Date("2021-07-01"), y=400, label= "2021") 
 ggsave("Figures/chem_timeseries_tn.jpg", width=6, height=3) 
 
-#read in water level (THIS LINK WILL NEED TO BE UPDATED ONCE QAQC IS DONE)
-gsheet_url <- 'https://docs.google.com/spreadsheets/d/1DDF-KZPuGBOjO2rB-owdod14N9bRs00XSZmmaASO7g8/edit#gid=0'
+#read in secchi data
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/81f396b3e910d3359907b7264e689052" 
+infile1 <- tempfile()
+try(download.file(inUrl1,infile1,method="curl"))
 
-water_level <- gsheet::gsheet2tbl(gsheet_url) |> 
-  select(Date, WaterLevel_m) |> 
-  mutate(WaterLevel_m = as.numeric(WaterLevel_m)) |> 
-  filter(Date >= "2014-01-01" & Date < "2022-01-01") |> 
-  mutate(month = month(Date),
-         year = year(Date)) |> 
-  group_by(month, year) |> 
-  summarise(waterlevel = mean(WaterLevel_m,na.rm=T)) |> 
-  filter(month %in% c(5,6,7,8,9),
-         year %in% c(2014:2016,2019:2021)) |> 
-  arrange(month,year)
+secchi <-read.csv(infile1) |> 
+  mutate(DateTime = as.Date(DateTime)) |> 
+  filter(Reservoir == "BVR" & Site == 50 &
+           DateTime %in% dates_list) |> 
+  distinct() |> 
+  mutate(year = format(DateTime, "%Y"),
+         month = format(DateTime, "%m")) |> 
+  group_by(year, month) |> 
+  summarise(secchi = mean(Secchi_m))
 
-ggplot(water_level, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                         waterlevel, color=as.factor(year))) +
-  geom_point() + geom_line() + theme_bw() + xlab("doy") +
-  scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Glacier", 6))
-ggsave("Figures/waterlevel_vs_doy.jpg", width=6, height=3) 
+ggplot(secchi, aes(as.Date("2019-12-31") + yday(DateTime), Secchi_m, color=year)) + 
+  geom_line() + geom_point() + theme_bw() + xlab("") +
+  scale_color_manual("",values=NatParksPalettes::natparks.pals("Cuyahoga", 6)) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") 
+ggsave("Figures/secchi_vs_doy.jpg", width=6, height=4)
 
 #read in met data
 #inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/389/7/02d36541de9088f2dd99d79dc3a7a853" 
@@ -247,7 +387,11 @@ env_drivers <- bind_cols(chem, anoxic_depth[!colnames(anoxic_depth) %in%
                                               c("month", "year")],
                          profiles[!colnames(profiles) %in% c("month", "year")],
                          water_level[!colnames(water_level) %in% 
-                                       c("month", "year")])
+                                       c("month", "year")],
+                         physics[!colnames(physics) %in% 
+                                   c("month", "year")])#,
+                        # secchi[!colnames(secchi) %in% 
+                        #          c("month", "year")])
 
 #export env csv
 write.csv(env_drivers, "./Output/env.csv", row.names=FALSE)
@@ -328,25 +472,6 @@ ggplot(data=subset(fp_long, variable %in% c("Mixed_ugL","Bluegreen_ugL")),
                      labels=c("Bluegreen_ugL","Mixed_ugL","Yellow_ugL"))
 ggsave("Figures/phyto_succession_no_brown_or_greens.jpg", width=6, height=3) 
   
-#------------------------------------------------------------------------------#
-#read in secchi data
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/81f396b3e910d3359907b7264e689052" 
-infile1 <- tempfile()
-try(download.file(inUrl1,infile1,method="curl"))
-
-secchi <-read.csv(infile1) |> 
-  mutate(DateTime = as.Date(DateTime)) |> 
-  filter(Reservoir == "BVR" & Site == 50 &
-           DateTime %in% dates_list) |> 
-  distinct() |> 
-  mutate(year = format(DateTime, "%Y"))
-  
-ggplot(secchi, aes(as.Date("2019-12-31") + yday(DateTime), Secchi_m, color=year)) + 
-  geom_line() + geom_point() + theme_bw() + xlab("") +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Cuyahoga", 6)) +
-  scale_x_date(date_breaks = "1 month", date_labels = "%b") 
-ggsave("Figures/secchi_vs_doy.jpg", width=6, height=4)
-
 #------------------------------------------------------------------------------#
 #quick plots to visualize data
 ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), Temp_C_epi)) +
@@ -455,10 +580,7 @@ ggsave("Figures/BVR_phyto_succession_stacked.jpg", width=6, height=4)
 chem_std <- chem_long |> 
   group_by(year, month) |> 
   summarise(TN = mean(value[variable=="TN_ugL_epi"]),
-            TP = mean(value[variable=="TP_ugL_epi"]),
-            NH4 = mean(value[variable=="NH4_ugL_epi"]),
-            NO3NO2 = mean(value[variable=="NO3NO2_ugL_epi"]),
-            SRP = mean(value[variable=="SRP_ugL_epi"])) |> 
+            TP = mean(value[variable=="TP_ugL_epi"])) |> 
   pivot_longer(-c(year,month),
                names_to = c("variable"))  |> 
   ungroup() |> group_by(variable,year) |>
@@ -471,15 +593,14 @@ ggplot(chem_std,
        aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
            standardized_value, color=variable)) +
   geom_area(aes(color = variable, fill = variable),
-            position = "identity", 
-            alpha=0.7) +
+            position = "stack", stat="identity") +
   facet_wrap(~year, scales = "free_x")+
-  scale_color_manual(values = NatParksPalettes::natparks.pals("DeathValley", 5))+
-  scale_fill_manual(values = NatParksPalettes::natparks.pals("DeathValley", 5)) +
+  scale_color_manual(values = NatParksPalettes::natparks.pals("DeathValley", 2))+
+  scale_fill_manual(values = NatParksPalettes::natparks.pals("DeathValley", 2)) +
   #breaks = c("Cladocera","Copepoda","Rotifera"))+
   scale_x_date(expand = c(0,0),
                labels = scales::date_format("%b",tz="EST5EDT")) +
-  scale_y_continuous(expand = c(0,0), limits = c(0,1))+
+  scale_y_continuous(expand = c(0,0))+
   xlab("") + ylab("standardized density") +
   guides(color= "none",
          fill = guide_legend(ncol=1)) +
@@ -501,5 +622,5 @@ ggplot(chem_std,
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-ggsave("Figures/BVR_chem_succession.jpg", width=6, height=4) 
+ggsave("Figures/BVR_total_np_succession.jpg", width=6, height=4) 
 
