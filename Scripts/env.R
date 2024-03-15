@@ -38,8 +38,8 @@ ctd_final <- ctd |>
   dplyr::group_by(month, year) |> 
   dplyr::filter(Depth_m %in% c(1,last(Depth_m))) |> 
   dplyr::summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
-                   Temp_C_hypo = mean(Temp_C[Depth_m!=1], na.rm=T))
-                   #DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T))
+                   Temp_C_hypo = mean(Temp_C[Depth_m!=1], na.rm=T),
+                   DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T))
 
 
 #missing Aug 2015, May 2019, May 2020, Aug + Sep 2021
@@ -67,7 +67,8 @@ ysi_final <- ysi |>
                 year = year(DateTime)) |> 
   group_by(month, year) |>          
   summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
-            Temp_C_hypo = mean(Temp_C[Depth_m==11], na.rm=T)) 
+            Temp_C_hypo = mean(Temp_C[Depth_m==11], na.rm=T),
+            DO_mgL_epi = mean(DO_mgL[Depth_m == 1], na.rm=T)) 
   
 #combine ctd and ysi
 profiles <- bind_rows(ctd_final, ysi_final) |> arrange(month, year) 
@@ -80,35 +81,60 @@ ctd_final_temp_do <- ctd |>
                    DO = mean(DO_mgL)) |>
   dplyr::rename(depth = rdepth) 
 
-#calculate thermocline depth (missing some profiles...)
-ctd_thermo_depth <- ctd_final_temp_do |> 
+#rename columns
+ctd_final_temp_do <- ctd_final_temp_do |> 
+  rename(Depth_m = depth,
+         Temp_C = temp,
+         DO_mgL = DO)
+
+#clean up ysi
+ysi_clean <- ysi |> 
+  select(Reservoir,DateTime, Depth_m,Temp_C, DO_mgL) |> 
+  filter(!is.na(Temp_C))
+
+#combine ctd and ysi dfs 
+temp_final <-ctd_final_temp_do |> 
+  select(DateTime, Depth_m,Temp_C) |> 
+  full_join(ysi_clean, multiple = 'all', 
+            by = c('DateTime', 'Depth_m',"Temp_C")) |>
+  arrange(DateTime, Depth_m) |> 
+  select(-c(Reservoir.x,Reservoir.y,DO_mgL))
+
+do_final <- ctd_final_temp_do |> 
+  select(DateTime, Depth_m, DO_mgL) |> 
+  full_join(ysi_clean, multiple = 'all', 
+            by = c('DateTime', 'Depth_m',"DO_mgL")) |>
+  arrange(DateTime, Depth_m) |> 
+  select(-c(Reservoir.x,Reservoir.y,Temp_C))
+
+#calculate thermocline depth (missing n=5 profiles...) - bring in ysi profiles too??
+ctd_thermo_depth <- temp_final |> 
   group_by(DateTime) |> 
-  summarise(therm_depth = thermo.depth(temp,depth)) |> 
+  summarise(therm_depth = thermo.depth(Temp_C,Depth_m)) |> 
   mutate(month = month(DateTime),
                  year = year(DateTime)) |> 
   ungroup() |>
   group_by(month, year) |> 
   summarise(therm_depth = mean(therm_depth))
 
-#calculate anoxic depth
-ctd_anoxic_depth <- ctd_final_temp_do |> 
+#calculate oxycline depth
+ctd_oxy_depth <- do_final |> 
   group_by(DateTime) |> 
-  mutate(AD = first(depth[DO <= 2])) |> 
+  summarise(oxy_depth = thermo.depth(DO_mgL,Depth_m)) |> 
   mutate(month = month(DateTime),
          year = year(DateTime)) |> 
+  ungroup() |>
   group_by(month, year) |> 
-  summarise(anoxic_depth = mean(AD,na.rm=T))
+  summarise(oxy_depth = mean(oxy_depth))
 
-ysi_anoxic_depth <- ysi |> 
+#calculate anoxic depth
+anoxic_depth <- do_final |> 
   group_by(DateTime) |> 
   mutate(AD = first(Depth_m[DO_mgL <= 2])) |> 
   mutate(month = month(DateTime),
          year = year(DateTime)) |> 
   group_by(month, year) |> 
   summarise(anoxic_depth = mean(AD,na.rm=T))
-
-anoxic_depth <- bind_rows(ctd_anoxic_depth, ysi_anoxic_depth) |> 
-  arrange(month, year)
 
 #plot anoxic depth
 ggplot(anoxic_depth, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
@@ -164,25 +190,6 @@ wl <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |>
 
 #add res column to wl df
 wl$Reservoir <- "BVR"
-
-#rename columns
-ctd_final_temp_do <- ctd_final_temp_do |> 
-  rename(Depth_m = depth,
-         Temp_C = temp)
-
-#clean up ysi
-ysi_clean <- ysi |> 
-  select(Reservoir,DateTime, Depth_m,Temp_C) |> 
-  filter(!is.na(Temp_C))
-
-#combine ctd and ysi dfs 
-temp_final <-ctd_final_temp_do |> 
-  select(DateTime, Depth_m,Temp_C) |> 
-  full_join(ysi_clean, multiple = 'all', 
-            by = c('DateTime', 'Depth_m',"Temp_C")) |>
-  arrange(DateTime, Depth_m) |> 
-  select(-c(Reservoir.x,Reservoir.y))
-  
 
 #only select wl on days where we have temp obs
 wl <- wl |> filter(Date %in% unique(temp_final$DateTime))
@@ -356,11 +363,14 @@ secchi <-read.csv(infile1) |>
   group_by(year, month) |> 
   summarise(secchi = mean(Secchi_m))
 
-ggplot(secchi, aes(as.Date("2019-12-31") + yday(DateTime), Secchi_m, color=year)) + 
+ggplot(secchi, aes(as.Date("2019-12-31") + 
+                     yday(as.Date(paste0(year,"-",month,"-01"), 
+                                  "%Y-%m-%d")), secchi, color=year)) + 
   geom_line() + geom_point() + theme_bw() + xlab("") +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("Cuyahoga", 6)) +
   scale_x_date(date_breaks = "1 month", date_labels = "%b") 
 ggsave("Figures/secchi_vs_doy.jpg", width=6, height=4)
+#there is a 23oct2015 3m secchi obs for bvr, but nothing in sep...
 
 #read in met data
 #inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/389/7/02d36541de9088f2dd99d79dc3a7a853" 
@@ -388,6 +398,10 @@ env_drivers <- bind_cols(chem, anoxic_depth[!colnames(anoxic_depth) %in%
                          profiles[!colnames(profiles) %in% c("month", "year")],
                          water_level[!colnames(water_level) %in% 
                                        c("month", "year")],
+                         ctd_thermo_depth[!colnames(ctd_thermo_depth) %in%
+                                            c("month","year")],
+                         ctd_oxy_depth[!colnames(ctd_oxy_depth) %in%
+                                         c("month","year")],
                          physics[!colnames(physics) %in% 
                                    c("month", "year")])#,
                         # secchi[!colnames(secchi) %in% 

@@ -69,7 +69,7 @@ set.seed(11)
 NMDS_bray_first <- vegan::metaMDS(zoop_bray, distance='bray', k=4, trymax=20, 
                             autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_first$stress
-# 0.074
+# 0.076
 
 #plot
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
@@ -306,25 +306,25 @@ year_box <- ggboxplot(within_year_dist, x = "group", y = "dist",
                       fill = "group", palette = natparks.pals("CapitolReef",6),
                       order = c("2014", "2015","2016","2019","2020","2021"),
                       ylab = "Dispersion", xlab = "") +
-  ylim(c(0,1)) +
+  ylim(c(0,0.5)) +
   theme(text = element_text(size=8),
         plot.margin = unit(c(0,-0.5,0,0), 'lines'),
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8)) +
-  annotate("text", x=1.3, y=1, label= "a: years",
+  annotate("text", x=1.3, y=0.5, label= "a: years",
            fontface = "italic", size=3) +
   guides (fill = "none")
 
 month_box <- ggboxplot(within_month_dist, x = "group", y = "dist", 
                      fill = "group", palette = natparks.pals("DeathValley",5),
                      order = c("May", "June", "July", "August", "September"),
-                     ylab = "", xlab = "") + ylim(c(0,1)) +
+                     ylab = "", xlab = "") + ylim(c(0,0.5)) +
   theme(text = element_text(size=8),
         plot.margin = unit(c(0,0.2,0,-0.4), 'lines'),
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8),
         axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
-  annotate("text",label=c("a","ab","b","b","ab"), x=c(1.2, 2.2, 3.2, 4.2, 5.2), size=4,
-           y=c(0.63, 0.47, 0.46, 0.46, 0.50)) +
-  annotate("text", x=1.3, y=1, label= "b: months",
+  annotate("text",label=c("a","b","b","b","ab"), x=c(1.2, 2.2, 3.2, 4.2, 5.2), size=4,
+           y=c(0.33, 0.24, 0.23, 0.25, 0.25)) +
+  annotate("text", x=1.3, y=0.5, label= "b: months",
            fontface = "italic", size=3) +
   guides (fill = "none")
 
@@ -399,7 +399,7 @@ set.seed(11)
 NMDS_bray_second <- vegan::metaMDS(stage2, distance='bray', k=4, trymax=20, 
                             autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_second$stress
-# 0.017
+# 0.014
 
 #--------------------------------------------------------------------------#
 #NMDS plot - second-stage
@@ -415,8 +415,8 @@ year$plot + geom_point() + theme_bw() +
       geom_point(data=year$df_mean.ord, aes(x, y), 
                 pch=21, size=2, 
                  fill=viridis::viridis(6, option="D")) +
-      theme(text = element_text(size=14), 
-            axis.text = element_text(size=7, color="black"), 
+      theme(text = element_text(size=8), 
+            axis.text = element_text(size=6, color="black"), 
             axis.title = element_text(size=6),
             legend.background = element_blank(), 
             legend.key.height=unit(0.3,"line"),
@@ -435,7 +435,7 @@ year$plot + geom_point() + theme_bw() +
       scale_fill_manual("",values=viridis::viridis(6, option="D"),
                         label=c('2014','2015',"2016","2019","2020","2021")) +
       scale_color_manual("",values=rep("gray",6) )
-#ggsave("Figures/second_stage_NMDS_2v1_dens.jpg", width=2.3, height=2) 
+#ggsave("Figures/second_stage_NMDS_2v1_dens.jpg", width=3, height=1) 
 
 
 #ANOSIM test on second-stage similarities
@@ -457,7 +457,7 @@ zoops_plus_drivers <- bind_cols(all_zoops_nmds, env_drivers[
   !colnames(env_drivers) %in% c("month", "year")])
 
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord$sites, zoops_plus_drivers[,c(13:27)]) 
+fit_env <- envfit(ord$sites, zoops_plus_drivers[,c(13:23, 25:26)]) #dropping oxycline depth bc 2 NAs
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -465,9 +465,13 @@ scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r),
 scores <- cbind(scores, env = rownames(scores))
 
 #supplmental table w/ r2 and p values for ms
-driver_correlation <- data.frame("variable" = scores$env,
+driver_NMDS_correlation <- data.frame("variable" = scores$env,
                                  "R2" = fit_env$vectors$r,
                                  "p-value" = fit_env$vectors$pvals)
+#write.csv(driver_NMDS_correlation, "Output/driver_NMDS_correlation.csv", row.names=F)
+
+#look for correlations between all pairs of env variables
+driver_correlation <- data.frame(cor(zoops_plus_drivers[,c(13:23, 25:26)], method = "spearman"))
 #write.csv(driver_correlation, "Output/driver_correlation.csv", row.names=F)
 
 #plot drivers w/ NMDS
@@ -482,7 +486,7 @@ month$plot + geom_point() + theme_bw() +
   geom_point(data=month$df_mean.ord, aes(x, y), 
              color="black", pch=21, size=2, 
              fill=viridis::viridis(5, option="F")) +
-  theme(text = element_text(size=8), 
+  theme(text = element_text(size=10), 
         axis.text = element_text(size=7, color="black"), 
         legend.background = element_blank(), 
         legend.key.height=unit(0.3,"line"),
@@ -504,7 +508,7 @@ month$plot + geom_point() + theme_bw() +
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS2, label = env), size = 1.5)
-#ggsave("Figures/first_stage_NMDS_2v1_months_envfit.jpg", width=5, height=3)
+#ggsave("Figures/first_stage_NMDS_2v1_months_envfit.jpg", width=4, height=4)
   
 
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
@@ -518,7 +522,7 @@ year$plot + geom_point() + theme_bw() +
   geom_point(data=year$df_mean.ord, aes(x, y), 
              color="black", pch=21, size=2, 
              fill=viridis::viridis(6, option="D")) +
-  theme(text = element_text(size=14), 
+  theme(text = element_text(size=10), 
         axis.text = element_text(size=7, color="black"), 
         legend.background = element_blank(), 
         legend.key.height=unit(0.3,"line"),
@@ -528,7 +532,7 @@ year$plot + geom_point() + theme_bw() +
         axis.text.x = element_text(vjust = 0.5), 
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
-        legend.position = "right", legend.spacing = unit(-0.5, 'cm'),
+        legend.position = c(0.86,0.2), legend.spacing = unit(-0.5, 'cm'),
         plot.margin = unit(c(0,-0.1,0,0), 'lines'),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
         legend.key.width =unit(0.1,"line")) +
@@ -539,4 +543,4 @@ year$plot + geom_point() + theme_bw() +
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS2, label = env), size = 1.5)
-#ggsave("Figures/first_stage_NMDS_2v1_years_envfit.jpg", width=5, height=3)
+#ggsave("Figures/first_stage_NMDS_2v1_years_envfit.jpg", width=4, height=3)
