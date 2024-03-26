@@ -140,7 +140,7 @@ par(mgp = c(2, 0.6, 0))
 
 for (i in 1:6) {
   ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
-                         choices = c(1,2),type = "n", xaxt='n', yaxt='n')
+                         choices = c(1,2),type = "n", xaxt = 'n', yaxt = 'n')
   
   lines(NMDS_bray_first$points[all_zoops_nmds$year == 
                                  unique(all_zoops_nmds$year)[i] ,1], 
@@ -156,20 +156,24 @@ for (i in 1:6) {
          pch = as.character(1:5), font=2, cex=3)
   
   mtext(c("2014","2015","2016","2019","2020","2021")[i], side = 3, line = -2, 
-         adj = 0.05, cex = 1.2, col = "black")
-   if (i %in% c(4, 5, 6))
-     axis(1, col = "black", col.axis = "black")
-   if (i %in% c(1, 4))
-     axis(2, col = "black", col.axis = "black")
-     box(col = "black")
-  if (i %in% c(4))
-    legend("bottomleft", legend=c('May','June','July','August','September'),
-           pch=c(as.character(1:5)) ,bty = "n", cex=1.5) 
+         adj = 0.05, cex = 1.5, col = "black")
+ # mtext(c("clockwise","??","counterclockwise","clockwise",
+ #         "counterclockwise","clockwise")[i], side = 3, line = -4, 
+ #       adj = 0.05, cex = 1.3, col = c("#01586D","black", "#8B0C13", 
+ #                                     "#01586D", "#8B0C13", "#01586D")[i])
+   #if (i %in% c(4, 5, 6))
+    # axis(1, col = "black", col.axis = "black")
+   #if (i %in% c(1, 4))
+   #  axis(2, col = "black", col.axis = "black")
+   #  box(col = "black")
+  #if (i %in% c(4))
+    #legend("bottomleft", legend=c('May','June','July','August','September'),
+     #      pch=c(as.character(1:5)) ,bty = "n", cex=1.5) 
 }
 
-mtext("NMDS1", side = 1, outer = TRUE, cex = 1.2, line = 2.2,
+mtext("NMDS1", side = 1, outer = TRUE, cex = 1.5, line = 0.9,
        col = "black")
-mtext("NMDS2", side = 2, outer = TRUE, cex = 1.2, line = 2.2,
+mtext("NMDS2", side = 2, outer = TRUE, cex = 1.5, line = 0.5,
          col = "black")
   
 #legend("topright", legend=c('2014','2015','2016','2019','2020','2021'),
@@ -303,29 +307,31 @@ cldList(P.adj ~ Comparison, data=dunn_within_month$res, threshold = 0.05)
 
 #within boxplot for years and months
 year_box <- ggboxplot(within_year_dist, x = "group", y = "dist", 
-                      fill = "group", palette = natparks.pals("CapitolReef",6),
+                      fill = "group", palette = viridis::viridis(6, option="D"),
+                      #palette = natparks.pals("CapitolReef",6),
                       order = c("2014", "2015","2016","2019","2020","2021"),
                       ylab = "Dispersion", xlab = "") +
   ylim(c(0,0.5)) +
-  theme(text = element_text(size=8),
+  theme(text = element_text(size=10),
         plot.margin = unit(c(0,-0.5,0,0), 'lines'),
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8)) +
-  annotate("text", x=1.3, y=0.5, label= "a: years",
-           fontface = "italic", size=3) +
+  annotate("text", x=1.5, y=0.5, label= "a: years",
+           fontface = "italic", size=5) +
   guides (fill = "none")
 
 month_box <- ggboxplot(within_month_dist, x = "group", y = "dist", 
-                     fill = "group", palette = natparks.pals("DeathValley",5),
+                     fill = "group", palette = viridis::viridis(6, option="F"),
+                     #palette = natparks.pals("DeathValley",5),
                      order = c("May", "June", "July", "August", "September"),
                      ylab = "", xlab = "") + ylim(c(0,0.5)) +
-  theme(text = element_text(size=8),
+  theme(text = element_text(size=10),
         plot.margin = unit(c(0,0.2,0,-0.4), 'lines'),
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8),
         axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
   annotate("text",label=c("a","b","b","b","ab"), x=c(1.2, 2.2, 3.2, 4.2, 5.2), size=4,
            y=c(0.33, 0.24, 0.23, 0.25, 0.25)) +
-  annotate("text", x=1.3, y=0.5, label= "b: months",
-           fontface = "italic", size=3) +
+  annotate("text", x=1.5, y=0.5, label= "b: months",
+           fontface = "italic", size=5) +
   guides (fill = "none")
 
 within_scales <- egg::ggarrange(year_box, month_box, nrow=1, widths = c(2, 1.9))
@@ -544,3 +550,108 @@ year$plot + geom_point() + theme_bw() +
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS2, label = env), size = 1.5)
 #ggsave("Figures/first_stage_NMDS_2v1_years_envfit.jpg", width=4, height=3)
+
+#------------------------------------------------------------------------------#
+# Which drivers explain patterns in zooplankton seasoanl succession among years?
+
+#read in driver df
+zoop_drivers <- read.csv("Output/all_drivers.csv") |> select(-diff) |> 
+  rename(buoyancy_frequency = BF,
+         schmidt_stability = SS,
+         water_level = waterlevel,
+         dissolved_oxygen_epi = DO_mgL_epi,
+         thermocline_depth = therm_depth,
+         total_nitrogen_epi = TN_ugL_epi,
+         total_phosphorus_epi = TP_ugL_epi)
+#delta wl is the same for every month so dropping this var
+
+#group years based on hysteresis direction
+zoop_drivers$box <- ifelse(zoop_drivers$year %in% c("2014", "2019", "2021"),
+                           "clockwise", ifelse(zoop_drivers$year %in% c(
+                             "2016", "2020"), "counterclockwise","mixed"))
+
+#convert from wide to long
+zoop_drivers_long <- zoop_drivers |> 
+  pivot_longer(-c(month,year,box),
+               names_to = "variable") |> 
+  mutate(year = as.factor(year))
+
+#change order of boxplots
+zoop_drivers_long$year <- factor(zoop_drivers_long$year , 
+                                levels=c("2014", "2019", "2021", 
+                                         "2016", "2020", "2015"))
+
+#now look at boxplots for each driver
+ggplot(data=subset(zoop_drivers_long, !box %in% c("mixed")),
+       aes(x=year, y=value, group = year)) +
+  geom_boxplot(aes(fill=box, alpha = 0.95)) + 
+  facet_wrap(~variable, nrow=5, scales = "free_y") +
+  theme_bw() + xlab("") + guides(alpha = "none") +
+  scale_fill_manual("",values=c("#01586D", "#8B0C13"))+
+  theme(text = element_text(size=10), 
+        axis.text = element_text(size=7, color="black"), 
+        legend.key.height=unit(0.3,"line"),
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-0,-0,-0,-0),
+        legend.direction = "vertical",
+        legend.title = element_blank(),
+        axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8),
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        legend.position = c(0.86,0.03), legend.spacing = unit(-0.5, 'cm'),
+        plot.margin = unit(c(0,0,0,0), 'lines'),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
+        legend.key.width =unit(0.3,"line"))
+#ggsave("Figures/drivers_vs_hysteresis_boxplot_years.jpg", width=6, height=5)
+
+#hand-picking the vars that are most different
+vars <- c("buoyancy_frequency","dissolved_oxygen_epi", "thermocline_depth",
+           "total_nitrogen_epi","total_phosphorus_epi","water_level")
+
+#just group by direction
+ggplot(data=subset(zoop_drivers_long, !box %in% c("mixed") &
+                     variable %in% vars),
+       aes(x=box, y=value, group = box)) +
+  geom_boxplot(aes(fill=box, alpha = 0.95)) + 
+  facet_wrap(~variable, nrow=5, scales = "free_y") +
+  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
+  scale_fill_manual("",values=c("#01586D", "#8B0C13"))+
+  theme(text = element_text(size=15), 
+        axis.text = element_text(size=12, color="black"), 
+        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        plot.margin = unit(c(0,0,0,0), 'lines'),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
+#ggsave("Figures/drivers_vs_hysteresis_boxplot_6.jpg", width=6, height=5)
+
+#kw tests to see if the vars are significantly different 
+kruskal_test_hyst_bf <- 
+  kruskal.test(zoop_drivers$buoyancy_frequency[
+    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
+      !zoop_drivers$box %in% c("mixed")]) #ns
+
+kruskal_test_hyst_do <- 
+  kruskal.test(zoop_drivers$dissolved_oxygen_epi[
+    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
+      !zoop_drivers$box %in% c("mixed")]) #sig (but maybe not after bf correction..)
+
+kruskal_test_hyst_td <- 
+  kruskal.test(zoop_drivers$thermocline_depth[
+    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
+      !zoop_drivers$box %in% c("mixed")]) #ns
+
+kruskal_test_hyst_tn <- 
+  kruskal.test(zoop_drivers$total_nitrogen_epi[
+    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
+      !zoop_drivers$box %in% c("mixed")]) #sig (but maybe not after bf correction..)
+
+kruskal_test_hyst_tp <- 
+  kruskal.test(zoop_drivers$total_phosphorus_epi[
+    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
+      !zoop_drivers$box %in% c("mixed")]) #ns
+
+kruskal_test_hyst_wl <- 
+  kruskal.test(zoop_drivers$water_level[
+    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
+      !zoop_drivers$box %in% c("mixed")]) #ns

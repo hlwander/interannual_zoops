@@ -160,7 +160,7 @@ all_zoops <- bind_rows(zoops_pre, zoops_post) |>
   ungroup() |> select(-StartDepth_m) #dropping, but note that depths range from 7.5-11.5m....
 
 #write all_zoops
-write.csv(all_zoops, paste0("Output/all_zoops_dens.csv"),row.names = FALSE)
+#write.csv(all_zoops, paste0("Output/all_zoops_dens.csv"),row.names = FALSE)
 
 #add column for pre vs post
 all_zoops$data <- ifelse(all_zoops$DateTime<="2019-01-01","pre","post")
@@ -235,16 +235,16 @@ zoop_prop_taxa <- all_zoop_taxa |> group_by(Taxon) |>
 zoops_total <- all_zoops |> 
   group_by(DateTime) |> 
   summarise(Total = sum(dens[Taxon %in% c("Cladocera","Copeoda","Rotifera")]),
-            sd = mean(sd[Taxon %in% c("Cladocera","Copeoda","Rotifera")],na.rm=T)) |> 
-  ungroup() |> 
-  mutate(year = format(DateTime, "%Y"),
-         month = format(DateTime, "%m")) |> 
-  group_by(year, month) |>
-  summarise(Total_avg = mean(Total,na.rm=T),
-            Total_sd = mean(sd,na.rm=T)) |> 
-  ungroup() |> 
-  mutate(Dens_std =(Total_avg - min(Total_avg)) / 
-           (max(Total_avg) - min(Total_avg)))
+            sd = mean(sd[Taxon %in% c("Cladocera","Copeoda","Rotifera")],na.rm=T))  
+  #ungroup() |> 
+  #mutate(year = format(DateTime, "%Y"),
+  #       month = format(DateTime, "%m")) |> 
+  #group_by(year, month) |>
+  #summarise(Total_avg = mean(Total,na.rm=T),
+  #          Total_sd = mean(sd,na.rm=T)) |> 
+  #ungroup() |> 
+  #mutate(Dens_std =(Total_avg - min(Total_avg)) / 
+  #         (max(Total_avg) - min(Total_avg)))
 
 # 3 group zoop dens
 zoops_3_groups <- all_zoops |> 
@@ -266,7 +266,8 @@ zoops_3_groups <- all_zoops |>
   mutate(min_dens = min(avg),
          max_dens = max(avg)) |> 
   mutate(standardized_dens = (avg - min_dens) / (max_dens - min_dens))
-write.csv(zoops_3_groups,"Output/std_dens_3taxa.csv", row.names = F)
+
+#write.csv(zoops_3_groups,"Output/std_dens_3taxa.csv", row.names = F)
 
 # 10 group zoop dens
 zoops_10_groups <- all_zoops |> 
@@ -304,68 +305,44 @@ zoops_10_groups <- all_zoops |>
          max_dens = max(avg)) |> 
   mutate(standardized_dens = (avg - min_dens) / (max_dens - min_dens))
 
-#------------------------------------------------------------------------------#
-# standardized density vs. doy
-ggplot(zoops_total, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                        Dens_std, color=year)) +
-  geom_point() + geom_line() + theme_bw() + xlab("doy") +
-scale_color_manual("",values=NatParksPalettes::natparks.pals("KingsCanyon", 6))
-ggsave("Figures/zoop_total_std_dens_vs_doy.jpg", width=6, height=3) 
-
-ggplot(zoops_3_groups, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                        standardized_dens, color=year)) +
-  facet_wrap(~Taxon, nrow=3)+
-  geom_point() + geom_line() + theme_bw() + xlab("doy") +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("KingsCanyon", 6))
-ggsave("Figures/zoop_3taxa_std_dens_vs_doy.jpg", width=6, height=3) 
-
-ggplot(zoops_10_groups, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                           standardized_dens, color=year)) +
-  facet_wrap(~Taxon, nrow=4)+
-  geom_point() + geom_line() + theme_bw() + xlab("doy") +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("KingsCanyon", 6))
-ggsave("Figures/zoop_10taxa_std_dens_vs_doy.jpg", width=6, height=3) 
-
 #-----------------------------------------------------------------------------#
 #shaded line plot for clads, copes, and rots each year
 
-# 3 group zoop dens - standardize within a year
+# 3 group zoop dens - standardize within a year including all data (not just averaged by month)
 zoops_3_groups_years <- all_zoops |> 
   filter(Taxon %in% c("Cladocera","Copepoda","Rotifera")) |> 
-  group_by(Taxon, DateTime) |> 
-  mutate(year = format(DateTime, "%Y"),
-         month = format(DateTime, "%m")) |> 
-  ungroup() |> group_by(year, month) |> 
+  group_by(DateTime) |> 
   summarise(Cladocera_avg = mean(dens[Taxon=="Cladocera"]),
             Cladocera_sd = mean(sd[Taxon=="Cladocera"],na.rm=T),
             Copepoda_avg = mean(dens[Taxon=="Copepoda"]),
             Copepoda_sd = mean(sd[Taxon=="Copepoda"],na.rm=T),
             Rotifera_avg = mean(dens[Taxon=="Rotifera"]),
             Rotifera_sd = mean(sd[Taxon=="Rotifera"],na.rm=T)) |> 
-  pivot_longer(-c(year,month),
+  mutate(year = format(DateTime, "%Y")) |> 
+  pivot_longer(-c(year,DateTime),
                names_to = c("Taxon", ".value"),
                names_sep="_" )  |> 
   ungroup() |> group_by(Taxon,year) |>
   mutate(min_dens = min(avg),
          max_dens = max(avg)) |> 
-  mutate(standardized_dens = (avg - min_dens) / (max_dens - min_dens)) |> 
-  mutate(month = as.numeric(month))
+  mutate(standardized_dens = (avg - min_dens) / (max_dens - min_dens)) 
 
-ggplot(zoops_3_groups_years, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                           standardized_dens, color=year)) +
+ggplot(zoops_3_groups_years, aes(as.Date("2019-12-31") + 
+                                   yday(as.Date(DateTime)),
+                                        standardized_dens, color=year)) +
   facet_wrap(~Taxon, nrow=3)+
   geom_point() + geom_line() + theme_bw() + xlab("doy") +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("KingsCanyon", 6))
 ggsave("Figures/zoop_3taxa_std_dens_by_year_vs_doy.jpg", width=6, height=3) 
 
-#playing around with order/layering of taxa
-zoops_3_groups_years$Taxon <- factor(zoops_3_groups_years$Taxon,
-                              levels = c("Rotifera","Copepoda","Cladocera"))
+#add a month column
+zoops_3_groups_years$month <- format(zoops_3_groups_years$DateTime,"%m")
                              
 #shaded line plot time
-ggplot(data=subset(zoops_3_groups_years, month %in% c(5,6,7,8,9)), 
-       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"),
-                                 standardized_dens, color=Taxon)) +
+ggplot(data=subset(zoops_3_groups_years, month %in% c("05","06","07","08","09")), 
+       aes(as.Date("2019-12-31") + yday(as.Date(DateTime)), 
+           standardized_dens, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
             position = "stack", stat = "identity",
             alpha=0.7) +
@@ -386,18 +363,18 @@ ggplot(data=subset(zoops_3_groups_years, month %in% c(5,6,7,8,9)),
         legend.background = element_blank(),
         legend.position = "right",
         legend.direction = "vertical",
-        text = element_text(size=8), 
-        axis.text.y = element_text(size = 8),
+        text = element_text(size=10), 
+        axis.text.y = element_text(size = 10),
         panel.border = element_rect(colour = "black", fill = NA),
         strip.text.x = element_text(face = "bold",hjust = 0),
         axis.text.x = element_text(angle=90),
         strip.background.x = element_blank(),
-        axis.title.y = element_text(size = 9),
+        axis.title.y = element_text(size = 11),
         plot.margin = unit(c(0, 1, 0, 0), "cm"),
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-ggsave("Figures/BVR_succession_3groups_subset_stacked.jpg", width=6, height=4) 
+ggsave("Figures/BVR_succession_3groups_stacked_alldens_std.jpg", width=7, height=4) 
 
 #-----------------------------------------------------------------------------#
 #read in phyto csv

@@ -19,7 +19,8 @@ dates_list <- c(seq(as.Date("2014-05-01"), as.Date("2014-09-30"), by="days"),
 #read in ctd
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/200/13/27ceda6bc7fdec2e7d79a6e4fe16ffdf" 
 infile1 <- tempfile()
-try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
+try(download.file(inUrl1,infile1,method="curl"))
+#try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
 ctd <-read.csv(infile1,header=T) |> 
   mutate(DateTime = as.Date(DateTime)) |>
@@ -363,6 +364,15 @@ secchi <-read.csv(infile1) |>
   group_by(year, month) |> 
   summarise(secchi = mean(Secchi_m))
 
+#missing secchi obs
+s_missing <- data.frame("year" = "2015",
+                        "month" = "09",
+                        "secchi" = NA)
+
+#combine dfs
+secchi_df <- bind_rows(secchi, s_missing) |> 
+              arrange(month, year)
+
 ggplot(secchi, aes(as.Date("2019-12-31") + 
                      yday(as.Date(paste0(year,"-",month,"-01"), 
                                   "%Y-%m-%d")), secchi, color=year)) + 
@@ -392,7 +402,7 @@ ggsave("Figures/secchi_vs_doy.jpg", width=6, height=4)
 #                   Rain_mm = mean(Rain_Total_mm),
 #                   PAR_umolm2s = mean(PAR_umolm2s_Average))
 #------------------------------------------------------------------------------#
-#make an environmental driver df
+#make an environmental driver df for each month/year
 env_drivers <- bind_cols(chem, anoxic_depth[!colnames(anoxic_depth) %in% 
                                               c("month", "year")],
                          profiles[!colnames(profiles) %in% c("month", "year")],
@@ -440,7 +450,20 @@ write.csv(fp, "Output/phytos.csv", row.names=FALSE)
 #convert fp from wide to long
 fp_long <- fp |>
   pivot_longer(cols = Green_ugL:Total_ugL, 
-               names_to = "variable")  
+               names_to = "variable") 
+
+#add in NAs for missing months
+fp_missing <- data.frame("month" = c(9,5),
+                         "year" = c(2015,2020),
+                         "Green_ugL" = c(NA,NA),
+                         "Bluegreen_ugL" = c(NA,NA),
+                         "Brown_ugL" = c(NA,NA),
+                         "Mixed_ugL" = c(NA,NA),
+                         "Total_ugL" = c(NA,NA))
+
+#combine dfs
+fp_df <-bind_rows(fp, fp_missing) |> 
+             arrange(month, year)
 
 #plot phytos over time
 ggplot(fp_long, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
@@ -485,7 +508,28 @@ ggplot(data=subset(fp_long, variable %in% c("Mixed_ugL","Bluegreen_ugL")),
   scale_color_manual("",values=NatParksPalettes::natparks.pals("BryceCanyon",3), 
                      labels=c("Bluegreen_ugL","Mixed_ugL","Yellow_ugL"))
 ggsave("Figures/phyto_succession_no_brown_or_greens.jpg", width=6, height=3) 
-  
+
+#------------------------------------------------------------------------------#
+#now average across years
+all_drivers <- bind_cols(chem, anoxic_depth[!colnames(anoxic_depth) %in% 
+                                 c("month", "year")],
+            profiles[!colnames(profiles) %in% c("month", "year")],
+            water_level[!colnames(water_level) %in% 
+                          c("month", "year")],
+            ctd_thermo_depth[!colnames(ctd_thermo_depth) %in%
+                               c("month","year")],
+            ctd_oxy_depth[!colnames(ctd_oxy_depth) %in%
+                            c("month","year")],
+            physics[!colnames(physics) %in% 
+                      c("month", "year")],
+            fp_df[!colnames(fp_df) %in% 
+                      c("month", "year","Total_ugL")],
+            secchi_df[!colnames(secchi_df) %in% 
+                      c("month", "year")])
+
+#export csv
+write.csv(all_drivers, "./Output/all_drivers.csv", row.names=FALSE)
+
 #------------------------------------------------------------------------------#
 #quick plots to visualize data
 ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), Temp_C_epi)) +
