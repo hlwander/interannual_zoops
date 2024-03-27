@@ -311,7 +311,9 @@ zoops_10_groups <- all_zoops |>
 # 3 group zoop dens - standardize within a year including all data (not just averaged by month)
 zoops_3_groups_years <- all_zoops |> 
   filter(Taxon %in% c("Cladocera","Copepoda","Rotifera")) |> 
-  group_by(DateTime) |> 
+  group_by(DateTime) |>
+  mutate(month = format(DateTime, "%m")) |> 
+  filter(month %in% c("05","06","07","08","09")) |> 
   summarise(Cladocera_avg = mean(dens[Taxon=="Cladocera"]),
             Cladocera_sd = mean(sd[Taxon=="Cladocera"],na.rm=T),
             Copepoda_avg = mean(dens[Taxon=="Copepoda"]),
@@ -334,14 +336,13 @@ ggplot(zoops_3_groups_years, aes(as.Date("2019-12-31") +
   geom_point() + geom_line() + theme_bw() + xlab("doy") +
   scale_x_date(date_breaks = "1 month", date_labels = "%b") +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("KingsCanyon", 6))
-ggsave("Figures/zoop_3taxa_std_dens_by_year_vs_doy.jpg", width=6, height=3) 
+#ggsave("Figures/zoop_3taxa_std_dens_by_year_vs_doy.jpg", width=6, height=3) 
 
 #add a month column
 zoops_3_groups_years$month <- format(zoops_3_groups_years$DateTime,"%m")
                              
 #shaded line plot time
-ggplot(data=subset(zoops_3_groups_years, month %in% c("05","06","07","08","09")), 
-       aes(as.Date("2019-12-31") + yday(as.Date(DateTime)), 
+ggplot(zoops_3_groups_years, aes(as.Date("2019-12-31") + yday(as.Date(DateTime)), 
            standardized_dens, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
             position = "stack", stat = "identity",
@@ -374,7 +375,7 @@ ggplot(data=subset(zoops_3_groups_years, month %in% c("05","06","07","08","09"))
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-ggsave("Figures/BVR_succession_3groups_stacked_alldens_std.jpg", width=7, height=4) 
+#ggsave("Figures/BVR_succession_3groups_stacked_alldens_std.jpg", width=7, height=4) 
 
 #-----------------------------------------------------------------------------#
 #read in phyto csv
