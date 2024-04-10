@@ -129,21 +129,21 @@ ctd_oxy_depth <- do_final |>
   summarise(oxy_depth = mean(oxy_depth))
 
 #calculate anoxic depth
-anoxic_depth <- do_final |> 
-  group_by(DateTime) |> 
-  mutate(AD = first(Depth_m[DO_mgL <= 2])) |> 
-  mutate(month = month(DateTime),
-         year = year(DateTime)) |> 
-  group_by(month, year) |> 
-  summarise(anoxic_depth = mean(AD,na.rm=T))
+#anoxic_depth <- do_final |> 
+#  group_by(DateTime) |> 
+#  mutate(AD = first(Depth_m[DO_mgL <= 2])) |> 
+#  mutate(month = month(DateTime),
+#         year = year(DateTime)) |> 
+#  group_by(month, year) |> 
+#  summarise(anoxic_depth = mean(AD,na.rm=T))
 
 #plot anoxic depth
-ggplot(anoxic_depth, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                         anoxic_depth, color=as.factor(year))) +
-  geom_point() + geom_line() + theme_bw() + xlab("doy") +
-  scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Acadia", 6))
-ggsave("Figures/anoxic_depth_vs_doy.jpg", width=6, height=3) 
+#ggplot(anoxic_depth, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
+#                         anoxic_depth, color=as.factor(year))) +
+#  geom_point() + geom_line() + theme_bw() + xlab("doy") +
+#  scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
+#  scale_color_manual("",values=NatParksPalettes::natparks.pals("Acadia", 6))
+#ggsave("Figures/anoxic_depth_vs_doy.jpg", width=6, height=3) 
 
 #download bathymetry
 infile <- tempfile()
@@ -382,30 +382,23 @@ ggplot(secchi, aes(as.Date("2019-12-31") +
 ggsave("Figures/secchi_vs_doy.jpg", width=6, height=4)
 #there is a 23oct2015 3m secchi obs for bvr, but nothing in sep...
 
-#read in met data
-#inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/389/7/02d36541de9088f2dd99d79dc3a7a853" 
-#infile1 <- tempfile()
-#try(download.file(inUrl1,infile1,method="curl"))
-#if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
-
-#avg obs for each 24 hr period - no met station until jul 2015...
-#met <-read.csv(infile1,header=T) |> 
-#  dplyr::mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S")) |> 
-#  dplyr::filter(DateTime %in% dates_list) |> 
-#  dplyr::select(DateTime, AirTemp_C_Average, WindSpeed_Average_m_s,
-#                            Rain_Total_mm, PAR_umolm2s_Average) |> 
-#  dplyr::mutate(month = month(DateTime),
-#                year = year(DateTime)) |> 
-#  dplyr::group_by(month, year) |> 
-#  dplyr::summarise(AirTemp_C = mean(AirTemp_C_Average),
-#                   WindSpeed = mean(WindSpeed_Average_m_s),
-#                   Rain_mm = mean(Rain_Total_mm),
-#                   PAR_umolm2s = mean(PAR_umolm2s_Average))
+#read in nldas met data
+nldas <- read.csv("/NLDAS/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |> 
+  dplyr::mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S")) |> 
+  dplyr::filter(DateTime %in% dates_list) |> 
+  dplyr::select(DateTime, AirTemp_C_Average, WindSpeed_Average_m_s,
+                            Rain_Total_mm, PAR_umolm2s_Average) |> 
+  dplyr::mutate(month = month(DateTime),
+                year = year(DateTime)) |> 
+  dplyr::group_by(month, year) |> 
+  dplyr::summarise(AirTemp_C = mean(AirTemp_C_Average),
+                   WindSpeed = mean(WindSpeed_Average_m_s),
+                   Rain_mm = mean(Rain_Total_mm),
+                   PAR_umolm2s = mean(PAR_umolm2s_Average))
 #------------------------------------------------------------------------------#
 #make an environmental driver df for each month/year
-env_drivers <- bind_cols(chem, anoxic_depth[!colnames(anoxic_depth) %in% 
-                                              c("month", "year")],
-                         profiles[!colnames(profiles) %in% c("month", "year")],
+env_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% 
+                                          c("month", "year")],
                          water_level[!colnames(water_level) %in% 
                                        c("month", "year")],
                          ctd_thermo_depth[!colnames(ctd_thermo_depth) %in%
@@ -510,10 +503,65 @@ ggplot(data=subset(fp_long, variable %in% c("Mixed_ugL","Bluegreen_ugL")),
 ggsave("Figures/phyto_succession_no_brown_or_greens.jpg", width=6, height=3) 
 
 #------------------------------------------------------------------------------#
+#Calculate heat budget using Wetzel and Likens eq (2000)
+# EQUATION: net radiation + latent heat exchange + sensible heat exchange with the atm +
+#net advective exchange + change in heat storage + conductive heat exchange through bottom sediments
+
+#calculate avg temp for 1m intervals
+ctd_layer_temp <- temp_final |>
+  dplyr::mutate(rdepth = ceiling(Depth_m)) |>
+  dplyr::group_by(DateTime, rdepth) |>
+  dplyr::summarise(temp = mean(Temp_C)) |>
+  dplyr::rename(depth = rdepth) |> 
+  dplyr::filter(! depth %in% c(0, 12, 13))
+
+#two dates missing a 11m temp due to wl changes so adding NA
+miss <- data.frame("DateTime" = c(as.Date("2019-09-20"), 
+                                  as.Date("2021-07-26"),
+                                  as.Date("2021-08-09"),
+                                  as.Date("2021-08-09"),
+                                  as.Date("2021-08-09"),
+                                  as.Date("2021-08-09"),
+                                  as.Date("2021-08-09")),
+                   "depth" = c(11,11, 7, 8, 10, 11, 5), 
+                   "temp" = c(rep(NA,7)))
+#these are the somewhat interpolated depths: c(9.196165, 8.998494, 19, 16.5, 14.2, 14.2, 23)) 
+
+#merge two dfs
+ctd_layer_temp_final <- bind_rows(ctd_layer_temp, miss) |> 
+  arrange(DateTime, depth)
+
+#create dataframe to store each term in equation
+heat_storage <- data.frame("date" = unique(ctd_layer_temp_final$DateTime),
+                           heat = NA)
+#heat in deg C cm3
+
+for(i in 1:length(unique(ctd_layer_temp_final$DateTime))){
+temp <- data.frame("depth" = c("0-1","1-2","2-3","3-4","4-5",
+                               "5-6","6-7","7-8","8-9","9-10",
+                               "10-11"),
+                   "layer_thick" = c(rep(100,11)),
+                   "layer_area" = bathymetry$SA_m2[1:11],
+                   "layer_vol" = 100 *bathymetry$SA_m2[1:11],
+                   "avg_temp" = ctd_layer_temp_final$temp[ctd_layer_temp_final$DateTime == 
+                                                      unique(ctd_layer_temp_final$DateTime)[i]],
+                   "calories_per_layer" = 100 *bathymetry$SA_m2[1:11]*
+                                          ctd_layer_temp_final$temp[i])
+    
+heat_storage$heat[i] <- sum(temp$calories_per_layer, na.rm=T) / 3939700000 # 0.39 km2
+  #units of cal/cm2
+}
+
+#average heat storage by month/year
+heat_storage_avg <- heat_storage |> 
+  dplyr::mutate(month = month(date),
+                year = year(date)) |>
+  dplyr::group_by(month, year) |> 
+  dplyr::summarise(heat = mean(heat))
+  
+#------------------------------------------------------------------------------#
 #now average across years
-all_drivers <- bind_cols(chem, anoxic_depth[!colnames(anoxic_depth) %in% 
-                                 c("month", "year")],
-            profiles[!colnames(profiles) %in% c("month", "year")],
+all_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("month", "year")],
             water_level[!colnames(water_level) %in% 
                           c("month", "year")],
             ctd_thermo_depth[!colnames(ctd_thermo_depth) %in%
@@ -525,7 +573,9 @@ all_drivers <- bind_cols(chem, anoxic_depth[!colnames(anoxic_depth) %in%
             fp_df[!colnames(fp_df) %in% 
                       c("month", "year","Total_ugL")],
             secchi_df[!colnames(secchi_df) %in% 
-                      c("month", "year")])
+                      c("month", "year")],
+            hwat_storage_avg[!colnames(hwat_storage_avg) %in%
+                               c("month","year")])
 
 #export csv
 write.csv(all_drivers, "./Output/all_drivers.csv", row.names=FALSE)

@@ -514,7 +514,7 @@ month$plot + geom_point() + theme_bw() +
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS2, label = env), size = 1.5)
-#ggsave("Figures/first_stage_NMDS_2v1_months_envfit.jpg", width=4, height=4)
+#ggsave("Figures/first_stage_NMDS_2v1_months_envfit.jpg", width=6, height=4)
   
 
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
@@ -566,9 +566,9 @@ zoop_drivers <- read.csv("Output/all_drivers.csv") |> select(-diff) |>
 #delta wl is the same for every month so dropping this var
 
 #group years based on hysteresis direction
-zoop_drivers$box <- ifelse(zoop_drivers$year %in% c("2014", "2019", "2021"),
+zoop_drivers$box <- ifelse(zoop_drivers$year %in% c("2014","2019", "2021"), 
                            "clockwise", ifelse(zoop_drivers$year %in% c(
-                             "2016", "2020"), "counterclockwise","mixed"))
+                             "2016", "2020"), "counterclockwise","NA")) 
 
 #convert from wide to long
 zoop_drivers_long <- zoop_drivers |> 
@@ -578,11 +578,11 @@ zoop_drivers_long <- zoop_drivers |>
 
 #change order of boxplots
 zoop_drivers_long$year <- factor(zoop_drivers_long$year , 
-                                levels=c("2014", "2019", "2021", 
+                                levels=c("2014", "2019" ,"2021", 
                                          "2016", "2020", "2015"))
 
 #now look at boxplots for each driver
-ggplot(data=subset(zoop_drivers_long, !box %in% c("mixed")),
+ggplot(data=subset(zoop_drivers_long, !box %in% c("NA")),
        aes(x=year, y=value, group = year)) +
   geom_boxplot(aes(fill=box, alpha = 0.95)) + 
   facet_wrap(~variable, nrow=5, scales = "free_y") +
@@ -609,7 +609,7 @@ vars <- c("buoyancy_frequency","dissolved_oxygen_epi", "thermocline_depth",
            "total_nitrogen_epi","total_phosphorus_epi","water_level")
 
 #just group by direction
-ggplot(data=subset(zoop_drivers_long, !box %in% c("mixed") &
+ggplot(data=subset(zoop_drivers_long, !box %in% c("NA") &
                      variable %in% vars),
        aes(x=box, y=value, group = box)) +
   geom_boxplot(aes(fill=box, alpha = 0.95)) + 
