@@ -140,7 +140,7 @@ par(mgp = c(2, 0.6, 0))
 
 for (i in 1:6) {
   ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
-                         choices = c(1,2),type = "n", xaxt = 'n', yaxt = 'n')
+                         choices = c(1,2),type = "none", xaxt = 'n', yaxt = 'n')
   
   lines(NMDS_bray_first$points[all_zoops_nmds$year == 
                                  unique(all_zoops_nmds$year)[i] ,1], 
@@ -180,6 +180,127 @@ mtext("NMDS2", side = 2, outer = TRUE, cex = 1.5, line = 0.5,
 #       pt.bg=c(viridis::viridis(5, option="D")) ,bty = "n", cex=1.2, pch=21) 
 
 #dev.off()
+
+#------------------------------------------------------------------------------#
+#plot species vectors
+
+zoop.spp.fit <- envfit(ord$sites, all_zoops_nmds, permutations = 999)
+
+#pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
+scores_sp <- data.frame((zoop.spp.fit$vectors)$arrows * sqrt(zoop.spp.fit$vectors$r), 
+                        pvals=(zoop.spp.fit$vectors)$pvals)
+scores_sp <- cbind(scores_sp, sp = rownames(scores_sp))
+
+#jpeg("Figures/first_stage_NMDS_2v1_dens_plus_species.jpg")
+par(mfrow = c(2, 3))
+par(cex = 0.6)
+par(mar = c(0, 0, 0, 0), oma = c(4, 4, 0.5, 0.5))
+par(tcl = -0.25)
+par(mgp = c(2, 0.6, 0))
+  
+  for (i in 1:6) {
+    ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
+                           choices = c(1,2),type = "none", 
+                           xlim= c(-0.7, 0.7), ylim= c(-0.3, 0.6),
+                           xaxt = 'n', yaxt = 'n')
+    
+    arrows(0, 0, scores_sp$NMDS1, scores_sp$NMDS2, 
+           length = 0.1, code=2) 
+    
+    text(x=scores_sp$NMDS1, y=scores_sp$NMDS2, 
+         label=scores_sp$sp)
+    
+    lines(NMDS_bray_first$points[all_zoops_nmds$year == 
+                                   unique(all_zoops_nmds$year)[i] ,1], 
+          NMDS_bray_first$points[(all_zoops_nmds$year ==
+                                    unique(all_zoops_nmds$year)[i]),2], 
+          col=viridis::viridis(6, option="D")[i])
+    
+    points(NMDS_bray_first$points[all_zoops_nmds$year == 
+                                    unique(all_zoops_nmds$year)[i] ,1], 
+           NMDS_bray_first$points[(all_zoops_nmds$year == 
+                                     unique(all_zoops_nmds$year)[i]),2], 
+           col=viridis::viridis(6, option="D")[i],
+           pch = as.character(1:5), font=2, cex=3)
+    
+    mtext(c("2014","2015","2016","2019","2020","2021")[i], side = 3, line = -2, 
+          adj = 0.05, cex = 1.5, col = "black")
+    
+  }
+    
+#dev.off()    
+    
+    
+#plot species vectors on NMDS
+ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
+                       choices = c(1,2),type = "n")
+month <- ggordiplots::gg_ordiplot(ord, all_zoops_nmds$month,
+                                  kind = "ehull", ellipse=FALSE, hull = TRUE, 
+                                  plot = FALSE, pt.size=0.9) 
+month$plot + geom_point() + theme_bw() + 
+  geom_polygon(data = month$df_hull, aes(x = x, y = y, fill = Group), 
+               alpha=0.2) +
+  geom_point(data=month$df_mean.ord, aes(x, y), 
+             color="black", pch=21, size=2, 
+             fill=viridis::viridis(5, option="F")) +
+  theme(text = element_text(size=10), 
+        axis.text = element_text(size=7, color="black"), 
+        legend.background = element_blank(), 
+        legend.key.height=unit(0.3,"line"),
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-0,-0,-0,-0),
+        legend.direction = "vertical",
+        axis.text.x = element_text(vjust = 0.5), 
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        legend.position = c(0.86,0.15), 
+        legend.spacing = unit(-0.5, 'cm'),
+        plot.margin = unit(c(0,-0.1,0,0), 'lines'),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
+        legend.key.width =unit(0.1,"line")) + guides(fill='none') +
+  scale_fill_manual("",values=viridis::viridis(5, option="F"))+
+  scale_color_manual("",values=viridis::viridis(5, option="F"),
+                     label=c('May',"June","July","August","September")) +
+  geom_segment(data = scores_sp,
+               aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
+               arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
+  geom_text_repel(data = scores_sp, aes(x = NMDS1, y = NMDS2, label = sp), size = 1.5)
+#ggsave("Figures/first_stage_NMDS_2v1_months_sp_fit.jpg", width=6, height=4)
+
+year <- ggordiplots::gg_ordiplot(ord, all_zoops_nmds$year,
+                                  kind = "ehull", ellipse=FALSE, hull = TRUE, 
+                                  plot = FALSE, pt.size=0.9) 
+year$plot + geom_point() + theme_bw() + 
+  geom_polygon(data = year$df_hull, aes(x = x, y = y, fill = Group), 
+               alpha=0.2) +
+  geom_point(data=year$df_mean.ord, aes(x, y), 
+             color="black", pch=21, size=2, 
+             fill=viridis::viridis(6, option="D")) +
+  theme(text = element_text(size=10), 
+        axis.text = element_text(size=7, color="black"), 
+        legend.background = element_blank(), 
+        legend.key.height=unit(0.3,"line"),
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-0,-0,-0,-0),
+        legend.direction = "vertical",
+        axis.text.x = element_text(vjust = 0.5), 
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        legend.position = c(0.86,0.15), 
+        legend.spacing = unit(-0.5, 'cm'),
+        plot.margin = unit(c(0,-0.1,0,0), 'lines'),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
+        legend.key.width =unit(0.1,"line")) + guides(fill='none') +
+  scale_fill_manual("",values=viridis::viridis(6, option="D"))+
+  scale_color_manual("",values=viridis::viridis(6, option="D"),
+                     label=c('May',"June","July","August","September")) +
+  geom_segment(data = scores_sp,
+               aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
+               arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
+  geom_text_repel(data = scores_sp, aes(x = NMDS1, y = NMDS2, label = sp), size = 1.5)
+#ggsave("Figures/first_stage_NMDS_2v1_years_sp_fit.jpg", width=6, height=4)
+
+
 
 #------------------------------------------------------------------------------#
 #calculate dispersion between years vs. months - monte carlo approach
@@ -463,7 +584,7 @@ zoops_plus_drivers <- bind_cols(all_zoops_nmds, env_drivers[
   !colnames(env_drivers) %in% c("month", "year")])
 
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord$sites, zoops_plus_drivers[,c(13:23, 25:26)]) #dropping oxycline depth bc 2 NAs
+fit_env <- envfit(ord$sites, zoops_plus_drivers[,c(13:22, 24:31)]) #dropping oxycline depth bc 2 NAs
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -477,7 +598,7 @@ driver_NMDS_correlation <- data.frame("variable" = scores$env,
 #write.csv(driver_NMDS_correlation, "Output/driver_NMDS_correlation.csv", row.names=F)
 
 #look for correlations between all pairs of env variables
-driver_correlation <- data.frame(cor(zoops_plus_drivers[,c(13:23, 25:26)], method = "spearman"))
+driver_correlation <- data.frame(cor(zoops_plus_drivers[,c(13:22, 24:31)], method = "spearman"))
 #write.csv(driver_correlation, "Output/driver_correlation.csv", row.names=F)
 
 #plot drivers w/ NMDS
@@ -593,13 +714,13 @@ ggplot(data=subset(zoop_drivers_long, !box %in% c("NA")),
         legend.key.height=unit(0.3,"line"),
         legend.box.margin=margin(-10,-10,-10,-10),
         legend.margin=margin(-0,-0,-0,-0),
-        legend.direction = "vertical",
+        legend.direction = "horizontal",
         legend.title = element_blank(),
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8),
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
-        legend.position = c(0.86,0.03), legend.spacing = unit(-0.5, 'cm'),
-        plot.margin = unit(c(0,0,0,0), 'lines'),
+        legend.position = "bottom", legend.spacing = unit(-0.5, 'cm'),
+        plot.margin = unit(c(0,0,1,0), 'lines'),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
         legend.key.width =unit(0.3,"line"))
 #ggsave("Figures/drivers_vs_hysteresis_boxplot_years.jpg", width=6, height=5)
@@ -625,33 +746,18 @@ ggplot(data=subset(zoop_drivers_long, !box %in% c("NA") &
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 #ggsave("Figures/drivers_vs_hysteresis_boxplot_6.jpg", width=6, height=5)
 
-#kw tests to see if the vars are significantly different 
-kruskal_test_hyst_bf <- 
-  kruskal.test(zoop_drivers$buoyancy_frequency[
-    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
-      !zoop_drivers$box %in% c("mixed")]) #ns
-
-kruskal_test_hyst_do <- 
-  kruskal.test(zoop_drivers$dissolved_oxygen_epi[
-    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
-      !zoop_drivers$box %in% c("mixed")]) #sig (but maybe not after bf correction..)
-
-kruskal_test_hyst_td <- 
-  kruskal.test(zoop_drivers$thermocline_depth[
-    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
-      !zoop_drivers$box %in% c("mixed")]) #ns
-
-kruskal_test_hyst_tn <- 
-  kruskal.test(zoop_drivers$total_nitrogen_epi[
-    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
-      !zoop_drivers$box %in% c("mixed")]) #sig (but maybe not after bf correction..)
-
-kruskal_test_hyst_tp <- 
-  kruskal.test(zoop_drivers$total_phosphorus_epi[
-    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
-      !zoop_drivers$box %in% c("mixed")]) #ns
-
-kruskal_test_hyst_wl <- 
-  kruskal.test(zoop_drivers$water_level[
-    !zoop_drivers$box %in% c("mixed")] ~ zoop_drivers$box[
-      !zoop_drivers$box %in% c("mixed")]) #ns
+#zooming in on 2015 becuase looks like it starts out clockwise then switches to cc
+ggplot(data=subset(zoop_drivers_long, box %in% c("NA")),
+       aes(x=month, y=value, group = month)) +
+  geom_point() + 
+  facet_wrap(~variable, nrow=5, scales = "free_y") +
+  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
+  scale_fill_manual("",values=c("#01586D", "#8B0C13"))+
+  theme(text = element_text(size=15), 
+        axis.text = element_text(size=12, color="black"), 
+        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        plot.margin = unit(c(0,0,0,0), 'lines'),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
+#ggsave("Figures/drivers_vs_month_2015.jpg", width=6, height=5)

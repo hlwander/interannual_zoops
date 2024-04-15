@@ -16,6 +16,8 @@ library(sf)
 library(httr)
 library(curl)
 library(stringr)
+library(dplyr)
+library(readr)
 
 ###########################################################
 ### Point to dump directory where data will be saved
@@ -42,10 +44,9 @@ extent = c(-79.82,37.31,-79.81,37.32)
 ###########################################################
 ### Set timeframe
 ###########################################################
-startdatetime = '2020-06-04 18:00:00'
-enddatetime = '2021-12-31 23:00:00'
+startdatetime = '2021-12-15 02:00:00'
+enddatetime = '2021-12-15 03:00:00'
 loc_tz = 'UTC'
-
 
 # sequence the datetime over your desired time period
 out.ts = seq.POSIXt(as.POSIXct(startdatetime, tz = loc_tz),as.POSIXct(enddatetime,tz=loc_tz), by = 'hour')
@@ -222,7 +223,7 @@ for (f in 1:length(vars_nc)){
 #where you stored your .csv's
 dumpdir_csv = './NLDAS/NLDAS_Data_2020_2021/'
 # define the dump directory for your final .csv files
-dumpdir_final = './NLDAS/NLDAS_Data_2020_2021/'
+dumpdir_final = './NLDAS/'
 
 #define the lakename, and the box number
 LakeName = 'BVR'
@@ -260,8 +261,12 @@ for (i in 1:11){
   fileIndx = grep(vars_nc[i],files)
   
   df = read_csv(paste0(dumpdir_csv,files[fileIndx[1]]),
-                col_types = c('cn')) %>% 
-    dplyr::mutate(dateTime = as.POSIXct(dateTime, tz=loc_tz)) %>% 
+                col_types = c('cn')) |> 
+    dplyr::mutate(dateTime = ifelse(nchar(dateTime) == 10,
+           paste(dateTime, "00:00:00"),
+           dateTime)) |> 
+    dplyr::mutate(dateTime = as.POSIXct(dateTime, tz=loc_tz,
+                                        "%Y-%m-%d %H:%M:%S")) |> 
     arrange(dateTime) # chronological order   
   
   if(length(fileIndx) >1) {
@@ -274,9 +279,9 @@ for (i in 1:11){
   # Total time series
   out = data.frame(dateTime = seq.POSIXt(
     as.POSIXct(startdatetime, tz= loc_tz),
-    as.POSIXct(enddatetime,tz=loc_tz),by = 'hour'))
+    as.POSIXct(enddatetime,tz=loc_tz),by = 'hour')) 
   
-  missingDates = out %>% 
+  missingDates = out |> 
     anti_join(df)
   print(nrow(missingDates)) # Check for missing dates. 
   
@@ -361,17 +366,35 @@ drivers %>%
                      format(as.POSIXct(startdatetime), '%Y_%m_%d'),
                      '_', format(as.POSIXct(enddatetime), '%Y_%m_%d'),'_hourly.csv'))
 
-drivers %>% 
+drivers |> 
   group_by(local_dateTime) %>% 
-  filter(n()>1)
+  filter(n()>1) 
 
-plot(drivers$local_dateTime,drivers$Rain,type = 'l')
-plot(drivers$local_dateTime,drivers$ShortWave,type = 'l')
+drivers <- drivers |> 
+  rename(time = local_dateTime,
+         ShortWave = ShortWave.W_m2,
+         LongWave = LongWave.W_m2,
+         AirTemp = AirTemp.C,
+         WindSpeed = WindSpeed.m_s,
+         Rain = Rain.m_day) |> 
+  select(-c(SurfPressure.Pa, SpecHumidity.kg_kg))
+
+plot(drivers$time,drivers$Rain,type = 'l')
+plot(drivers$time,drivers$ShortWave,type = 'l')
 
 #combine with 2013-2019 NLDAS csv
-nldas_13_19 <- read.csv("/NLDAS/BVR_GLM_NLDAS_010113_123119_GMTadjusted.csv")
+nldas_13_19 <- read.csv(paste0(getwd(),"/NLDAS/BVR_GLM_NLDAS_010113_123119_GMTadjusted.csv")) |> 
+  mutate(time = as.POSIXct(time, tz=loc_tz,
+                           "%Y-%m-%d %H:%M"))
 
 all_NLDAS <- bind_rows(drivers, nldas_13_19)
 
 #save combined nldas file
-write.csv("/NLDAS/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv")
+write.csv(all_NLDAS, "./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv", rownames=F)
+
+#quick plots to make sure things look okay
+plot(all_NLDAS$time,all_NLDAS$Rain,type = 'l')
+plot(all_NLDAS$time,all_NLDAS$ShortWave,type = 'l')
+plot(all_NLDAS$time,all_NLDAS$LongWave,type = 'l')
+plot(all_NLDAS$time,all_NLDAS$RelHum,type = 'l')
+plot(all_NLDAS$time,all_NLDAS$WindSpeed,type = 'l')

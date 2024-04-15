@@ -5,8 +5,12 @@
 
 #packages
 if (!require("pacman"))install.packages("pacman")
-pacman::p_load(httr, EcoHydRology, GSODR, curl, elevatr,
+pacman::p_load(httr, EcoHydRology, GSODR, curl, elevatr, devtools, sf,
                raster, soilDB, rgdal, lattice, lubridate, tidyverse)
+
+#download archived EcoHydRology package from github
+#install.packages(c("operators", "topmodel", "DEoptim", "XML"))
+#install.packages("~/Downloads/EcoHydRology_0.4.12.1.tar.gz", repos = NULL, type = "source")
 
 #soil data
 #url="https://websoilsurvey.sc.egov.usda.gov/DSD/Download/AOI/hdbxgq2us0dl32ysxprivmbf/wss_aoi_2023-03-01_08-53-36.zip"
@@ -29,38 +33,7 @@ myflowgage$area<- 2.27 #km
 myflowgage$declat<- 37.31321
 myflowgage$declon<- -79.81535
 
-#read in obs met data from FCR met station
-#inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/389/7/02d36541de9088f2dd99d79dc3a7a853" 
-#infile1 <- paste0(getwd(),"/inputs/Met_final_2015_2022.csv")
-#try(download.file(inUrl1,infile1,method="curl"))
-#if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
-
-met <- read.csv(file.path(getwd(),"inputs/met_precip_mmd.csv")) #precip units in mm/d
-
-#drop first 3 rows because end of 1600 hour
-#met <- met[-c(1:3),]
-
-#only select first entry for each hour
-#met_hourly <- met %>% select(c(DateTime,ShortwaveRadiationUp_Average_W_m2,InfaredRadiationUp_Average_W_m2,
-#                               AirTemp_Average_C,RH_percent,WindSpeed_Average_m_s,Rain_Total_mm)) %>% 
-#                      mutate(DateTime = ymd_hms(DateTime), dt = as_date(DateTime), hr = hour(DateTime)) %>% 
-#                      group_by(dt, hr) %>% filter(DateTime == min(DateTime)) %>% filter(DateTime <=as.Date("2019-12-31")) 
-#met_hourly_final <- met_hourly[,-c(8,9)]
-#names(met_hourly_final) <- c("time","ShortWave","LongWave","AirTemp","RelHum","WindSpeed","Rain")
-#write.csv(met_hourly_final,"inputs/FCR_hourly_met_2015_2020.csv",row.names=FALSE)
-
-#convert to as.date format
-met$time  <- as.Date(met$time)
-
-#then average by date (sometimes need to unload then reload dplyr)
-met_daily <- met %>% select(time, AirTemp, Rain) %>% group_by(time) %>%
-  rename(mdate=time) %>% filter(mdate<as.Date("2022-01-01")) %>%
-  summarise(MaxTemp_C = max(AirTemp, na.rm=T),
-            MinTemp_C = min(AirTemp, na.rm=T),
-            MeanTemp_C = mean(AirTemp, na.rm=T),
-            Precip_mmpd = sum(Rain, na.rm=T)) 
-
-#use NLDAS for missing met days (might want to use all NLDAS depending on met vs. nldas comparison)
+#use NLDAS for missing met days 
 NLDAS<- read.csv("./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv")
 NLDAS[is.na(NLDAS)]=0 # A Quick BUT sloppy removal of NAs
 
@@ -77,19 +50,11 @@ NLDAS <- NLDAS %>% select(time, AirTemp, precip_mm) %>% group_by(time) %>%
             MeanTemp_C = mean(AirTemp),
             Precip_mmpd = sum(precip_mm)) 
 
-#new merged df with mostly met, but some NLDAS to fill missing days
-dates <- seq(as.Date("2014-01-01"),as.Date("2022-01-01"),by="days")
-
-#now fill in missing days with NLDAS
-missing_met <- NLDAS[!(NLDAS$mdate %in% met_daily$mdate),] 
-missing_met <- missing_met %>% filter(missing_met$mdate>=as.Date("2014-01-01"))
-met_final <- rbind(missing_met,met_daily)
-
 #replace flow with NAs because this is specific to Roanoke River (not BVR)
 myflowgage$flowdata[["flow"]] <- NA
 
 # Merge met_final weather data with flow gage to use as our base HRU data structure
-myflowgage$TMWB=merge(myflowgage$flowdata,met_final)
+myflowgage$TMWB=merge(myflowgage$flowdata,NLDAS)
 
 # Grab the necessary soil and elevation spatial layers and parameters (usgs)
 #url="https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHD/HU8/HighResolution/Shape/NHD_H_03010101_HU8_Shape.zip"
@@ -124,6 +89,9 @@ mu2chmax=aggregate(mu2ch,list(mu2ch$mukey),max)
 #set projection
 proj4string(streams)
 proj4string(mysoil)<- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
+
+#convert to sf
+mysoil <- st_as_sf(mysoil)
 
 # Use the spatial extents from our stream to download elevation raster.
 mydem=get_elev_raster(mysoil, z = 11, src ="aws",clip="bbox")
@@ -175,6 +143,9 @@ myflowgage$TMWB$S[1]=0
 myflowgage$fcres=0.3  #typically ranges from 0.2-0.5
 myflowgage$SlopeRad=0.0 
 
+#need to modify a couple of the functions bc EcoHydRology is no longer maintained
+source("./Scripts/EcoHydRology_functions.R")
+
 TMWBModel<-function(hru_list){  
   # hru_list is the same object we have been using till now to store all our
   # variables and parameters.
@@ -183,7 +154,7 @@ TMWBModel<-function(hru_list){
   attach(TMWB)
   
   # Snow accumulation and melt, as well as PET only depend on the surface attributes, and as such, can run  at the beginning, independent of the daily calculated ET, TMWB, and the linear reservoir Storage Discharge (Qmm). 
-  SNO_Energy=SnowMelt(mdate, Precip_mmpd, MaxTemp_C-3, MinTemp_C-3, myflowgage$declat, 
+  SNO_Energy=snowmelt(mdate, Precip_mmpd, MaxTemp_C-3, MinTemp_C-3, myflowgage$declat, 
                       slope = 0, aspect = 0, tempHt = 1, windHt = 2, groundAlbedo = 0.25,
                       SurfEmissiv = 0.95, windSp = 2, forest = 0, startingSnowDepth_m = 0,
                       startingSnowDensity_kg_m3=450)
@@ -195,7 +166,7 @@ TMWBModel<-function(hru_list){
   myflowgage$TMWB$SnowWaterEq_mm=SnowWaterEq_mm
   myflowgage$TMWB$SnowfallWatEq_mm=SnowfallWatEq_mm
   myflowgage$TMWB$Albedo[myflowgage$TMWB$SnowfallWatEq_mm>0]=.95
-  PET=PET_fromTemp(Jday=(1+as.POSIXlt(mdate)$yday),Tmax_C=MaxTemp_C,Tmin_C = MinTemp_C, lat_radians = myflowgage$declat*pi/180) * 1000
+  PET=pet_fromTemp(Jday=(1+as.POSIXlt(mdate)$yday),Tmax_C=MaxTemp_C,Tmin_C = MinTemp_C, lat_radians = myflowgage$declat*pi/180) * 1000
   myflowgage$TMWB$PET=PET
   
   # Those processes that are dependant on prior days conditions, we run as a loop through each of the days.
@@ -256,6 +227,6 @@ plot(TMWBsol$TMWB$mdate,TMWBsol$TMWB$S,col="green", type='l')
 plot(TMWBsol$TMWB$mdate,TMWBsol$TMWB$Drainage,col="purple", type='l')
 
 #create csv for q export
-QExport<- data.frame("time"=TMWBsol$TMWB$mdate, "Q_BVR_m3pd"=TMWBsol$TMWB$Qpred_m3pd)
-write.csv(QExport, "Output/BVR_flow_calcs_obs_met_2014-2021.csv")
+QExport<- data.frame("time"=TMWBsol$TMWB$mdate, "Q_m3pd"=TMWBsol$TMWB$Qpred_m3pd)
+write.csv(QExport, "Output/BVR_flow_calcs_NLDAS_2014-2021.csv", row.names = F)
 

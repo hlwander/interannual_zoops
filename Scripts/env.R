@@ -383,32 +383,32 @@ ggsave("Figures/secchi_vs_doy.jpg", width=6, height=4)
 #there is a 23oct2015 3m secchi obs for bvr, but nothing in sep...
 
 #read in nldas met data
-nldas <- read.csv("/NLDAS/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |> 
-  dplyr::mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S")) |> 
-  dplyr::filter(DateTime %in% dates_list) |> 
-  dplyr::select(DateTime, AirTemp_C_Average, WindSpeed_Average_m_s,
-                            Rain_Total_mm, PAR_umolm2s_Average) |> 
-  dplyr::mutate(month = month(DateTime),
-                year = year(DateTime)) |> 
+nldas <- read.csv("./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |> 
+  dplyr::mutate(time = as.POSIXct(time, format="%Y-%m-%d %H:%M:%S")) |> 
+  dplyr::filter(time %in% dates_list) |> 
+  dplyr::mutate(month = month(time),
+                year = year(time)) |> 
   dplyr::group_by(month, year) |> 
-  dplyr::summarise(AirTemp_C = mean(AirTemp_C_Average),
-                   WindSpeed = mean(WindSpeed_Average_m_s),
-                   Rain_mm = mean(Rain_Total_mm),
-                   PAR_umolm2s = mean(PAR_umolm2s_Average))
+  dplyr::summarise(AirTemp = mean(AirTemp),
+                   Shortwave = mean(ShortWave),
+                   Longwave = mean(LongWave),
+                   RelHum = mean(RelHum),
+                   WindSpeed = mean(WindSpeed),
+                   Rain = mean(Rain))
 #------------------------------------------------------------------------------#
 #make an environmental driver df for each month/year
 env_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% 
-                                          c("month", "year")],
+                                       c("month", "year")],
                          water_level[!colnames(water_level) %in% 
                                        c("month", "year")],
                          ctd_thermo_depth[!colnames(ctd_thermo_depth) %in%
-                                            c("month","year")],
+                                        c("month","year")],
                          ctd_oxy_depth[!colnames(ctd_oxy_depth) %in%
-                                         c("month","year")],
+                                        c("month","year")],
                          physics[!colnames(physics) %in% 
-                                   c("month", "year")])#,
-                        # secchi[!colnames(secchi) %in% 
-                        #          c("month", "year")])
+                                        c("month", "year")],
+                         nldas[!colnames(nldas) %in% 
+                                        c("month","year")])
 
 #export env csv
 write.csv(env_drivers, "./Output/env.csv", row.names=FALSE)
@@ -478,7 +478,7 @@ ggplot(fp_long, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
   scale_color_manual("",values=NatParksPalettes::natparks.pals("SmokyMtns", 6), 
                      labels=c("Bluegreen_ugL","Brown_ugL","Green_ugL",
                               "Mixed_ugL","Total_ugL"))
-ggsave("Figures/phyto_succession.jpg", width=6, height=3) 
+#ggsave("Figures/phyto_succession.jpg", width=6, height=3) 
 
 #remove green, brown, and total to see what other groups are doing
 ggplot(data=subset(fp_long, variable %in% c("Mixed_ugL","Bluegreen_ugL")),
@@ -500,7 +500,7 @@ ggplot(data=subset(fp_long, variable %in% c("Mixed_ugL","Bluegreen_ugL")),
   annotate("text", x=as.Date("2021-07-01"), y=6.1, label= "2021") +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("BryceCanyon",3), 
                      labels=c("Bluegreen_ugL","Mixed_ugL","Yellow_ugL"))
-ggsave("Figures/phyto_succession_no_brown_or_greens.jpg", width=6, height=3) 
+#ggsave("Figures/phyto_succession_no_brown_or_greens.jpg", width=6, height=3) 
 
 #------------------------------------------------------------------------------#
 #Calculate heat budget using Wetzel and Likens eq (2000)
@@ -559,71 +559,42 @@ heat_storage_avg <- heat_storage |>
   dplyr::group_by(month, year) |> 
   dplyr::summarise(heat = mean(heat))
   
+#calculate residence time (volume / total inflow)
+#EDI bvr bathy = 1357140.6 m3
+
+res_time <- read.csv("Output/BVR_flow_calcs_NLDAS_2014-2021.csv") |> 
+  dplyr::filter(time %in% dates_list) |>  
+  dplyr::mutate(month = month(time),
+                year = year(time)) |>
+  dplyr::group_by(month, year) |> 
+  dplyr::summarise(res_time_d = 1357140.6 / mean(Q_m3pd))
+  
+
 #------------------------------------------------------------------------------#
 #now average across years
 all_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("month", "year")],
             water_level[!colnames(water_level) %in% 
                           c("month", "year")],
             ctd_thermo_depth[!colnames(ctd_thermo_depth) %in%
-                               c("month","year")],
+                           c("month","year")],
             ctd_oxy_depth[!colnames(ctd_oxy_depth) %in%
-                            c("month","year")],
+                           c("month","year")],
             physics[!colnames(physics) %in% 
-                      c("month", "year")],
+                           c("month", "year")],
             fp_df[!colnames(fp_df) %in% 
-                      c("month", "year","Total_ugL")],
+                           c("month", "year","Total_ugL")],
             secchi_df[!colnames(secchi_df) %in% 
-                      c("month", "year")],
-            hwat_storage_avg[!colnames(hwat_storage_avg) %in%
-                               c("month","year")])
+                           c("month", "year")],
+            heat_storage_avg[!colnames(heat_storage_avg) %in%
+                           c("month","year")],
+            nldas[!colnames(nldas) %in% 
+                          c("month","year")],
+            res_time[!colnames(res_time) %in% 
+                          c("month","year")])
 
 #export csv
 write.csv(all_drivers, "./Output/all_drivers.csv", row.names=FALSE)
 
-#------------------------------------------------------------------------------#
-#quick plots to visualize data
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), Temp_C_epi)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), Temp_C_hypo)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), DO_mgL_epi)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), DO_mgL_hypo)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), TN_ugL_epi)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), TN_ugL_hypo)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), TP_ugL_epi)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), TP_ugL_hypo)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), NH4_ugL_epi)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), NH4_ugL_hypo)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), NO3NO2_ugL_epi)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), NO3NO2_ugL_hypo)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), SRP_ugL_epi)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-
-ggplot(env_drivers, aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), SRP_ugL_hypo)) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date")
-                          
 #-----------------------------------------------------------------------------#
 #standardize for each year and variable (n=30 1s)
 phytos_std <- fp_long |> 
@@ -682,7 +653,7 @@ ggplot(phytos_std,
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-ggsave("Figures/BVR_phyto_succession_stacked.jpg", width=6, height=4) 
+#ggsave("Figures/BVR_phyto_succession_stacked.jpg", width=6, height=4) 
 
 #standardize for each year and variable (n=30 1s)
 chem_std <- chem_long |> 
@@ -730,5 +701,5 @@ ggplot(chem_std,
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-ggsave("Figures/BVR_total_np_succession.jpg", width=6, height=4) 
+#ggsave("Figures/BVR_total_np_succession.jpg", width=6, height=4) 
 
