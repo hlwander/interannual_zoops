@@ -307,48 +307,6 @@ chem_long <- chem |>
   pivot_longer(cols = c(TN_ugL_epi,TP_ugL_epi), 
                names_to = "variable")  
 
-#plot chem over time
-ggplot(data=subset(chem_long, !variable %in% c("TN_ugL_epi")), 
-       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
-                    color = variable)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=23, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=23, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=23, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=23, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=23, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=23, label= "2021") +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Banff", 4), 
-                     labels=c("NH4_ugL","NO3NO2_ugL","SRP_ugL","TP_ugL"))
-ggsave("Figures/chem_timeseries_notn.jpg", width=6, height=3) 
-
-#and now tn
-ggplot(data=subset(chem_long, variable %in% c("TN_ugL_epi")), 
-       aes(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d"), value,
-           color = variable)) +
-  geom_vline(xintercept = as.Date("2014-01-01")) +
-  geom_vline(xintercept = as.Date("2015-01-01")) +
-  geom_vline(xintercept = as.Date("2016-01-01")) +
-  geom_vline(xintercept = as.Date("2017-01-01")) +
-  geom_vline(xintercept = as.Date("2019-01-01")) +
-  geom_vline(xintercept = as.Date("2020-01-01")) +
-  geom_vline(xintercept = as.Date("2021-01-01")) +
-  geom_point() + geom_line() + theme_bw() + xlab("Date") +
-  annotate("text", x=as.Date("2014-07-01"), y=400, label= "2014") +
-  annotate("text", x=as.Date("2015-07-01"), y=400, label= "2015") +
-  annotate("text", x=as.Date("2016-07-01"), y=400, label= "2016") +
-  annotate("text", x=as.Date("2019-07-01"), y=400, label= "2019") +
-  annotate("text", x=as.Date("2020-07-01"), y=400, label= "2020") +
-  annotate("text", x=as.Date("2021-07-01"), y=400, label= "2021") 
-ggsave("Figures/chem_timeseries_tn.jpg", width=6, height=3) 
-
 #read in secchi data
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/81f396b3e910d3359907b7264e689052" 
 infile1 <- tempfile()
@@ -379,7 +337,7 @@ ggplot(secchi, aes(as.Date("2019-12-31") +
   geom_line() + geom_point() + theme_bw() + xlab("") +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("Cuyahoga", 6)) +
   scale_x_date(date_breaks = "1 month", date_labels = "%b") 
-ggsave("Figures/secchi_vs_doy.jpg", width=6, height=4)
+#ggsave("Figures/secchi_vs_doy.jpg", width=6, height=4)
 #there is a 23oct2015 3m secchi obs for bvr, but nothing in sep...
 
 #read in nldas met data
@@ -582,7 +540,7 @@ all_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("month", "yea
             physics[!colnames(physics) %in% 
                            c("month", "year")],
             fp_df[!colnames(fp_df) %in% 
-                           c("month", "year","Total_ugL")],
+                           c("month", "year")],
             secchi_df[!colnames(secchi_df) %in% 
                            c("month", "year")],
             heat_storage_avg[!colnames(heat_storage_avg) %in%

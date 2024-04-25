@@ -41,6 +41,7 @@ all_zoops_nmds <- all_zoops_nmds |>
          !year %in% c("2022"))
 #only 5 months per year bc needs to be equal for pairwise correlation matrix
 
+
 #select only data cols
 zoops_dens <- all_zoops_nmds |> select(Bosmina:Polyarthra)
 
@@ -179,7 +180,98 @@ mtext("NMDS2", side = 2, outer = TRUE, cex = 1.5, line = 0.5,
 #legend("topright", legend=c('2014','2015','2016','2019','2020','2021'),
 #       pt.bg=c(viridis::viridis(5, option="D")) ,bty = "n", cex=1.2, pch=21) 
 
+dev.off()
+
+#look at all years overlapping
+#jpeg("Figures/first_stage_NMDS_2v1_dens_overlapping_years.jpg")
+ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
+                       choices = c(1,2),type = "none")
+lines(NMDS_bray_first$points[all_zoops_nmds$year == 
+                               unique(all_zoops_nmds$year)[1] ,1], 
+      NMDS_bray_first$points[(all_zoops_nmds$year ==
+                                unique(all_zoops_nmds$year)[1]),2], 
+      col=viridis::viridis(6, option="D")[1])
+
+lines(NMDS_bray_first$points[all_zoops_nmds$year == 
+                               unique(all_zoops_nmds$year)[2] ,1], 
+      NMDS_bray_first$points[(all_zoops_nmds$year ==
+                                unique(all_zoops_nmds$year)[2]),2], 
+      col=viridis::viridis(6, option="D")[2])
+
+lines(NMDS_bray_first$points[all_zoops_nmds$year == 
+                               unique(all_zoops_nmds$year)[3] ,1], 
+      NMDS_bray_first$points[(all_zoops_nmds$year ==
+                                unique(all_zoops_nmds$year)[3]),2], 
+      col=viridis::viridis(6, option="D")[3])
+
+lines(NMDS_bray_first$points[all_zoops_nmds$year == 
+                               unique(all_zoops_nmds$year)[4] ,1], 
+      NMDS_bray_first$points[(all_zoops_nmds$year ==
+                                unique(all_zoops_nmds$year)[4]),2], 
+      col=viridis::viridis(6, option="D")[4])
+
+lines(NMDS_bray_first$points[all_zoops_nmds$year == 
+                               unique(all_zoops_nmds$year)[5] ,1], 
+      NMDS_bray_first$points[(all_zoops_nmds$year ==
+                                unique(all_zoops_nmds$year)[5]),2], 
+      col=viridis::viridis(6, option="D")[5])
+
+lines(NMDS_bray_first$points[all_zoops_nmds$year == 
+                               unique(all_zoops_nmds$year)[6] ,1], 
+      NMDS_bray_first$points[(all_zoops_nmds$year ==
+                                unique(all_zoops_nmds$year)[6]),2], 
+      col=viridis::viridis(6, option="D")[6])
+
+points(NMDS_bray_first$points[all_zoops_nmds$year == 
+                                unique(all_zoops_nmds$year)[1] ,1], 
+       NMDS_bray_first$points[(all_zoops_nmds$year == 
+                                 unique(all_zoops_nmds$year)[1]),2], 
+       col=viridis::viridis(6, option="D")[1],
+       pch = as.character(1:5), font=2, cex=3)
+
+points(NMDS_bray_first$points[all_zoops_nmds$year == 
+                                unique(all_zoops_nmds$year)[2] ,1], 
+       NMDS_bray_first$points[(all_zoops_nmds$year == 
+                                 unique(all_zoops_nmds$year)[2]),2], 
+       col=viridis::viridis(6, option="D")[2],
+       pch = as.character(1:5), font=2, cex=3)
+
+points(NMDS_bray_first$points[all_zoops_nmds$year == 
+                                unique(all_zoops_nmds$year)[3] ,1], 
+       NMDS_bray_first$points[(all_zoops_nmds$year == 
+                                 unique(all_zoops_nmds$year)[3]),2], 
+       col=viridis::viridis(6, option="D")[3],
+       pch = as.character(1:5), font=2, cex=3)
+
+points(NMDS_bray_first$points[all_zoops_nmds$year == 
+                                unique(all_zoops_nmds$year)[4] ,1], 
+       NMDS_bray_first$points[(all_zoops_nmds$year == 
+                                 unique(all_zoops_nmds$year)[4]),2], 
+       col=viridis::viridis(6, option="D")[4],
+       pch = as.character(1:5), font=2, cex=3)
+
+points(NMDS_bray_first$points[all_zoops_nmds$year == 
+                                unique(all_zoops_nmds$year)[5] ,1], 
+       NMDS_bray_first$points[(all_zoops_nmds$year == 
+                                 unique(all_zoops_nmds$year)[5]),2], 
+       col=viridis::viridis(6, option="D")[5],
+       pch = as.character(1:5), font=2, cex=3)
+
+points(NMDS_bray_first$points[all_zoops_nmds$year == 
+                                unique(all_zoops_nmds$year)[6] ,1], 
+       NMDS_bray_first$points[(all_zoops_nmds$year == 
+                                 unique(all_zoops_nmds$year)[6]),2], 
+       col=viridis::viridis(6, option="D")[6],
+       pch = as.character(1:5), font=2, cex=3)
+
+legend("bottomleft", legend=c("May","June","July","August","September"),
+       pch=as.character(1:5) ,bty = "n", cex=1.2) 
+
+legend("topright", legend=c('2014','2015','2016','2019','2020','2021'),
+       pt.bg=c(viridis::viridis(6, option="D")) ,bty = "n", cex=1.2, pch=21) 
+
 #dev.off()
+
 
 #------------------------------------------------------------------------------#
 #plot species vectors
@@ -204,11 +296,12 @@ par(mgp = c(2, 0.6, 0))
                            xlim= c(-0.7, 0.7), ylim= c(-0.3, 0.6),
                            xaxt = 'n', yaxt = 'n')
     
-    arrows(0, 0, scores_sp$NMDS1, scores_sp$NMDS2, 
-           length = 0.1, code=2) 
+    arrows(0, 0, scores_sp$NMDS1, scores_sp$NMDS2, lwd=3,
+           length = 0.1, code=2, col=c(rep("#44637D",3),rep("#AAC9ED",2),
+                                       rep("#613921",5))) 
     
     text(x=scores_sp$NMDS1, y=scores_sp$NMDS2, 
-         label=scores_sp$sp)
+         label=scores_sp$sp, cex=1.4)
     
     lines(NMDS_bray_first$points[all_zoops_nmds$year == 
                                    unique(all_zoops_nmds$year)[i] ,1], 
@@ -492,85 +585,41 @@ kw_results_disp <- data.frame("Group" = c("2014", "2015", "2016", "2019",
 
 #------------------------------------------------------------------------------#
 #create distance matrices for all years (first stage pairwise dissimilarities)
-dist2014 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2014",],
-                                     method='bray'))
-dist2015 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2015",],
-                                     method='bray'))
-dist2016 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2016",],
-                                     method='bray'))
-dist2019 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2019",],
-                                     method='bray'))
-dist2020 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2020",],
-                                     method='bray'))
-dist2021 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2021",],
-                                     method='bray'))
+#dist2014 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2014",],
+#                                     method='bray'))
+#dist2015 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2015",],
+#                                     method='bray'))
+#dist2016 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2016",],
+#                                     method='bray'))
+#dist2019 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2019",],
+#                                     method='bray'))
+#dist2020 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2020",],
+#                                     method='bray'))
+#dist2021 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2021",],
+#                                     method='bray'))
 
 #combine all distance matrices - each col is a year/month combo (5X30)
-alldist <- as.data.frame(cbind(dist2014, dist2015, dist2016,
-                              dist2019, dist2020, dist2021))
+#alldist <- as.data.frame(cbind(dist2014, dist2015, dist2016,
+#                              dist2019, dist2020, dist2021))
 
 #perform pairwise correlations among dissimilarity matrices
 #and convert from similarity to distance 
-stage2 <- as.matrix(vegan::vegdist(1-cor(alldist)), method="bray")
+#stage2 <- as.matrix(vegan::vegdist(1-cor(alldist)), method="bray")
 
 #run NMDS again - clustering will indicate years where changes through time are similar
 #scree plot to choose dimension 
 #jpeg("figures/scree.jpg") 
-goeveg::dimcheckMDS(stage2, distance = "bray", 
-                    k = 4, trymax = 20, autotransform = TRUE)
+#goeveg::dimcheckMDS(stage2, distance = "bray", 
+#                    k = 4, trymax = 20, autotransform = TRUE)
 #dev.off()
 
-set.seed(11)
+#set.seed(11)
 
 #now do NMDS w/ 4 dimensions for consistency
-NMDS_bray_second <- vegan::metaMDS(stage2, distance='bray', k=4, trymax=20, 
-                            autotransform=FALSE, pc=FALSE, plot=FALSE)
-NMDS_bray_second$stress
+#NMDS_bray_second <- vegan::metaMDS(stage2, distance='bray', k=4, trymax=20, 
+#                            autotransform=FALSE, pc=FALSE, plot=FALSE)
+#NMDS_bray_second$stress
 # 0.014
-
-#--------------------------------------------------------------------------#
-#NMDS plot - second-stage
-
-ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites','species'),
-                       choices = c(1,2),type = "n")
-year <- ggordiplots::gg_ordiplot(ord, all_zoops_nmds$year, kind = "ehull", 
-                                 spiders = TRUE, ellipse = FALSE,
-                                 label = FALSE, hull = FALSE, 
-                                 plot = FALSE, pt.size=0.9) 
-
-year$plot + geom_point() + theme_bw() + 
-      geom_point(data=year$df_mean.ord, aes(x, y), 
-                pch=21, size=2, 
-                 fill=viridis::viridis(6, option="D")) +
-      theme(text = element_text(size=8), 
-            axis.text = element_text(size=6, color="black"), 
-            axis.title = element_text(size=6),
-            legend.background = element_blank(), 
-            legend.key.height=unit(0.3,"line"),
-            legend.box.margin=margin(-10,-10,-10,-10),
-            legend.margin=margin(-0,-0,-0,-0),
-            legend.direction = "vertical",
-            axis.text.x = element_text(vjust = 0.5), 
-            axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
-            strip.background = element_rect(fill = "transparent"), 
-            legend.position = "right", legend.spacing = unit(-0.5, 'cm'),
-            plot.margin = unit(c(0,-0.1,0,0), 'lines'),
-            panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
-            legend.key.width =unit(0.1,"line")) +
-  guides(color = guide_legend(override.aes = list(
-    color = viridis::viridis(6, option="D")))) +
-      scale_fill_manual("",values=viridis::viridis(6, option="D"),
-                        label=c('2014','2015',"2016","2019","2020","2021")) +
-      scale_color_manual("",values=rep("gray",6) )
-#ggsave("Figures/second_stage_NMDS_2v1_dens.jpg", width=3, height=1) 
-
-
-#ANOSIM test on second-stage similarities
-ano_year = anosim(stage2, all_zoops_nmds$year, distance = "bray", permutations = 9999)
-#p > 0.05 so no sig difference among years
-
-ano_month = anosim(stage2, all_zoops_nmds$month, distance = "bray", permutations = 9999)
-#p < 0.01 so there is a difference among months!
 
 #------------------------------------------------------------------------------#
 #read in env csv
@@ -598,7 +647,7 @@ driver_NMDS_correlation <- data.frame("variable" = scores$env,
 #write.csv(driver_NMDS_correlation, "Output/driver_NMDS_correlation.csv", row.names=F)
 
 #look for correlations between all pairs of env variables
-driver_correlation <- data.frame(cor(zoops_plus_drivers[,c(13:22, 24:31)], method = "spearman"))
+driver_correlation <- data.frame(cor(zoops_plus_drivers[,c(13:22, 24:26, 28:31)], method = "spearman"))
 #write.csv(driver_correlation, "Output/driver_correlation.csv", row.names=F)
 
 #plot drivers w/ NMDS
@@ -689,7 +738,7 @@ zoop_drivers <- read.csv("Output/all_drivers.csv") |> select(-diff) |>
 #group years based on hysteresis direction
 zoop_drivers$box <- ifelse(zoop_drivers$year %in% c("2014","2019", "2021"), 
                            "clockwise", ifelse(zoop_drivers$year %in% c(
-                             "2016", "2020"), "counterclockwise","NA")) 
+                             "2015", "2016", "2020"), "counterclockwise","NA")) 
 
 #convert from wide to long
 zoop_drivers_long <- zoop_drivers |> 
@@ -700,13 +749,13 @@ zoop_drivers_long <- zoop_drivers |>
 #change order of boxplots
 zoop_drivers_long$year <- factor(zoop_drivers_long$year , 
                                 levels=c("2014", "2019" ,"2021", 
-                                         "2016", "2020", "2015"))
+                                         "2015", "2016", "2020"))
 
 #now look at boxplots for each driver
 ggplot(data=subset(zoop_drivers_long, !box %in% c("NA")),
        aes(x=year, y=value, group = year)) +
   geom_boxplot(aes(fill=box, alpha = 0.95)) + 
-  facet_wrap(~variable, nrow=5, scales = "free_y") +
+  facet_wrap(~variable, ncol=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none") +
   scale_fill_manual("",values=c("#01586D", "#8B0C13"))+
   theme(text = element_text(size=10), 
@@ -714,13 +763,13 @@ ggplot(data=subset(zoop_drivers_long, !box %in% c("NA")),
         legend.key.height=unit(0.3,"line"),
         legend.box.margin=margin(-10,-10,-10,-10),
         legend.margin=margin(-0,-0,-0,-0),
-        legend.direction = "horizontal",
+        legend.direction = "vertical",
         legend.title = element_blank(),
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8),
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
-        legend.position = "bottom", legend.spacing = unit(-0.5, 'cm'),
-        plot.margin = unit(c(0,0,1,0), 'lines'),
+        legend.position = c(0.7, 0.03), legend.spacing = unit(-0.5, 'cm'),
+        plot.margin = unit(c(0,0,0,0), 'lines'),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
         legend.key.width =unit(0.3,"line"))
 #ggsave("Figures/drivers_vs_hysteresis_boxplot_years.jpg", width=6, height=5)
@@ -746,18 +795,103 @@ ggplot(data=subset(zoop_drivers_long, !box %in% c("NA") &
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 #ggsave("Figures/drivers_vs_hysteresis_boxplot_6.jpg", width=6, height=5)
 
-#zooming in on 2015 becuase looks like it starts out clockwise then switches to cc
-ggplot(data=subset(zoop_drivers_long, box %in% c("NA")),
-       aes(x=month, y=value, group = month)) +
-  geom_point() + 
+#points with sd
+zoop_drivers_long |> group_by(year, box, variable) |> 
+  summarize(mean = mean(value),
+            sd = sd(value)) |> 
+  ungroup() |> 
+  filter(variable %in% vars) |> 
+ggplot(aes(x=year, y=mean, group = box)) +
+  geom_point(aes(color=box, alpha = 0.95), cex=3) + 
+  geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
   facet_wrap(~variable, nrow=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
-  scale_fill_manual("",values=c("#01586D", "#8B0C13"))+
+  scale_color_manual("",values=c("#01586D", "#8B0C13"))+
   theme(text = element_text(size=15), 
         axis.text = element_text(size=12, color="black"), 
         axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
-        plot.margin = unit(c(0,0,0,0), 'lines'),
+        plot.margin = unit(c(0.5,0.3,1,0), 'lines'),
+        legend.position = "bottom",
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-15,-0,-0,-0),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-#ggsave("Figures/drivers_vs_month_2015.jpg", width=6, height=5)
+#ggsave("Figures/drivers_vs_hysteresis_points_6.jpg", width=7, height=5)
+
+#month on x and colored points for years
+zoop_drivers_long |> group_by(year, month, variable) |> 
+  summarize(mean = mean(value)) |> 
+  ungroup() |> 
+  filter(variable %in% vars) |> 
+  ggplot(aes(x=as.factor(month), y=mean, group = year)) +
+  geom_point(aes(color=year, alpha = 0.95), cex=3) + 
+  geom_line(aes(color=year, alpha = 0.95)) +
+  facet_wrap(~variable, nrow=5, scales = "free_y") +
+  theme_bw() + xlab("") + guides(alpha = "none", fill = "none",
+                                 colour = guide_legend(nrow = 1)) +
+  scale_color_manual("",values=NatParksPalettes::
+                       natparks.pals("Banff",6))+
+  scale_x_discrete(labels= c("May","June","July",
+                             "August","September")) +
+  theme(text = element_text(size=15), 
+        axis.text = element_text(size=12, color="black"), 
+        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        plot.margin = unit(c(0.5,0.3,1,0), 'lines'),
+        legend.position = "bottom",
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-15,-0,-0,-0),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
+#ggsave("Figures/6drivers_vs_months.jpg", width=7, height=5)
+
+#points with sd --> all drivers
+zoop_drivers_long |> group_by(year, box, variable) |> 
+  summarize(mean = mean(value, na.rm=T),
+            sd = sd(value, na.rm=T)) |> 
+  ungroup() |> 
+  ggplot(aes(x=year, y=mean, group = box)) +
+  geom_point(aes(color=box, alpha = 0.95), cex=3) + 
+  geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
+  facet_wrap(~variable, ncol=5, scales = "free_y") +
+  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
+  scale_color_manual("",values=c("#01586D", "#8B0C13"))+
+  theme(text = element_text(size=10), 
+        axis.text = element_text(size=9, color="black"), 
+        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        plot.margin = unit(c(0.5,0.3,0,0), 'lines'),
+        legend.position = c(0.9, 0.01),
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-15,-0,-0,-0),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
+#ggsave("Figures/all_drivers_vs_hysteresis_points.jpg", width=7, height=5)
+
+#month on x and colored points for years - all drivers
+zoop_drivers_long |> group_by(year, month, variable) |> 
+  summarize(mean = mean(value)) |> 
+  ungroup() |> 
+  filter(!variable %in% "Shortwave") |> 
+  ggplot(aes(x=as.factor(month), y=mean, group = year)) +
+  geom_point(aes(color=year, alpha = 0.95), cex=3) + 
+  geom_line(aes(color=year, alpha = 0.95)) +
+  facet_wrap(~variable, ncol=5, scales = "free_y") +
+  theme_bw() + xlab("") + guides(alpha = "none", fill = "none",
+                                 colour = guide_legend(nrow = 1)) +
+  scale_color_manual("",values=NatParksPalettes::
+                       natparks.pals("Banff",6))+
+  scale_x_discrete(labels= c("May","June","July",
+                             "August","September")) +
+  theme(text = element_text(size=10), 
+        axis.text = element_text(size=9, color="black"), 
+        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        plot.margin = unit(c(0.5,0.3,1,0), 'lines'),
+        legend.position = "bottom",
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-15,-0,-0,-0),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
+#ggsave("Figures/all_drivers_vs_months.jpg", width=7, height=5)
