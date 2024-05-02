@@ -167,9 +167,10 @@ for (i in 1:6) {
    #if (i %in% c(1, 4))
    #  axis(2, col = "black", col.axis = "black")
    #  box(col = "black")
-  #if (i %in% c(4))
-    #legend("bottomleft", legend=c('May','June','July','August','September'),
-     #      pch=c(as.character(1:5)) ,bty = "n", cex=1.5) 
+  if (i %in% c(4)){
+    legend(-0.3, 0.5, legend=c('May','June','July','August','September'),
+           pch=c(as.character(1:5)) ,bty = "n", cex=1.8) 
+}
 }
 
 mtext("NMDS1", side = 1, outer = TRUE, cex = 1.5, line = 0.9,
@@ -752,7 +753,7 @@ zoop_drivers_long$year <- factor(zoop_drivers_long$year ,
                                          "2015", "2016", "2020"))
 
 #now look at boxplots for each driver
-ggplot(data=subset(zoop_drivers_long, !box %in% c("NA")),
+ggplot(zoop_drivers_long, 
        aes(x=year, y=value, group = year)) +
   geom_boxplot(aes(fill=box, alpha = 0.95)) + 
   facet_wrap(~variable, ncol=5, scales = "free_y") +
@@ -778,8 +779,13 @@ ggplot(data=subset(zoop_drivers_long, !box %in% c("NA")),
 vars <- c("buoyancy_frequency","dissolved_oxygen_epi", "thermocline_depth",
            "total_nitrogen_epi","total_phosphorus_epi","water_level")
 
+#group by years (one val per year/variable)
+zoop_drivers_long_yearly <- zoop_drivers_long |> 
+  group_by(year, variable, box) |> 
+  summarise(value = mean(value, na.rm=T))
+
 #just group by direction
-ggplot(data=subset(zoop_drivers_long, !box %in% c("NA") &
+ggplot(data=subset(zoop_drivers_long_yearly,
                      variable %in% vars),
        aes(x=box, y=value, group = box)) +
   geom_boxplot(aes(fill=box, alpha = 0.95)) + 
@@ -794,6 +800,24 @@ ggplot(data=subset(zoop_drivers_long, !box %in% c("NA") &
         plot.margin = unit(c(0,0,0,0), 'lines'),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 #ggsave("Figures/drivers_vs_hysteresis_boxplot_6.jpg", width=6, height=5)
+
+#same as above, but with all vars
+ggplot(data = subset(zoop_drivers_long_yearly, 
+                     !variable %in% "Shortwave"),
+       aes(x=box, y=value, group = box)) +
+  geom_boxplot(aes(fill=box, alpha = 0.95)) + 
+  facet_wrap(~variable, ncol=5, scales = "free_y") +
+  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
+  scale_fill_manual("",values=c("#01586D", "#8B0C13"))+
+  theme(text = element_text(size=8), 
+        axis.text = element_text(size=9, color="black"), 
+        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        plot.margin = unit(c(0,0,0,0), 'lines'),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
+#ggsave("Figures/all_drivers_vs_hysteresis_boxplot.jpg", width=6, height=5)
+
 
 #points with sd
 zoop_drivers_long |> group_by(year, box, variable) |> 
@@ -895,3 +919,241 @@ zoop_drivers_long |> group_by(year, month, variable) |>
         legend.margin=margin(-15,-0,-0,-0),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 #ggsave("Figures/all_drivers_vs_months.jpg", width=7, height=5)
+
+#---------------------------------------------------------------#
+# Mann-Whitney U test between clockwise and counterclockwise vars
+# null hypothesis = no difference in means (p > 0.05)
+
+#none of the vars are sig different...
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="AirTemp"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="AirTemp"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Bluegreen_ugL"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="Bluegreen_ugL"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Brown_ugL"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="Brown_ugL"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Green_ugL"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="Green_ugL"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Longwave"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="Longwave"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Mixed_ugL"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="Mixed_ugL"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Rain"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="Rain"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="RelHum"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="RelHum"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="TN_ugL_hypo"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="TN_ugL_hypo"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="TP_ugL_hypo"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="TP_ugL_hypo"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Temp_C_epi"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="Temp_C_epi"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Temp_C_hypo"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="Temp_C_hypo"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Total_ugL"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="Total_ugL"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="WindSpeed"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="WindSpeed"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="buoyancy_frequency"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="buoyancy_frequency"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="dissolved_oxygen_epi"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="dissolved_oxygen_epi"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="heat"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="heat"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="oxy_depth"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="oxy_depth"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="res_time_d"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="res_time_d"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="schmidt_stability"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="schmidt_stability"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="secchi"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="secchi"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="thermocline_depth"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="thermocline_depth"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="total_nitrogen_epi"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="total_nitrogen_epi"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="total_phosphorus_epi"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="total_phosphorus_epi"], exact = FALSE)
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="water_level"]~ 
+  zoop_drivers_long_yearly$box[
+  zoop_drivers_long_yearly$variable=="water_level"], exact = FALSE)
+
+
+
+#---------------------------------------------------------------#
+#check assumptions for ANOVA
+
+library(afex)
+library(rstatix)
+
+zoop_drivers |> 
+  mutate(month = as.factor(month)) |> 
+  group_by(month) |> 
+  get_summary_stats(type = "mean_sd")
+
+ggboxplot(zoop_drivers_long, x = "month", y = "value") +
+  facet_wrap(~variable, scales="free_y")
+
+#check for outliers - half of the data are outliers
+outliers <- zoop_drivers_long %>% 
+  group_by(month, variable) %>%
+  identify_outliers(value)
+
+#check for normality - build linear model
+model  <- lm(res_time_d ~ month, data = zoop_drivers)
+# Create a QQ plot of residuals
+ggqqplot(residuals(model)) 
+
+# Compute Shapiro-Wilk test of normality
+shapiro_test(residuals(model))
+#if p-value is not significant, we can assume normality
+#water level, thermocline depth, green, bluegreen, 
+#brown, mixed, rain, and residence time are not normal
+
+#honestly easier to do KW for consistency
+
+kruskal.test(total_nitrogen_epi ~ month, data = zoop_drivers)
+kruskal.test(TN_ugL_hypo ~ month, data = zoop_drivers)
+kruskal.test(total_phosphorus_epi ~ month, data = zoop_drivers)
+kruskal.test(TP_ugL_hypo ~ month, data = zoop_drivers)
+kruskal.test(Temp_C_epi ~ month, data = zoop_drivers) # p = 0.03 (0.001 * 25)
+kruskal.test(Temp_C_hypo ~ month, data = zoop_drivers) 
+kruskal.test(dissolved_oxygen_epi ~ month, data = zoop_drivers)
+kruskal.test(water_level ~ month, data = zoop_drivers)
+kruskal.test(thermocline_depth ~ month, data = zoop_drivers)
+kruskal.test(oxy_depth ~ month, data = zoop_drivers)
+kruskal.test(schmidt_stability ~ month, data = zoop_drivers)
+kruskal.test(buoyancy_frequency ~ month, data = zoop_drivers)
+kruskal.test(Green_ugL ~ month, data = zoop_drivers)
+kruskal.test(Bluegreen_ugL ~ month, data = zoop_drivers)
+kruskal.test(Brown_ugL ~ month, data = zoop_drivers)
+kruskal.test(Mixed_ugL ~ month, data = zoop_drivers)
+kruskal.test(Total_ugL ~ month, data = zoop_drivers)
+kruskal.test(secchi ~ month, data = zoop_drivers) # p = 0.03 (0.001 * 25)
+kruskal.test(heat ~ month, data = zoop_drivers)
+kruskal.test(AirTemp ~ month, data = zoop_drivers) # p = 0.00125 (0.00005 * 25)
+kruskal.test(Longwave ~ month, data = zoop_drivers) # p = 0.003 (0.0001 * 25) 
+kruskal.test(RelHum ~ month, data = zoop_drivers) 
+kruskal.test(WindSpeed ~ month, data = zoop_drivers) # p = 0.05 (0.002 * 25)
+kruskal.test(Rain ~ month, data = zoop_drivers) 
+kruskal.test(res_time_d ~ month, data = zoop_drivers)
+# p-values have to be multiplied by 25
+
+#now dunn tests for epi temp, secchi, air temp, longwave, wind speed
+
+## Order groups by median
+zoop_drivers$month = factor(zoop_drivers$month,
+                     levels=c("5", "6", "7", "8", "9"))
+
+library(FSA)
+
+wtemp_month <- dunnTest(Temp_C_epi ~ month,
+              data=zoop_drivers,
+              method="bonferroni") 
+
+secchi_month <- dunnTest(secchi ~ month,
+                       data=zoop_drivers,
+                       method="bonferroni") 
+
+atemp_month <- dunnTest(AirTemp ~ month,
+                         data=zoop_drivers,
+                         method="bonferroni") 
+
+longwave_month <- dunnTest(Longwave ~ month,
+                        data=zoop_drivers,
+                        method="bonferroni") 
+
+wind_month <- dunnTest(WindSpeed ~ month,
+                           data=zoop_drivers,
+                           method="bonferroni") 
+
+ggboxplot(zoop_drivers_long, x = "year", y = "value") +
+  facet_wrap(~variable, scales="free_y") + 
+  theme(axis.text.x = element_text(angle=, vjust=0.8, hjust=0.8))
+
+#now KW for years
+kruskal.test(total_nitrogen_epi ~ year, data = zoop_drivers)
+kruskal.test(TN_ugL_hypo ~ year, data = zoop_drivers)
+kruskal.test(total_phosphorus_epi ~ year, data = zoop_drivers)
+kruskal.test(TP_ugL_hypo ~ year, data = zoop_drivers)
+kruskal.test(Temp_C_epi ~ year, data = zoop_drivers) 
+kruskal.test(Temp_C_hypo ~ year, data = zoop_drivers) # p = 0.01 (0.0005 * 25)
+kruskal.test(dissolved_oxygen_epi ~ year, data = zoop_drivers)
+kruskal.test(water_level ~ year, data = zoop_drivers)
+kruskal.test(thermocline_depth ~ year, data = zoop_drivers)
+kruskal.test(oxy_depth ~ year, data = zoop_drivers)
+kruskal.test(schmidt_stability ~ year, data = zoop_drivers)
+kruskal.test(buoyancy_frequency ~ year, data = zoop_drivers)
+kruskal.test(Green_ugL ~ year, data = zoop_drivers)
+kruskal.test(Bluegreen_ugL ~ year, data = zoop_drivers)
+kruskal.test(Brown_ugL ~ year, data = zoop_drivers)
+kruskal.test(Mixed_ugL ~ year, data = zoop_drivers)
+kruskal.test(Total_ugL ~ year, data = zoop_drivers)
+kruskal.test(secchi ~ year, data = zoop_drivers) 
+kruskal.test(heat ~ year, data = zoop_drivers)
+kruskal.test(AirTemp ~ year, data = zoop_drivers) 
+kruskal.test(Longwave ~ year, data = zoop_drivers) 
+kruskal.test(RelHum ~ year, data = zoop_drivers) 
+kruskal.test(WindSpeed ~ year, data = zoop_drivers)
+kruskal.test(Rain ~ year, data = zoop_drivers) 
+kruskal.test(res_time_d ~ year, data = zoop_drivers)
+# p-values have to be multiplied by 25
+
+htemp_year <- dunnTest(Temp_C_hypo ~ year,
+                       data=zoop_drivers,
+                       method="bonferroni") 
+
+
+#library(rcompanion)
+#
+#cldList(P.adj ~ Comparison, data = temp_month,
+#        threshold  = 0.05)
+
