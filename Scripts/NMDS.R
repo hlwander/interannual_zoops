@@ -723,10 +723,10 @@ year$plot + geom_point() + theme_bw() +
 #ggsave("Figures/first_stage_NMDS_2v1_years_envfit.jpg", width=4, height=3)
 
 #------------------------------------------------------------------------------#
-# Which drivers explain patterns in zooplankton seasoanl succession among years?
+# Which drivers explain patterns in zooplankton seasonal succession among years?
 
 #read in driver df
-zoop_drivers <- read.csv("Output/all_drivers.csv") |> select(-diff) |> 
+zoop_drivers <- read.csv("Output/all_drivers.csv") |> 
   rename(buoyancy_frequency = BF,
          schmidt_stability = SS,
          water_level = waterlevel,
@@ -777,17 +777,19 @@ ggplot(zoop_drivers_long,
 
 #hand-picking the vars that are most different
 vars <- c("buoyancy_frequency","dissolved_oxygen_epi", "thermocline_depth",
-           "total_nitrogen_epi","total_phosphorus_epi","water_level")
+           "total_nitrogen_epi","total_phosphorus_epi",
+          "res_time_d","WindSpeed", "secchi")
 
 #group by years (one val per year/variable)
 zoop_drivers_long_yearly <- zoop_drivers_long |> 
   group_by(year, variable, box) |> 
-  summarise(value = mean(value, na.rm=T))
+  summarise(mean = mean(value, na.rm=T),
+            median = median(value, na.rm=T))
 
 #just group by direction
 ggplot(data=subset(zoop_drivers_long_yearly,
                      variable %in% vars),
-       aes(x=box, y=value, group = box)) +
+       aes(x=box, y=median, group = box)) +
   geom_boxplot(aes(fill=box, alpha = 0.95)) + 
   facet_wrap(~variable, nrow=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
@@ -801,38 +803,39 @@ ggplot(data=subset(zoop_drivers_long_yearly,
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 #ggsave("Figures/drivers_vs_hysteresis_boxplot_6.jpg", width=6, height=5)
 
-#same as above, but with all vars
+#points all vars
 ggplot(data = subset(zoop_drivers_long_yearly, 
                      !variable %in% "Shortwave"),
-       aes(x=box, y=value, group = box)) +
-  geom_boxplot(aes(fill=box, alpha = 0.95)) + 
+       aes(x=year, y=median, color = box)) +
+  #geom_boxplot(aes(fill=box, alpha = 0.95)) + 
+  geom_point() +
   facet_wrap(~variable, ncol=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
-  scale_fill_manual("",values=c("#01586D", "#8B0C13"))+
+  scale_color_manual("",values=c("#01586D", "#8B0C13"))+
   theme(text = element_text(size=8), 
         axis.text = element_text(size=9, color="black"), 
         axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
         plot.margin = unit(c(0,0,0,0), 'lines'),
+        legend.position = c(0.8, 0.01),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-#ggsave("Figures/all_drivers_vs_hysteresis_boxplot.jpg", width=6, height=5)
+#ggsave("Figures/all_drivers_vs_hysteresis_points_median.jpg", width=6, height=5)
 
 
-#points with sd
+#points
 zoop_drivers_long |> group_by(year, box, variable) |> 
-  summarize(mean = mean(value),
-            sd = sd(value)) |> 
+  summarize(median = median(value, na.rm=T)) |> 
   ungroup() |> 
   filter(variable %in% vars) |> 
-ggplot(aes(x=year, y=mean, group = box)) +
+ggplot(aes(x=year, y=median, group = box)) +
   geom_point(aes(color=box, alpha = 0.95), cex=3) + 
-  geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
+  #geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
   facet_wrap(~variable, nrow=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
   scale_color_manual("",values=c("#01586D", "#8B0C13"))+
-  theme(text = element_text(size=15), 
-        axis.text = element_text(size=12, color="black"), 
+  theme(text = element_text(size=12), 
+        axis.text = element_text(size=11, color="black"), 
         axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
@@ -841,21 +844,68 @@ ggplot(aes(x=year, y=mean, group = box)) +
         legend.box.margin=margin(-10,-10,-10,-10),
         legend.margin=margin(-15,-0,-0,-0),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-#ggsave("Figures/drivers_vs_hysteresis_points_6.jpg", width=7, height=5)
+#ggsave("Figures/drivers_vs_hysteresis_points_8_median.jpg", width=7, height=5)
+
+#median vs trajectory
+zoop_drivers_long |> group_by(year, box, variable) |> 
+  summarize(median = median(value, na.rm=T)) |> 
+  ungroup() |> 
+  filter(variable %in% vars) |> 
+  ggplot(aes(x=box, y=median, group = box)) +
+  geom_point(aes(color=year, alpha = 0.95), cex=3) + 
+  facet_wrap(~variable, nrow=5, scales = "free_y") +
+  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
+  scale_color_manual("",values=c("#01586D","#01586D","#01586D", 
+                                 "#8B0C13","#8B0C13","#8B0C13"))+
+  theme(text = element_text(size=12), 
+        axis.text = element_text(size=11, color="black"), 
+        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        plot.margin = unit(c(0.5,0.3,-1,0), 'lines'),
+        legend.position = "none",
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-15,-0,-0,-0),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
+#ggsave("Figures/8drivers_vs_trajectory_vertical_points.jpg", width=7, height=5)
+
+#median vs trajectory
+zoop_drivers_long |> group_by(year, box, variable) |> 
+  summarize(median = median(value, na.rm=T)) |> 
+  ungroup() |> 
+  ggplot(aes(x=box, y=median, group = box)) +
+  geom_point(aes(color=year, alpha = 0.95), cex=3) + 
+  facet_wrap(~variable, nrow=5, scales = "free_y") +
+  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
+  scale_color_manual("",values=c("#01586D","#01586D","#01586D", 
+                                 "#8B0C13","#8B0C13","#8B0C13"))+
+  theme(text = element_text(size=8), 
+        axis.text = element_text(size=7, color="black"), 
+        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        plot.margin = unit(c(0.5,0.3,-1,0), 'lines'),
+        legend.position = "none",
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-15,-0,-0,-0),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
+#ggsave("Figures/all_drivers_vs_trajectory_vertical_points.jpg", width=7, height=5)
+
+
 
 #month on x and colored points for years
 zoop_drivers_long |> group_by(year, month, variable) |> 
-  summarize(mean = mean(value)) |> 
+  summarize(median = median(value)) |> 
   ungroup() |> 
   filter(variable %in% vars) |> 
-  ggplot(aes(x=as.factor(month), y=mean, group = year)) +
+  ggplot(aes(x=as.factor(month), y=median, group = year)) +
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
   geom_line(aes(color=year, alpha = 0.95)) +
   facet_wrap(~variable, nrow=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none",
                                  colour = guide_legend(nrow = 1)) +
-  scale_color_manual("",values=NatParksPalettes::
-                       natparks.pals("Banff",6))+
+  scale_color_manual("",values= c("#003366","#0099CC","#339999",
+                                  "#660000","#CC0000","#CC6666"))+
   scale_x_discrete(labels= c("May","June","July",
                              "August","September")) +
   theme(text = element_text(size=15), 
@@ -868,30 +918,7 @@ zoop_drivers_long |> group_by(year, month, variable) |>
         legend.box.margin=margin(-10,-10,-10,-10),
         legend.margin=margin(-15,-0,-0,-0),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-#ggsave("Figures/6drivers_vs_months.jpg", width=7, height=5)
-
-#points with sd --> all drivers
-zoop_drivers_long |> group_by(year, box, variable) |> 
-  summarize(mean = mean(value, na.rm=T),
-            sd = sd(value, na.rm=T)) |> 
-  ungroup() |> 
-  ggplot(aes(x=year, y=mean, group = box)) +
-  geom_point(aes(color=box, alpha = 0.95), cex=3) + 
-  geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
-  facet_wrap(~variable, ncol=5, scales = "free_y") +
-  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
-  scale_color_manual("",values=c("#01586D", "#8B0C13"))+
-  theme(text = element_text(size=10), 
-        axis.text = element_text(size=9, color="black"), 
-        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
-        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
-        strip.background = element_rect(fill = "transparent"), 
-        plot.margin = unit(c(0.5,0.3,0,0), 'lines'),
-        legend.position = c(0.9, 0.01),
-        legend.box.margin=margin(-10,-10,-10,-10),
-        legend.margin=margin(-15,-0,-0,-0),
-        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-#ggsave("Figures/all_drivers_vs_hysteresis_points.jpg", width=7, height=5)
+#ggsave("Figures/8drivers_vs_months.jpg", width=7, height=5)
 
 #month on x and colored points for years - all drivers
 zoop_drivers_long |> group_by(year, month, variable) |> 
@@ -904,8 +931,8 @@ zoop_drivers_long |> group_by(year, month, variable) |>
   facet_wrap(~variable, ncol=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none",
                                  colour = guide_legend(nrow = 1)) +
-  scale_color_manual("",values=NatParksPalettes::
-                       natparks.pals("Banff",6))+
+  scale_color_manual("",values= c("#003366","#0099CC","#339999",
+                                  "#660000","#CC0000","#CC6666"))+
   scale_x_discrete(labels= c("May","June","July",
                              "August","September")) +
   theme(text = element_text(size=10), 
@@ -924,107 +951,109 @@ zoop_drivers_long |> group_by(year, month, variable) |>
 # Mann-Whitney U test between clockwise and counterclockwise vars
 # null hypothesis = no difference in means (p > 0.05)
 
-#none of the vars are sig different...
+#ordered by low --> highest p-value for holm correction
+#because lowest pval is > 0.05/25 = 0.002, no difference in means for any vars
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="heat"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="heat"], exact = FALSE) # p = 0.08
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="WindSpeed"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="WindSpeed"], exact = FALSE) # p = 0.19
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="buoyancy_frequency"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="buoyancy_frequency"], exact = FALSE) # p = 0.19
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="dissolved_oxygen_epi"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="dissolved_oxygen_epi"], exact = FALSE) # p = 0.19
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="res_time_d"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="res_time_d"], exact = FALSE) # p = 0.19
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="thermocline_depth"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="thermocline_depth"], exact = FALSE) # p = 0.38
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="total_nitrogen_epi"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="total_nitrogen_epi"], exact = FALSE) # p = 0.38
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="total_phosphorus_epi"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="total_phosphorus_epi"], exact = FALSE) # p = 0.38
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Bluegreen_ugL"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="Bluegreen_ugL"], exact = FALSE) # p = 0.38
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Longwave"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="Longwave"], exact = FALSE) # p = 0.38
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Mixed_ugL"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="Mixed_ugL"], exact = FALSE) # p = 0.38
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="TP_ugL_hypo"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="TP_ugL_hypo"], exact = FALSE) # p = 0.38
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="secchi"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="secchi"], exact = FALSE) # p = 0.66
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="water_level"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="water_level"], exact = FALSE) # p = 0.66
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="Rain"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="Rain"], exact = FALSE) # p = 0.66
+wilcox.test(zoop_drivers_long_yearly$value[
+  zoop_drivers_long_yearly$variable=="RelHum"]~ 
+    zoop_drivers_long_yearly$box[
+      zoop_drivers_long_yearly$variable=="RelHum"], exact = FALSE) # p = 0.66
 wilcox.test(zoop_drivers_long_yearly$value[
   zoop_drivers_long_yearly$variable=="AirTemp"]~ 
   zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="AirTemp"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="Bluegreen_ugL"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="Bluegreen_ugL"], exact = FALSE)
+  zoop_drivers_long_yearly$variable=="AirTemp"], exact = FALSE) # p = 1
 wilcox.test(zoop_drivers_long_yearly$value[
   zoop_drivers_long_yearly$variable=="Brown_ugL"]~ 
   zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="Brown_ugL"], exact = FALSE)
+  zoop_drivers_long_yearly$variable=="Brown_ugL"], exact = FALSE) # p = 1
 wilcox.test(zoop_drivers_long_yearly$value[
   zoop_drivers_long_yearly$variable=="Green_ugL"]~ 
   zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="Green_ugL"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="Longwave"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="Longwave"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="Mixed_ugL"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="Mixed_ugL"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="Rain"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="Rain"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="RelHum"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="RelHum"], exact = FALSE)
+  zoop_drivers_long_yearly$variable=="Green_ugL"], exact = FALSE) # p = 1
 wilcox.test(zoop_drivers_long_yearly$value[
   zoop_drivers_long_yearly$variable=="TN_ugL_hypo"]~ 
   zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="TN_ugL_hypo"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="TP_ugL_hypo"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="TP_ugL_hypo"], exact = FALSE)
+  zoop_drivers_long_yearly$variable=="TN_ugL_hypo"], exact = FALSE) # p = 1
 wilcox.test(zoop_drivers_long_yearly$value[
   zoop_drivers_long_yearly$variable=="Temp_C_epi"]~ 
   zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="Temp_C_epi"], exact = FALSE)
+  zoop_drivers_long_yearly$variable=="Temp_C_epi"], exact = FALSE) # p = 1
 wilcox.test(zoop_drivers_long_yearly$value[
   zoop_drivers_long_yearly$variable=="Temp_C_hypo"]~ 
   zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="Temp_C_hypo"], exact = FALSE)
+  zoop_drivers_long_yearly$variable=="Temp_C_hypo"], exact = FALSE) # p = 1
 wilcox.test(zoop_drivers_long_yearly$value[
   zoop_drivers_long_yearly$variable=="Total_ugL"]~ 
   zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="Total_ugL"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="WindSpeed"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="WindSpeed"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="buoyancy_frequency"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="buoyancy_frequency"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="dissolved_oxygen_epi"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="dissolved_oxygen_epi"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="heat"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="heat"], exact = FALSE)
+  zoop_drivers_long_yearly$variable=="Total_ugL"], exact = FALSE) # p = 1
 wilcox.test(zoop_drivers_long_yearly$value[
   zoop_drivers_long_yearly$variable=="oxy_depth"]~ 
   zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="oxy_depth"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="res_time_d"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="res_time_d"], exact = FALSE)
+  zoop_drivers_long_yearly$variable=="oxy_depth"], exact = FALSE) # p = 1
 wilcox.test(zoop_drivers_long_yearly$value[
   zoop_drivers_long_yearly$variable=="schmidt_stability"]~ 
   zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="schmidt_stability"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="secchi"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="secchi"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="thermocline_depth"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="thermocline_depth"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="total_nitrogen_epi"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="total_nitrogen_epi"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="total_phosphorus_epi"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="total_phosphorus_epi"], exact = FALSE)
-wilcox.test(zoop_drivers_long_yearly$value[
-  zoop_drivers_long_yearly$variable=="water_level"]~ 
-  zoop_drivers_long_yearly$box[
-  zoop_drivers_long_yearly$variable=="water_level"], exact = FALSE)
+  zoop_drivers_long_yearly$variable=="schmidt_stability"], exact = FALSE) # p = 1
+
 
 
 

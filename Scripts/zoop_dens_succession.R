@@ -359,18 +359,23 @@ zoops_10_groups$traj <- ifelse(zoops_10_groups$year %in%
 
 ggplot(data = subset(zoops_10_groups, month %in% 
                        c("05","06","07","08","09") &
-                       Taxon %in% "Polyarthra"), 
+                       Taxon %in% c("Bosmina","Ceriodaphnia",
+                                    "Cyclopoida","Nauplius",
+                                    "Keratella","Kellicottia")), 
        aes(as.Date("2019-12-31") + yday(as.Date(paste0(
        year,"-",month,"-01"))), avg, color=year)) +
   geom_area(aes(color = year, fill = year),
             position = "identity", stat = "identity", #position = stack
-            alpha=0.7) + ggtitle("Polyarthra") +
-  facet_wrap(~traj, scales = "free", ncol=2) +
+            alpha=0.5) +
+  facet_wrap(~Taxon+traj, scales = "free", ncol=2,
+             labeller = labeller(.multi_line = FALSE)) +
   scale_x_date(expand = c(0,0), labels = 
                        scales::date_format("%b",tz="EST5EDT"))+
   scale_y_continuous(expand = c(0,0))+
-  scale_color_manual(values = NatParksPalettes::natparks.pals("Saguaro", 6))+
-  scale_fill_manual(values = NatParksPalettes::natparks.pals("Saguaro", 6))+
+  scale_color_manual(values = c(
+    "#003366","#0099CC","#339999","#660000","#CC0000","#CC6666"))+
+  scale_fill_manual(values = c(
+    "#003366","#0099CC","#339999","#660000","#CC0000","#CC6666"))+
   xlab("") + ylab("Density (#/L)") +
   guides(color= "none",
          fill = guide_legend(ncol=1)) +
@@ -392,8 +397,46 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_polyarthra.jpg", width=7, height=4) 
+#ggsave("Figures/BVR_succession_5taxa.jpg", width=6, height=7) 
 
+#order years
+zoops_10_groups$year <- factor(zoops_10_groups$year, levels = c( 
+                                 "2014","2019","2021", 
+                                 "2015","2016", "2020"))
+
+#line plots - colors = trajectories
+ggplot(data = subset(zoops_10_groups, month %in% 
+                       c("05","06","07","08","09") &
+                       Taxon %in% "Bosmina"), 
+       aes(as.Date("2019-12-31") + yday(as.Date(paste0(
+         year,"-",month,"-01"))), avg, color=year)) +
+  geom_point(cex=3) + geom_line(lwd=1) + 
+  scale_x_date(expand = c(0,0), labels = 
+                 scales::date_format("%b",tz="EST5EDT"))+
+  scale_color_manual(values = c(rep("#01586D",3),rep("#8B0C13",3)))+
+  scale_fill_manual(values = c(rep("#01586D",3),rep("#8B0C13",3)))+
+  xlab("") + ylab("Density (#/L)") + 
+  guides(color= "none",
+         fill = guide_legend(ncol=1)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.key = element_blank(),
+        legend.background = element_blank(),
+        legend.position = "right",
+        legend.direction = "vertical",
+        text = element_text(size=10), 
+        axis.text.y = element_text(size = 10),
+        panel.border = element_rect(colour = "black", fill = NA),
+        strip.text.x = element_text(face = "bold",hjust = 0),
+        axis.text.x = element_text(angle=90),
+        strip.background.x = element_blank(),
+        axis.title.y = element_text(size = 11),
+        plot.margin = unit(c(0.4, 1, 0, 0), "cm"),
+        panel.background = element_rect(
+          fill = "white"),
+        panel.spacing = unit(0.5, "lines"))
+#ggsave("Figures/BVR_succession_lines_raw_dens_bosmina.jpg", width=7, height=4) 
 
 #----------------------------------------------------------------#
 #zooming in on clads - raw density

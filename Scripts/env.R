@@ -109,11 +109,13 @@ do_final <- ctd_final_temp_do |>
   select(-c(Reservoir.x,Reservoir.y,Temp_C))
 
 #calculate thermocline depth (missing n=5 profiles...) - bring in ysi profiles too??
-ctd_thermo_depth <- temp_final |> 
+ctd_thermo_depth_all <- temp_final |> 
   group_by(DateTime) |> 
   summarise(therm_depth = thermo.depth(Temp_C,Depth_m)) |> 
   mutate(month = month(DateTime),
-                 year = year(DateTime)) |> 
+                 year = year(DateTime)) 
+
+ctd_thermo_depth <- ctd_thermo_depth_all |> 
   ungroup() |>
   group_by(month, year) |> 
   summarise(therm_depth = mean(therm_depth))
@@ -172,7 +174,7 @@ water_level <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |>
          year %in% c(2014:2016,2019:2021)) |> 
   arrange(month,year) |> ungroup() |> 
   group_by(year) |> 
-  mutate(diff = max(waterlevel) - min(waterlevel)) |> 
+  mutate(wl_cv = sd(waterlevel)/mean(waterlevel)) |> 
   ungroup()
 
 ggplot(water_level, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
@@ -180,7 +182,7 @@ ggplot(water_level, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
   geom_point() + geom_line() + theme_bw() + xlab("doy") +
   scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
   scale_color_manual("",values=NatParksPalettes::natparks.pals("Glacier", 6))
-ggsave("Figures/waterlevel_vs_doy.jpg", width=6, height=3) 
+#ggsave("Figures/waterlevel_vs_doy.jpg", width=6, height=3) 
 
 wl <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |> 
   select(Date, WaterLevel_m) |> 
@@ -504,18 +506,25 @@ temp <- data.frame("depth" = c("0-1","1-2","2-3","3-4","4-5",
                    "avg_temp" = ctd_layer_temp_final$temp[ctd_layer_temp_final$DateTime == 
                                                       unique(ctd_layer_temp_final$DateTime)[i]],
                    "calories_per_layer" = 100 *bathymetry$SA_m2[1:11]*
-                                          ctd_layer_temp_final$temp[i])
+                     ctd_layer_temp_final$temp[ctd_layer_temp_final$DateTime == 
+                                                 unique(ctd_layer_temp_final$DateTime)[i]])
     
-heat_storage$heat[i] <- sum(temp$calories_per_layer, na.rm=T) / 3939700000 # 0.39 km2
+heat_storage$heat_content[i] <- sum(temp$calories_per_layer, na.rm=T) / 3939700000 # 0.39 km2
   #units of cal/cm2
+heat_storage$epi_cal[i] <- sum(temp$calories_per_layer[1:
+as.numeric(substr(ctd_thermo_depth_all$therm_depth[i],1,1))], na.rm=T)
+  #weighted calories per layer (degC cm3)
 }
+
+
 
 #average heat storage by month/year
 heat_storage_avg <- heat_storage |> 
   dplyr::mutate(month = month(date),
                 year = year(date)) |>
   dplyr::group_by(month, year) |> 
-  dplyr::summarise(heat = mean(heat))
+  dplyr::summarise(heat_content = mean(heat_content),
+                   epi_cal = mean(epi_cal))
   
 #calculate residence time (volume / total inflow)
 #EDI bvr bathy = 1357140.6 m3
