@@ -314,15 +314,17 @@ zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon,
 
 
 #shaded line plot - raw density
-ggplot(zoops_10_groups, aes(as.Date("2019-12-31") + 
+ggplot(data = subset(zoops_10_groups, month %in% 
+                       c("05","06","07","08","09")),
+       aes(as.Date("2019-12-31") + 
                         yday(as.Date(paste0(year,"-",month,"-01"))), 
                                  avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
-            position = "fill", stat = "identity", #position = stack
+            position = "stack", stat = "identity", #position = fill
             alpha=0.7) +
   facet_wrap(~year, scales = "free")+
-  scale_color_manual(values = NatParksPalettes::natparks.pals("DeathValley", 10, direction=-1))+
-  scale_fill_manual(values = NatParksPalettes::natparks.pals("DeathValley", 10, direction=-1))+
+  scale_color_manual(values = NatParksPalettes::natparks.pals("DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
+  scale_fill_manual(values = NatParksPalettes::natparks.pals("DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
   scale_x_date(expand = c(0,0),
                labels = scales::date_format("%b",tz="EST5EDT")) +
   scale_y_continuous(expand = c(0,0))+
@@ -347,7 +349,7 @@ ggplot(zoops_10_groups, aes(as.Date("2019-12-31") +
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_10groups_fill_alldens_raw.jpg", width=7, height=4) 
+#ggsave("Figures/BVR_succession_10groups_stack_alldens_raw.jpg", width=7, height=4) 
 
 #----------------------------------------------------------------#
 #looking at each taxon + grouping years by trajectory 
