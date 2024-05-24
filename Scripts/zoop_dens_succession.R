@@ -312,6 +312,7 @@ zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon,
                                          "Conochilus","Kellicottia","Keratella",
                                          "Polyarthra"))
 
+#write.csv(zoops_10_groups,"Output/std_dens_10taxa.csv", row.names = F)
 
 #shaded line plot - raw density
 ggplot(data = subset(zoops_10_groups, month %in% 
@@ -320,7 +321,7 @@ ggplot(data = subset(zoops_10_groups, month %in%
                         yday(as.Date(paste0(year,"-",month,"-01"))), 
                                  avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
-            position = "stack", stat = "identity", #position = fill
+            position = "fill", stat = "identity", #position = stack
             alpha=0.7) +
   facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals("DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
@@ -328,7 +329,7 @@ ggplot(data = subset(zoops_10_groups, month %in%
   scale_x_date(expand = c(0,0),
                labels = scales::date_format("%b",tz="EST5EDT")) +
   scale_y_continuous(expand = c(0,0))+
-  xlab("") + ylab("Density (#/L)") +
+  xlab("") + ylab("Relative density") +
   guides(color= "none",
          fill = guide_legend(ncol=1)) +
   theme(panel.grid.major = element_blank(), 
@@ -349,10 +350,15 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_10groups_stack_alldens_raw.jpg", width=7, height=4) 
+#ggsave("Figures/BVR_succession_10groups_fill_alldens_relative.jpg", width=7, height=4) 
 
 #----------------------------------------------------------------#
 #looking at each taxon + grouping years by trajectory 
+
+#order by trajectory year
+zoops_10_groups$year <- factor(zoops_10_groups$year, 
+                               levels = c("2014","2019","2021", 
+                                          "2015","2016", "2020"))
 
 #add trajectory col
 zoops_10_groups$traj <- ifelse(zoops_10_groups$year %in% 
@@ -361,8 +367,7 @@ zoops_10_groups$traj <- ifelse(zoops_10_groups$year %in%
 
 ggplot(data = subset(zoops_10_groups, month %in% 
                        c("05","06","07","08","09") &
-                       Taxon %in% c("Bosmina","Ceriodaphnia",
-                                    "Cyclopoida","Nauplius",
+                       Taxon %in% c("Cyclopoida","Nauplii",
                                     "Keratella","Kellicottia")), 
        aes(as.Date("2019-12-31") + yday(as.Date(paste0(
        year,"-",month,"-01"))), avg, color=year)) +
@@ -399,7 +404,7 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_5taxa.jpg", width=6, height=7) 
+#ggsave("Figures/BVR_succession_4taxa.jpg", width=6, height=7) 
 
 #order years
 zoops_10_groups$year <- factor(zoops_10_groups$year, levels = c( 
@@ -446,7 +451,7 @@ ggplot(data = subset(zoops_10_groups, Taxon %in% c("Bosmina","Ceriodaphnia","Dap
        aes(as.Date("2019-12-31") + 
              yday(as.Date(paste0(year,"-",month,"-01"))), avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
-            position = "stack", stat = "identity",
+            position = "identity", stat = "identity",
             alpha=0.7) +
   facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals("Glacier", 3, direction=-1))+
@@ -475,7 +480,7 @@ ggplot(data = subset(zoops_10_groups, Taxon %in% c("Bosmina","Ceriodaphnia","Dap
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_clads_stacked_alldens_raw.jpg", width=7, height=4) 
+#ggsave("Figures/BVR_succession_clads_alldens_raw.jpg", width=7, height=4) 
 
 #add functional groups 
 zoops_10_groups$trophi <- ifelse(zoops_10_groups$Taxon %in% c("Ascomorpha", "Polyarthra"), "virgate",
@@ -507,7 +512,7 @@ ggplot(aes(as.Date("2019-12-31") +
              yday(as.Date(paste0(year,"-",month,"-01"))), 
              value, color=feeding_types)) +
   geom_area(aes(color = feeding_types, fill = feeding_types),
-            position = "stack",# stat = "identity",
+            position = "identity",# stat = "identity",
             alpha=0.7) +
   facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals("Halekala", 3))+
@@ -536,7 +541,7 @@ ggplot(aes(as.Date("2019-12-31") +
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_feeding_types_stacked_alldens_raw.jpg", width=7, height=4) 
+#ggsave("Figures/BVR_succession_feeding_types_alldens_raw.jpg", width=7, height=4) 
 
 zoops_10_groups |> group_by(year, month) |> 
   summarise(virgate = sum(avg[trophi == "virgate"]),
@@ -550,7 +555,7 @@ zoops_10_groups |> group_by(year, month) |>
                yday(as.Date(paste0(year,"-",month,"-01"))), 
              value, color=trophi)) +
   geom_area(aes(color = trophi, fill = trophi),
-            position = "stack",# stat = "identity",
+            position = "identity",# stat = "identity",
             alpha=0.7) +
   facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals("Halekala", 4))+
@@ -579,7 +584,7 @@ zoops_10_groups |> group_by(year, month) |>
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_trophi_stacked_alldens_raw.jpg", width=7, height=4) 
+#ggsave("Figures/BVR_succession_trophi_alldens_raw.jpg", width=7, height=4) 
 
 zoops_10_groups |> group_by(year, month) |> 
   summarise(Herbivore = sum(avg[trophic_group == "Herbivore"]),
@@ -593,7 +598,7 @@ zoops_10_groups |> group_by(year, month) |>
                yday(as.Date(paste0(year,"-",month,"-01"))), 
              value, color=trophic_group)) +
   geom_area(aes(color = trophic_group, fill = trophic_group),
-            position = "stack",# stat = "identity",
+            position = "identity",# stat = "identity",
             alpha=0.7) +
   facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals("Halekala", 4))+
@@ -622,7 +627,7 @@ zoops_10_groups |> group_by(year, month) |>
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_trophic_group_stacked_alldens_raw.jpg", width=7, height=4) 
+#ggsave("Figures/BVR_succession_trophic_group_alldens_raw.jpg", width=7, height=4) 
 
 #-----------------------------------------------------------------------------#
 #shaded line plot for clads, copes, and rots each year
@@ -1048,5 +1053,5 @@ ggplot(zoops_phytos, aes(as.Date("2023-12-31") + yday(as.Date(
     paste0(year,"-",month,"-01"), "%Y-%m-%d")), secchi_std,
     group=as.numeric(year)), col="red")
 
-ggsave("Figures/phyto_zoop_annual_peg_plus_secchi.jpg", width=6, height=4)
+#ggsave("Figures/phyto_zoop_annual_peg_plus_secchi.jpg", width=6, height=4)
 
