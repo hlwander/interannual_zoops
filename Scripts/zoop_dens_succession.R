@@ -314,20 +314,23 @@ zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon,
 
 #write.csv(zoops_10_groups,"Output/std_dens_10taxa.csv", row.names = F)
 
+#create new column w/ date bc leap years are really messing up my tick marks
+zoops_10_groups$date <- as.Date(paste0(zoops_10_groups$year,"-",
+                                       zoops_10_groups$month,"-01"))
+
 #shaded line plot - raw density
 ggplot(data = subset(zoops_10_groups, month %in% 
                        c("05","06","07","08","09")),
-       aes(as.Date("2019-12-31") + 
-                        yday(as.Date(paste0(year,"-",month,"-01"))), 
-                                 avg, color=Taxon)) +
+       aes(x=date, y = avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
             position = "fill", stat = "identity", #position = stack
             alpha=0.7) +
-  facet_wrap(~year, scales = "free")+
+  facet_wrap(~year, scales = "free_x")+
   scale_color_manual(values = NatParksPalettes::natparks.pals("DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
   scale_fill_manual(values = NatParksPalettes::natparks.pals("DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
-  scale_x_date(expand = c(0,0),
-               labels = scales::date_format("%b",tz="EST5EDT")) +
+  scale_x_date(expand = c(0,0)) +#,
+ #              breaks = scales::pretty_breaks(5),
+ #              date_labels = "%b") +
   scale_y_continuous(expand = c(0,0))+
   xlab("") + ylab("Relative density") +
   guides(color= "none",
@@ -347,6 +350,7 @@ ggplot(data = subset(zoops_10_groups, month %in%
         strip.background.x = element_blank(),
         axis.title.y = element_text(size = 11),
         plot.margin = unit(c(0, 1, 0, 0), "cm"),
+        panel.spacing.x = unit(0.2, "in"),
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
@@ -499,6 +503,11 @@ zoops_10_groups$trophic_group <- ifelse(zoops_10_groups$Taxon %in% c("Cyclopoida
                                     "Ceriodaphnia","Daphnia","Bosmina", "Nauplii"), "Herbivore",
                                     ifelse(zoops_10_groups$Taxon %in% c("Ascomorpha", "Polyarthra"), "Raptorial",
                                            "Microphagous"))) #conochilus, keratella, kellicottia
+
+#order years again
+zoops_10_groups$year <- factor(zoops_10_groups$year, levels = c( 
+  "2014","2015","2016", 
+  "2019","2020", "2021"))
 
 #functional groups
 zoops_10_groups |> group_by(year, month) |> 

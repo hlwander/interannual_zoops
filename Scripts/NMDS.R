@@ -727,13 +727,14 @@ year$plot + geom_point() + theme_bw() +
 
 #read in driver df
 zoop_drivers <- read.csv("Output/all_drivers.csv") |> 
-  rename(buoyancy_frequency = BF,
-         schmidt_stability = SS,
-         water_level = waterlevel,
-         dissolved_oxygen_epi = DO_mgL_epi,
-         thermocline_depth = therm_depth,
-         total_nitrogen_epi = TN_ugL_epi,
-         total_phosphorus_epi = TP_ugL_epi)
+  rename("wind speed" = WindSpeed,
+         "residence time" = res_time_d,
+         "thermocline depth" = therm_depth,
+         "stratification strength" = BF,
+         "epilimnetic DO" = DO_mgL_epi,
+         "epilimnetic TN" = TN_ugL_epi,
+         "epilimnetic TP" = TP_ugL_epi,
+         "Secchi depth" = secchi)
 #delta wl is the same for every month so dropping this var
 
 #group years based on hysteresis direction
@@ -776,10 +777,10 @@ ggplot(zoop_drivers_long,
 #ggsave("Figures/drivers_vs_hysteresis_boxplot_years.jpg", width=6, height=5)
 
 #hand-picking the vars that are most different
-vars <- c("WindSpeed","res_time_d",
-          "thermocline_depth", "buoyancy_frequency", 
-          "dissolved_oxygen_epi", "total_nitrogen_epi",
-          "total_phosphorus_epi", "secchi")
+vars <- c("wind speed","residence time",
+          "thermocline depth", "stratification strength", 
+          "epilimnetic DO", "epilimnetic TN",
+          "epilimnetic TP", "Secchi depth")
 
 #group by years (one val per year/variable)
 zoop_drivers_long_yearly <- zoop_drivers_long |> 
@@ -1014,19 +1015,19 @@ zoops |> select(year, month, Taxon, avg) |>
             position = "identity", stat = "identity",
             alpha=0.7) + theme_bw() + xlab("") +
   scale_x_discrete(expand = c(0,0), breaks = c("5","6","7","8","9"),
-                   labels = c("May","June","July","August","September")) +
+                   labels = c("May","June","Jul","Aug","Sep")) +
   scale_y_continuous(expand = c(0,0))+ 
-  facet_wrap(~Taxon+traj, scales = "free_y",
+  facet_wrap(~Taxon+traj,
              labeller = label_wrap_gen(multi_line=FALSE))+ 
-  scale_color_manual("",values= c("#203C69","#AB4C1E"))+
-  scale_fill_manual("",values= c("#203C69","#AB4C1E"),
+  scale_color_manual("",values= c("#203C69","#DA996F"))+
+  scale_fill_manual("",values= c("#203C69","#DA996F"),
                     labels = c("Cyclopoida/ \n nauplii",
                                "Keratella/ \n Kellicottia"))+
   guides(color = "none") +
+  ylab("zooplankton density (#/L)") +
   theme(text = element_text(size=10), 
         strip.text.x = element_blank(),
         axis.text = element_text(size=9, color="black"), 
-        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
         axis.ticks.x = element_line(colour = c(rep("black",5), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
         plot.margin = unit(c(0.5,1.2,1,0), 'lines'),
@@ -1034,7 +1035,8 @@ zoops |> select(year, month, Taxon, avg) |>
         legend.box.margin=margin(-10,-10,-10,-10),
         legend.margin=margin(0,-0,-0,-0),
         panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank(),
+        panel.spacing.x = unit(0.3, "in"))
 #ggsave("Figures/zoop_dens_conceptual_monthly.jpg", width=7, height=5)
 
 
