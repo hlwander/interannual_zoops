@@ -410,6 +410,54 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.spacing = unit(0.5, "lines"))
 #ggsave("Figures/BVR_succession_4taxa.jpg", width=6, height=7) 
 
+#order taxa depending on year 
+zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon, 
+                                levels = c("Conochilus","Ascomorpha","Daphnia","Keratella", "Kellicottia","Polyarthra","Nauplii","Cyclopoida","Ceriodaphnia","Bosmina")) # 2014
+                                #levels = c("Kellicottia","Polyarthra","Cyclopoida","Keratella", "Daphnia","Nauplii","Ascomorpha","Conochilus","Ceriodaphnia","Bosmina")) # 2015
+                                #levels = c("Ascomorpha","Keratella","Cyclopoida", "Daphnia","Conochilus", "Ceriodaphnia","Polyarthra","Nauplii","Bosmina","Kellicottia")) # 2016
+                                #levels = c("Daphnia", "Polyarthra","Conochilus", "Cyclopoida","Nauplii","Kellicottia","Keratella","Ceriodaphnia","Bosmina","Ascomorpha")) # 2019
+                                #levels = c("Polyarthra","Conochilus","Nauplii", "Daphnia","Cyclopoida", "Keratella","Ceriodaphnia","Bosmina","Kellicottia","Ascomorpha")) # 2020/2021
+
+#look at "succession" for each taxon
+ggplot(data = subset(zoops_10_groups, month %in% 
+                       c("05","06","07","08","09") &
+                       year =="2014"),
+       aes(date, standardized_dens,
+         color=Taxon)) +
+  geom_area(aes(color = Taxon, fill = Taxon),
+            stat = "identity") +
+  facet_wrap(~Taxon, strip.position="left",ncol=1) +
+  scale_x_date(expand = c(0,0), labels = 
+                 scales::date_format("%b",tz="EST5EDT"))+
+  scale_y_continuous(expand = c(0,0)) +
+  scale_color_manual(values = NatParksPalettes::
+                       natparks.pals("DeathValley", 12, 
+                                     direction=-1)[c(1:3,5,6,8:12)])+
+  scale_fill_manual(values = NatParksPalettes::
+                      natparks.pals("DeathValley", 12, 
+                                    direction=-1)[c(1:3,5,6,8:12)])+
+  xlab("") + ylab("") +
+  guides(color= "none",
+         fill = "none") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.key = element_blank(),
+        legend.background = element_blank(),
+        text = element_text(size=10), 
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        strip.background.y = element_blank(),
+        strip.placement = "outside",
+        strip.text.y.left = element_text(angle=0),
+        plot.margin = unit(c(0.4, 1, 0, 0), "cm"),
+        panel.background = element_rect(
+          fill = "white"),
+        panel.spacing = unit(0.5, "lines"))
+#ggsave("Figures/BVR_succession_alltaxa_2014.jpg", width=6, height=7) 
+
+
+
 #order years
 zoops_10_groups$year <- factor(zoops_10_groups$year, levels = c( 
                                  "2014","2019","2021", 

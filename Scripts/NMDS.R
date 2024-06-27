@@ -1,4 +1,4 @@
-# code for second-stage NMDS
+# NMDS code
 # 20 December 2023
 
 #read in packages
@@ -585,44 +585,6 @@ kw_results_disp <- data.frame("Group" = c("2014", "2015", "2016", "2019",
 #write.csv(kw_results_disp, "Output/within_group_dispersion_kw_results_dens.csv",row.names = FALSE)
 
 #------------------------------------------------------------------------------#
-#create distance matrices for all years (first stage pairwise dissimilarities)
-#dist2014 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2014",],
-#                                     method='bray'))
-#dist2015 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2015",],
-#                                     method='bray'))
-#dist2016 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2016",],
-#                                     method='bray'))
-#dist2019 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2019",],
-#                                     method='bray'))
-#dist2020 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2020",],
-#                                     method='bray'))
-#dist2021 <- as.matrix(vegan::vegdist(zoop_dens_trans[all_zoops_nmds$year=="2021",],
-#                                     method='bray'))
-
-#combine all distance matrices - each col is a year/month combo (5X30)
-#alldist <- as.data.frame(cbind(dist2014, dist2015, dist2016,
-#                              dist2019, dist2020, dist2021))
-
-#perform pairwise correlations among dissimilarity matrices
-#and convert from similarity to distance 
-#stage2 <- as.matrix(vegan::vegdist(1-cor(alldist)), method="bray")
-
-#run NMDS again - clustering will indicate years where changes through time are similar
-#scree plot to choose dimension 
-#jpeg("figures/scree.jpg") 
-#goeveg::dimcheckMDS(stage2, distance = "bray", 
-#                    k = 4, trymax = 20, autotransform = TRUE)
-#dev.off()
-
-#set.seed(11)
-
-#now do NMDS w/ 4 dimensions for consistency
-#NMDS_bray_second <- vegan::metaMDS(stage2, distance='bray', k=4, trymax=20, 
-#                            autotransform=FALSE, pc=FALSE, plot=FALSE)
-#NMDS_bray_second$stress
-# 0.014
-
-#------------------------------------------------------------------------------#
 #read in env csv
 env_drivers <- read.csv("./Output/env.csv")
 
@@ -972,8 +934,8 @@ zoop_drivers_long |>
   group_by(year, month, variable) |> 
   summarize(median = median(value)) |> 
   ungroup() |> 
-  filter(variable %in% c("total_phosphorus_epi","thermocline_depth",
-                         "buoyancy_frequency")) |> 
+  filter(variable %in% c("epilimnetic TP","thermocline depth",
+                         "stratification strength")) |> 
   mutate(traj = ifelse(year %in% c("2014","2019","2021"),"clockwise",
                        "counterclockwise")) |> 
   group_by(traj, month, variable) |> 
