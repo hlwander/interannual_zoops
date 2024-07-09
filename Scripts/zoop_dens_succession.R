@@ -375,9 +375,10 @@ ggplot(data = subset(zoops_10_groups, month %in%
                                     "Keratella","Kellicottia")), 
        aes(as.Date("2019-12-31") + yday(as.Date(paste0(
        year,"-",month,"-01"))), avg, color=year)) +
-  geom_area(aes(color = year, fill = year),
-            position = "identity", stat = "identity", #position = stack
-            alpha=0.5) +
+  geom_line() +
+  #geom_area(aes(color = year, fill = year),
+  #          position = "identity", stat = "identity", #position = stack
+  #          alpha=0.5) +
   facet_wrap(~Taxon+traj, scales = "free", ncol=2,
              labeller = labeller(.multi_line = FALSE)) +
   scale_x_date(expand = c(0,0), labels = 
@@ -388,8 +389,8 @@ ggplot(data = subset(zoops_10_groups, month %in%
   scale_fill_manual(values = c(
     "#003366","#0099CC","#339999","#660000","#CC0000","#CC6666"))+
   xlab("") + ylab("Density (#/L)") +
-  guides(color= "none",
-         fill = guide_legend(ncol=1)) +
+  guides(#color= "none",
+         color = guide_legend(ncol=1)) + #fill = 
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
@@ -408,7 +409,7 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_4taxa.jpg", width=6, height=7) 
+#ggsave("Figures/BVR_succession_4taxa_lines.jpg", width=6, height=7) 
 
 #order taxa depending on year 
 zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon, 

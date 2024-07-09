@@ -2,7 +2,7 @@
 # 20 December 2023
 
 #read in packages
-pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,
+pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,ape,
                sf,vegan,FSA,rcompanion,NatParksPalettes,ggrepel)
 
 #read in all_zoops df
@@ -54,6 +54,48 @@ zoop_dens_trans <- labdsv::hellinger(zoops_dens)
 
 #turn transformed community data into b-c distance matrix 
 zoop_bray <- as.matrix(vegan::vegdist(zoop_dens_trans, method='bray'))
+
+
+#------------------------------------------------------------------------------#
+#try principal coordinates analysis so that I am justified in choosing two axes
+
+pcoa_zoops <- pcoa(zoop_bray, correction='none')
+
+#relative eigenvalue = how much variace each pc explains
+#merge years + months with first two axes (makes up 63.9%)
+pcoa_zoops_0.64 <- data.frame(all_zoops_nmds[,c("year","month")], 
+                pcoa_zoops$vectors[,1:2])
+
+#jpeg("Figures/pcoa_2v1_dens.jpg")
+par(mfrow = c(2, 3))
+par(cex = 0.6)
+par(mar = c(0, 0, 0, 0), oma = c(4, 4, 0.5, 0.5))
+par(tcl = -0.25)
+par(mgp = c(2, 0.6, 0))
+
+years <- unique(pcoa_zoops_0.64$year)
+
+for (i in 1:6) {
+plot(pcoa_zoops_0.64$Axis.1, pcoa_zoops_0.64$Axis.2, 
+     type='n', xlab='PCoA 1', ylab='PCoA 2', xlim=c(-0.5, 0.35),
+     ylim = c(-0.35,0.35), xaxt = 'n', yaxt = 'n')
+  lines(pcoa_zoops_0.64$Axis.1[pcoa_zoops_0.64$year==years[i]], 
+         pcoa_zoops_0.64$Axis.2[pcoa_zoops_0.64$year==years[i]], 
+         col= viridis::viridis(6, option="D")[i])
+  points(pcoa_zoops_0.64$Axis.1[pcoa_zoops_0.64$year==years[i]], 
+       pcoa_zoops_0.64$Axis.2[pcoa_zoops_0.64$year==years[i]], 
+       pch=as.character(5:9), cex=3, font = 2, 
+       col=viridis::viridis(6, option="D")[i])
+
+mtext(c("2014","2015","2016","2019","2020","2021")[i], side = 3, line = -2, 
+      adj = 0.05, cex = 1.5, col = "black")
+
+mtext("PCoA1", side = 1, outer = TRUE, cex = 1.5, line = 0.9,
+      col = "black")
+mtext("PCoA2", side = 2, outer = TRUE, cex = 1.5, line = 0.5,
+      col = "black")
+}
+#dev.off()
   
 #------------------------------------------------------------------------------#
 #first-stage NMDS
@@ -522,7 +564,7 @@ cldList(P.adj ~ Comparison, data=dunn_within_month$res, threshold = 0.05)
 
 #within boxplot for years and months
 year_box <- ggboxplot(within_year_dist, x = "group", y = "dist", 
-                      fill = "group", palette = viridis::viridis(6, option="D"),
+                      fill = "group", palette = rep("#505050",6),
                       #palette = natparks.pals("CapitolReef",6),
                       order = c("2014", "2015","2016","2019","2020","2021"),
                       ylab = "Dispersion", xlab = "") +
@@ -535,7 +577,7 @@ year_box <- ggboxplot(within_year_dist, x = "group", y = "dist",
   guides (fill = "none")
 
 month_box <- ggboxplot(within_month_dist, x = "group", y = "dist", 
-                     fill = "group", palette = viridis::viridis(6, option="F"),
+                     fill = "group", palette = rep("#C4C4C4",5),
                      #palette = natparks.pals("DeathValley",5),
                      order = c("May", "June", "July", "August", "September"),
                      ylab = "", xlab = "") + ylim(c(0,0.5)) +
@@ -692,7 +734,7 @@ zoop_drivers <- read.csv("Output/all_drivers.csv") |>
   rename("wind speed" = WindSpeed,
          "residence time" = res_time_d,
          "thermocline depth" = therm_depth,
-         "stratification strength" = BF,
+         "buoyancy frequency" = BF,
          "epilimnetic DO" = DO_mgL_epi,
          "epilimnetic TN" = TN_ugL_epi,
          "epilimnetic TP" = TP_ugL_epi,
@@ -700,115 +742,36 @@ zoop_drivers <- read.csv("Output/all_drivers.csv") |>
 #delta wl is the same for every month so dropping this var
 
 #group years based on hysteresis direction
-zoop_drivers$box <- ifelse(zoop_drivers$year %in% c("2014","2019", "2021"), 
-                           "clockwise", ifelse(zoop_drivers$year %in% c(
-                             "2015", "2016", "2020"), "counterclockwise","NA")) 
+#zoop_drivers$box <- ifelse(zoop_drivers$year %in% c("2014","2019", "2021"), 
+#                           "clockwise", ifelse(zoop_drivers$year %in% c(
+#                             "2015", "2016", "2020"), "counterclockwise","NA")) 
+
+zoop_drivers$traj <- ifelse(zoop_drivers$year %in% c("2014","2020", "2021"), 
+                           "cyclical", ifelse(zoop_drivers$year %in% c(
+                             "2015", "2016", "2019"), "directional","NA")) 
 
 #convert from wide to long
 zoop_drivers_long <- zoop_drivers |> 
-  pivot_longer(-c(month,year,box),
+  pivot_longer(-c(month,year,traj),
                names_to = "variable") |> 
   mutate(year = as.factor(year))
 
-#change order of boxplots
+#change order of years
 zoop_drivers_long$year <- factor(zoop_drivers_long$year , 
-                                levels=c("2014", "2019" ,"2021", 
-                                         "2015", "2016", "2020"))
-
-#now look at boxplots for each driver
-ggplot(zoop_drivers_long, 
-       aes(x=year, y=value, group = year)) +
-  geom_boxplot(aes(fill=box, alpha = 0.95)) + 
-  facet_wrap(~variable, ncol=5, scales = "free_y") +
-  theme_bw() + xlab("") + guides(alpha = "none") +
-  scale_fill_manual("",values=c("#01586D", "#8B0C13"))+
-  theme(text = element_text(size=10), 
-        axis.text = element_text(size=7, color="black"), 
-        legend.key.height=unit(0.3,"line"),
-        legend.box.margin=margin(-10,-10,-10,-10),
-        legend.margin=margin(-0,-0,-0,-0),
-        legend.direction = "vertical",
-        legend.title = element_blank(),
-        axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8),
-        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
-        strip.background = element_rect(fill = "transparent"), 
-        legend.position = c(0.7, 0.03), legend.spacing = unit(-0.5, 'cm'),
-        plot.margin = unit(c(0,0,0,0), 'lines'),
-        panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
-        legend.key.width =unit(0.3,"line"))
-#ggsave("Figures/drivers_vs_hysteresis_boxplot_years.jpg", width=6, height=5)
+                                levels=c("2014", "2020" ,"2021", 
+                                         "2015", "2016", "2019"))
 
 #hand-picking the vars that are most different
 vars <- c("wind speed","residence time",
-          "thermocline depth", "stratification strength", 
+          "thermocline depth", "buoyancy frequency", 
           "epilimnetic DO", "epilimnetic TN",
           "epilimnetic TP", "Secchi depth")
 
 #group by years (one val per year/variable)
 zoop_drivers_long_yearly <- zoop_drivers_long |> 
-  group_by(year, variable, box) |> 
+  group_by(year, variable, traj) |> 
   summarise(mean = mean(value, na.rm=T),
             median = median(value, na.rm=T))
-
-#just group by direction
-ggplot(data=subset(zoop_drivers_long_yearly,
-                     variable %in% vars),
-       aes(x=box, y=median, group = box)) +
-  geom_boxplot(aes(fill=box, alpha = 0.95)) + 
-  facet_wrap(~variable, nrow=5, scales = "free_y") +
-  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
-  scale_fill_manual("",values=c("#01586D", "#8B0C13"))+
-  theme(text = element_text(size=15), 
-        axis.text = element_text(size=12, color="black"), 
-        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
-        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
-        strip.background = element_rect(fill = "transparent"), 
-        plot.margin = unit(c(0,0,0,0), 'lines'),
-        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-#ggsave("Figures/drivers_vs_hysteresis_boxplot_6.jpg", width=6, height=5)
-
-#points all vars
-ggplot(data = subset(zoop_drivers_long_yearly, 
-                     !variable %in% "Shortwave"),
-       aes(x=year, y=median, color = box)) +
-  #geom_boxplot(aes(fill=box, alpha = 0.95)) + 
-  geom_point() +
-  facet_wrap(~variable, ncol=5, scales = "free_y") +
-  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
-  scale_color_manual("",values=c("#01586D", "#8B0C13"))+
-  theme(text = element_text(size=8), 
-        axis.text = element_text(size=9, color="black"), 
-        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
-        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
-        strip.background = element_rect(fill = "transparent"), 
-        plot.margin = unit(c(0,0,0,0), 'lines'),
-        legend.position = c(0.8, 0.01),
-        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-#ggsave("Figures/all_drivers_vs_hysteresis_points_median.jpg", width=6, height=5)
-
-
-#points
-zoop_drivers_long |> group_by(year, box, variable) |> 
-  summarize(median = median(value, na.rm=T)) |> 
-  ungroup() |> 
-  filter(variable %in% vars) |> 
-ggplot(aes(x=year, y=median, group = box)) +
-  geom_point(aes(color=box, alpha = 0.95), cex=3) + 
-  #geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
-  facet_wrap(~variable, nrow=5, scales = "free_y") +
-  theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
-  scale_color_manual("",values=c("#01586D", "#8B0C13"))+
-  theme(text = element_text(size=12), 
-        axis.text = element_text(size=11, color="black"), 
-        axis.text.x = element_text(angle=45, vjust=0.7, hjust=0.6),
-        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
-        strip.background = element_rect(fill = "transparent"), 
-        plot.margin = unit(c(0.5,0.3,1,0), 'lines'),
-        legend.position = "bottom",
-        legend.box.margin=margin(-10,-10,-10,-10),
-        legend.margin=margin(-15,-0,-0,-0),
-        panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-#ggsave("Figures/drivers_vs_hysteresis_points_8_median.jpg", width=7, height=5)
 
 
 #order variables
@@ -817,11 +780,11 @@ zoop_drivers_long$variable <- factor(zoop_drivers_long$variable,
                                         !zoop_drivers_long$variable %in% vars]))) 
 
 #median vs trajectory
-zoop_drivers_long |> group_by(year, box, variable) |> 
+zoop_drivers_long |> group_by(year, traj, variable) |> 
   summarize(median = median(value, na.rm=T)) |> 
   ungroup() |> 
   filter(variable %in% vars) |> 
-  ggplot(aes(x=box, y=median, group = box)) +
+  ggplot(aes(x=traj, y=median, group = traj)) +
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
   facet_wrap(~variable, nrow=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
@@ -840,10 +803,10 @@ zoop_drivers_long |> group_by(year, box, variable) |>
 #ggsave("Figures/8drivers_vs_trajectory_vertical_points.jpg", width=7, height=5)
 
 #median vs trajectory
-zoop_drivers_long |> group_by(year, box, variable) |> 
+zoop_drivers_long |> group_by(year, traj, variable) |> 
   summarize(median = median(value, na.rm=T)) |> 
   ungroup() |> 
-  ggplot(aes(x=box, y=median, group = box)) +
+  ggplot(aes(x=traj, y=median, group = traj)) +
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
   facet_wrap(~variable, nrow=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none") +
@@ -896,13 +859,13 @@ mean(zoop_drivers_long$value[zoop_drivers_long$box=="clockwise" &
 
 
 #month on x and colored points for years - all drivers
-zoop_drivers_long |> group_by(box, month, variable) |> 
+zoop_drivers_long |> group_by(traj, month, variable) |> 
   summarize(median = median(value, na.rm=T)) |> 
   ungroup() |> 
   filter(!variable %in% "Shortwave") |> 
-  ggplot(aes(x=as.factor(month), y=median, group = box)) +
-  geom_point(aes(color=box, alpha = 0.95), cex=3) + 
-  geom_line(aes(color=box, alpha = 0.95)) +
+  ggplot(aes(x=as.factor(month), y=median, group = traj)) +
+  geom_point(aes(color=traj, alpha = 0.95), cex=3) + 
+  geom_line(aes(color=traj, alpha = 0.95)) +
   facet_wrap(~variable, ncol=5, scales = "free_y") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none",
                                  colour = guide_legend(nrow = 1)) +

@@ -71,7 +71,7 @@ month$plot + geom_point() + theme_bw() +
 #ggsave("Figures/first_stage_NMDS_2v1_months_dens.jpg", width=5, height=3)
 
 #track months in each year and connect
-#jpeg("Figures/first_stage_NMDS_2v1_dens.jpg")
+#jpeg("Figures/first_stage_NMDS_2v1_dens_k=2.jpg")
 par(mfrow = c(2, 3))
 par(cex = 0.6)
 par(mar = c(0, 0, 0, 0), oma = c(4, 4, 0.5, 0.5))
@@ -129,43 +129,49 @@ nmds_3d$year <- c(rep("2014",5),rep("2015",5),rep("2016",5),
                   rep("2019",5),rep("2020",5),rep("2021",5))
 nmds_3d$month <- c(rep(c("5","6","7","8","9"),6))
 
-#scatterplot3d(nmds_3d[,1:3], color=nmds_3d$year, type="b")
-
 #plotly plot
 fig <- plot_ly(nmds_3d, x = ~MDS1[year=="2014"], 
-               y = ~MDS2[year=="2014"],
-               z = ~MDS3[year=="2014"],
-               text = ~month[year== "2014"],
-               type = 'scatter3d', mode ='text+lines',
-               textfont = list(color = '#003366', width = 1),
-               line = list(color = '#003366', width = 1),
-               name = "2014") 
+                        y = ~MDS2[year=="2014"],
+                        z = ~MDS3[year=="2014"],
+                        text = ~month[year== "2014"],
+                        type = 'scatter3d', mode ='text+lines',
+                        textfont = list(color = '#003366', width = 1),
+                        line = list(color = '#003366', width = 2),
+                        #textfont = list(color = viridis::viridis(6, option="D")[1], width = 1),
+                        #line = list(color = viridis::viridis(6, option="D")[1], width = 1),
+                        name = "2014") 
 fig <- fig |> layout(scene = list(xaxis = list(title = "x"),
                                    yaxis = list(title = "y"), 
                                    zaxis = list(title = "z"))) |> 
-     add_trace(x = ~MDS1[year=="2015"], 
-               y = ~MDS2[year=="2015"], 
-               z = ~MDS3[year=="2015"],
-               text = ~month[year== "2015"],
-               type = 'scatter3d', mode ='text+lines',
-               textfont = list(color = '#660000', width = 1),
-               line = list(color = '#660000', width = 1),
-               name = "2015")
+              add_trace(x = ~MDS1[year=="2015"], 
+                        y = ~MDS2[year=="2015"], 
+                        z = ~MDS3[year=="2015"],
+                        text = ~month[year== "2015"],
+                        type = 'scatter3d', mode ='text+lines',
+                        textfont = list(color = '#660000', width = 1),
+                        line = list(color = '#660000', width = 2),
+                        #textfont = list(color = viridis::viridis(6, option="D")[2], width = 1),
+                        #line = list(color = viridis::viridis(6, option="D")[2], width = 1),
+                        name = "2015")
 fig <- fig |> add_trace(x = ~MDS1[year=="2016"], 
-               y = ~MDS2[year=="2016"], 
-               z = ~MDS3[year=="2016"],
-               text = ~month[year== "2016"],
-               type = 'scatter3d', mode ='text+lines',
-               textfont = list(color = '#CC0000', width = 1),
-               line = list(color = '#CC0000', width = 1),
-               name = "2016")
+                        y = ~MDS2[year=="2016"], 
+                        z = ~MDS3[year=="2016"],
+                        text = ~month[year== "2016"],
+                        type = 'scatter3d', mode ='text+lines',
+                        textfont = list(color = '#CC0000', width = 1),
+                        line = list(color = '#CC0000', width = 2),
+                        #textfont = list(color = viridis::viridis(6, option="D")[3], width = 1),
+                        #line = list(color = viridis::viridis(6, option="D")[3], width = 1),
+                        name = "2016")
 fig <- fig |> add_trace(x = ~MDS1[year=="2019"], 
                         y = ~MDS2[year=="2019"], 
                         z = ~MDS3[year=="2019"],
                         text = ~month[year== "2019"],
                         type = 'scatter3d', mode ='text+lines',
                         textfont = list(color = '#0099CC', width = 1),
-                        line = list(color = '#0099CC', width = 1),
+                        line = list(color = '#0099CC', width = 2),
+                        #textfont = list(color = viridis::viridis(6, option="D")[4], width = 1),
+                        #line = list(color = viridis::viridis(6, option="D")[4], width = 1),
                         name = "2019")
 fig <- fig |> add_trace(x = ~MDS1[year=="2020"], 
                         y = ~MDS2[year=="2020"], 
@@ -173,7 +179,9 @@ fig <- fig |> add_trace(x = ~MDS1[year=="2020"],
                         text = ~month[year== "2020"],
                         type = 'scatter3d', mode ='text+lines',
                         textfont = list(color = '#CC6666', width = 1),
-                        line = list(color = '#CC6666', width = 1),
+                        line = list(color = '#CC6666', width = 2),
+                        #textfont = list(color = viridis::viridis(6, option="D")[5], width = 1),
+                        #line = list(color = viridis::viridis(6, option="D")[5], width = 1),
                         name = "2020")
 fig <- fig |> add_trace(x = ~MDS1[year=="2021"], 
                         y = ~MDS2[year=="2021"], 
@@ -181,6 +189,8 @@ fig <- fig |> add_trace(x = ~MDS1[year=="2021"],
                         text = ~month[year== "2021"],
                         type = 'scatter3d', mode ='text+lines',
                         textfont = list(color = '#339999', width = 1),
-                        line = list(color = '#339999', width = 1),
+                        line = list(color = '#339999', width = 2),
+                        #textfont = list(color = viridis::viridis(6, option="D")[6], width = 1),
+                        #line = list(color = viridis::viridis(6, option="D")[6], width = 1),
                         name = "2021")
 
