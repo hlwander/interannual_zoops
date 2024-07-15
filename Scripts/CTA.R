@@ -39,19 +39,20 @@ all_zoops_nmds <- all_zoops_nmds |>
 #select only data cols
 zoops_dens <- all_zoops_nmds |> select(Bosmina:Polyarthra)
 
-#hellinger transform data
-zoop_dens_trans <- labdsv::hellinger(zoops_dens)
-
 #turn transformed community data into b-c distance matrix 
-zoop_bray <- as.matrix(vegan::vegdist(zoop_dens_trans, method='euclidean'))
+zoop_hell <- as.matrix(vegan::vegdist(zoops_dens, method='hellinger'))
+
+#check to make sure the dissimilarity matrix satisfies triangle inequality
+is.metric(zoop_hell)
+#note - if I hellinger transform then use bc, does not satisfy triangle inequality
 
 #calculate length of each trajectory
-lengths <-trajectoryLengths(zoop_bray, all_zoops_nmds$year) |> 
-  mutate(years = c(2014,2015,2016,2019,2020,2021)) |> 
+lengths <-trajectoryLengths(zoop_hell, all_zoops_nmds$year) |> 
+  mutate(year = c(2014,2015,2016,2019,2020,2021)) |> 
   pivot_longer(cols = S1:S4, names_to = "segment") 
 
-ggplot(lengths, aes(segment, value, color = as.factor(years), cex = value)) +
-  #geom_line(aes(group=years)) + 
+ggplot(lengths, aes(segment, value, color = as.factor(year), cex = value)) +
+  #geom_line(aes(group=year)) + 
   geom_point() +
   ylab("Length") + theme_bw() + xlab("") +
   guides(cex = "none") +
@@ -75,14 +76,22 @@ ggplot(lengths, aes(segment, value, color = as.factor(years), cex = value)) +
         panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
         legend.key.width =unit(0.1,"line")) 
 
+ggplot(lengths, aes(as.factor(year), value, group=as.factor(year))) + 
+  geom_boxplot() + theme_bw() + ylab("length") + xlab("year")
+
 #calculate angle of each trajectory
-trajectoryAngles(zoop_bray, all_zoops_nmds$year)
+angles <- trajectoryAngles(zoop_hell, all_zoops_nmds$year) |> 
+  mutate(year = c("2014","2015","2016","2019","2020","2021")) |> 
+  pivot_longer(cols = c("S1-S2":"S3-S4"),names_to = "segment")
+
+ggplot(angles, aes(year, value, group=year)) + 
+  geom_boxplot() + theme_bw() + ylab("angle")
 
 #calculate speed of each trajectory (I think average speed is just avg length / (150-30 days)
 lengths$speed <- lengths$value / 30
 
-ggplot(lengths, aes(segment, speed, color = as.factor(years))) +
-  geom_line(aes(group=years)) + geom_point() +
+ggplot(lengths, aes(segment, speed, color = as.factor(year))) +
+  geom_line(aes(group=year)) + geom_point() +
   ylab("Speed") + theme_bw() + xlab("") +
   scale_x_discrete(labels=c(S1 = "May-Jun", 
                             S2 = "Jun-Jul",
@@ -106,20 +115,23 @@ ggplot(lengths, aes(segment, speed, color = as.factor(years))) +
         panel.grid.minor = element_blank(), 
         legend.key.width =unit(0.1,"line")) 
 
+ggplot(lengths, aes(as.factor(year), speed, group=as.factor(year))) + 
+  geom_boxplot() + theme_bw() + ylab("speed") + xlab("year")
+
 #summarize across years
 yearly_stats <- data.frame("year" = c(2014,2015,2016,2019,2020,2021))
-yearly_stats$length <- c(sum(lengths$Trajectory[lengths$years==2014]),
-                         sum(lengths$Trajectory[lengths$years==2015]),
-                         sum(lengths$Trajectory[lengths$years==2016]),
-                         sum(lengths$Trajectory[lengths$years==2019]),
-                         sum(lengths$Trajectory[lengths$years==2020]),
-                         sum(lengths$Trajectory[lengths$years==2021]))
-yearly_stats$speed <- c(mean(lengths$speed[lengths$years==2014]),
-                         mean(lengths$speed[lengths$years==2015]),
-                         mean(lengths$speed[lengths$years==2016]),
-                         mean(lengths$speed[lengths$years==2019]),
-                         mean(lengths$speed[lengths$years==2020]),
-                         mean(lengths$speed[lengths$years==2021]))
+yearly_stats$length <- c(sum(lengths$Trajectory[lengths$year==2014]),
+                         sum(lengths$Trajectory[lengths$year==2015]),
+                         sum(lengths$Trajectory[lengths$year==2016]),
+                         sum(lengths$Trajectory[lengths$year==2019]),
+                         sum(lengths$Trajectory[lengths$year==2020]),
+                         sum(lengths$Trajectory[lengths$year==2021]))
+yearly_stats$speed <- c(mean(lengths$speed[lengths$year==2014]),
+                         mean(lengths$speed[lengths$year==2015]),
+                         mean(lengths$speed[lengths$year==2016]),
+                         mean(lengths$speed[lengths$year==2019]),
+                         mean(lengths$speed[lengths$year==2020]),
+                         mean(lengths$speed[lengths$year==2021]))
 
 barplot(yearly_stats$length, ylab = "Length",
         names.arg = c("2014","2015","2016",
@@ -130,8 +142,109 @@ barplot(yearly_stats$speed, ylab = "Speed",
                       "2019","2020","2021"))
 
 #calculate direction of each trajectory
-dir <- trajectoryDirectionality(zoop_bray, all_zoops_nmds$year)
+dir <- trajectoryDirectionality(zoop_hell, all_zoops_nmds$year)
 
 barplot(dir, ylab = "Direction")
 
+#convergence vs. divergence
+trajectoryConvergence(zoop_hell, all_zoops_nmds$year)
+#p-values are all > 0.05 so there is divergence among all trajectories
 
+#now check across months
+trajectoryConvergence(zoop_hell, all_zoops_nmds$month)
+#may and jul are converging? p=0.02 but not sure what that really means
+
+#now do NMDS w/ 3 dimensions 
+NMDS_bray <- vegan::metaMDS(zoop_hell, distance='bray', k=3, trymax=20, 
+                                   autotransform=FALSE, pc=FALSE, plot=FALSE)
+#stress=0.08
+
+ord <- vegan::ordiplot(NMDS_bray,display = c('sites','species'),
+                       choices = c(1,2),type = "n")
+
+trajectoryPlot(ord$sites, all_zoops_nmds$year,
+               traj.colors = viridis::viridis(6, option="D"))
+
+#---------------------------------------------------------------------
+#try length vs. env variables?
+
+env <- read.csv("Output/env.csv",header=T) |> 
+  arrange(year, month)
+
+env_years <- env |> 
+  group_by(year) |> 
+  summarise_all(list(mean = mean), na.rm=T) |> 
+  select(-month_mean)
+
+env_traj <- inner_join(yearly_stats, env, by="year")
+env_traj_final <- inner_join(env_traj, env_years, by="year")
+
+ggplot(env_traj_final, aes(Temp_C_epi, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(Temp_C_epi_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(Temp_C_hypo, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(Temp_C_hypo_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(DO_mgL_epi, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(DO_mgL_epi_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(TN_ugL_epi, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(TN_ugL_epi_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(TN_ugL_hypo, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(TN_ugL_hypo_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(TP_ugL_epi, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(TP_ugL_epi_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(TP_ugL_hypo, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(TP_ugL_hypo_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(waterlevel, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(waterlevel_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(therm_depth, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(therm_depth_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(oxy_depth, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(oxy_depth_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(SS, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(SS_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(BF, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(BF_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(AirTemp, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(AirTemp_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
+
+ggplot(env_traj_final, aes(WindSpeed, length, col=as.factor(year))) +
+  geom_point() + theme_bw() + geom_line() +
+  geom_point(aes(WindSpeed_mean, length,col = as.factor(year), size = 3))+
+  guides(size = "none") 
