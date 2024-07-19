@@ -746,9 +746,9 @@ zoop_drivers <- read.csv("Output/all_drivers.csv") |>
 #                           "clockwise", ifelse(zoop_drivers$year %in% c(
 #                             "2015", "2016", "2020"), "counterclockwise","NA")) 
 
-zoop_drivers$traj <- ifelse(zoop_drivers$year %in% c("2014","2020", "2021"), 
-                           "cyclical", ifelse(zoop_drivers$year %in% c(
-                             "2015", "2016", "2019"), "directional","NA")) 
+zoop_drivers$traj <- ifelse(zoop_drivers$year %in% c("2014","2015", "2021"), 
+                           "left", ifelse(zoop_drivers$year %in% c(
+                             "2016", "2019", "2020"), "right","NA")) 
 
 #convert from wide to long
 zoop_drivers_long <- zoop_drivers |> 
@@ -758,8 +758,8 @@ zoop_drivers_long <- zoop_drivers |>
 
 #change order of years
 zoop_drivers_long$year <- factor(zoop_drivers_long$year , 
-                                levels=c("2014", "2020" ,"2021", 
-                                         "2015", "2016", "2019"))
+                                levels=c("2014", "2015" ,"2021", 
+                                         "2016", "2019", "2020"))
 
 #hand-picking the vars that are most different
 vars <- c("wind speed","residence time",
