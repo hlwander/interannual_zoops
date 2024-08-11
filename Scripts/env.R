@@ -128,7 +128,7 @@ ctd_oxy_depth <- do_final |>
          year = year(DateTime)) |> 
   ungroup() |>
   group_by(month, year) |> 
-  summarise(oxy_depth = mean(oxy_depth))
+  summarise(oxy_depth = mean(oxy_depth, na.rm=T))
 
 #calculate anoxic depth
 #anoxic_depth <- do_final |> 

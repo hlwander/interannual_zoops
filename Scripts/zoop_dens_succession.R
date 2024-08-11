@@ -3,6 +3,9 @@
 #read in packages
 pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, sf, lubridate)
 
+#cb friendly year palette
+year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
+
 #read in zoop data from EDI
 inUrl1  <-  "https://pasta.lternet.edu/package/data/eml/edi/197/3/9eb6db370194bd3b2824726d89a008a6" 
 infile1 <-  tempfile()
@@ -132,7 +135,7 @@ zoops_pre <- zoops_2016_2018 |>
   filter(hour(DateTime) %in% c(9,10,11,12,13,14)) |> #drop nighttime samples
   mutate(DateTime = as.Date(DateTime)) |> 
   mutate(dens = dens * (1/0.031))  #10m bvr neteff from 2016 (n=2) - note that 7m neteff was also 0.031
-#avg from 2020 and 2021 is 0.021...
+#avg from 2020 and 2021 is 0.021 for reference
 
 #list common taxa between pre and post
 taxa <- c("Bosmina", "Daphnia", "Ceriodaphnia",
@@ -236,15 +239,6 @@ zoops_total <- all_zoops |>
   group_by(DateTime) |> 
   summarise(Total = sum(dens[Taxon %in% c("Cladocera","Copeoda","Rotifera")]),
             sd = mean(sd[Taxon %in% c("Cladocera","Copeoda","Rotifera")],na.rm=T))  
-  #ungroup() |> 
-  #mutate(year = format(DateTime, "%Y"),
-  #       month = format(DateTime, "%m")) |> 
-  #group_by(year, month) |>
-  #summarise(Total_avg = mean(Total,na.rm=T),
-  #          Total_sd = mean(sd,na.rm=T)) |> 
-  #ungroup() |> 
-  #mutate(Dens_std =(Total_avg - min(Total_avg)) / 
-  #         (max(Total_avg) - min(Total_avg)))
 
 # 3 group zoop dens
 zoops_3_groups <- all_zoops |> 
@@ -323,9 +317,11 @@ ggplot(data = subset(zoops_10_groups, month %in%
                        c("05","06","07","08","09")),
        aes(x=date, y = avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
-            position = "fill", stat = "identity", #position = stack
+            position = "fill", 
+            #position = "stack",
+            stat = "identity", 
             alpha=0.7) +
-  facet_wrap(~year, scales = "free_x")+
+  facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals("DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
   scale_fill_manual(values = NatParksPalettes::natparks.pals("DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
   scale_x_date(expand = c(0,0)) +#,
@@ -359,38 +355,38 @@ ggplot(data = subset(zoops_10_groups, month %in%
 #----------------------------------------------------------------#
 #looking at each taxon + grouping years by trajectory 
 
-#order by trajectory year
+#order by year
 zoops_10_groups$year <- factor(zoops_10_groups$year, 
-                               levels = c("2014","2019","2021", 
-                                          "2015","2016", "2020"))
+                               levels = c("2014","2015","2016", 
+                                          "2019","2020", "2021"))
 
 #add trajectory col
 zoops_10_groups$traj <- ifelse(zoops_10_groups$year %in% 
-                                 c("2014","2019","2021"), 
-                               "clockwise", "counterclockwise")
+                                 c("2014","2019"), "1", "2")
+                              # ifelse(zoops_10_groups$year %in% 
+                              #          c("2015","2020"),"2","3"))
 
 ggplot(data = subset(zoops_10_groups, month %in% 
-                       c("05","06","07","08","09") &
-                       Taxon %in% c("Cyclopoida","Nauplii",
-                                    "Keratella","Kellicottia")), 
+                       c("05","06","07","08","09")),# &
+                       #Taxon %in% c("Ascomorpha","Conochilus","Keratella","Kellicottia","Polyarthra")),
+                       #Taxon %in% c("Daphnia","Bosmina","Ceriodaphnia","Cyclopoida","Nauplii")),
+                         #"Daphnia","Keratella",
+                          #          "Ceriodaphnia","Conochilus")), 
        aes(as.Date("2019-12-31") + yday(as.Date(paste0(
        year,"-",month,"-01"))), avg, color=year)) +
-  geom_line() +
-  #geom_area(aes(color = year, fill = year),
-  #          position = "identity", stat = "identity", #position = stack
-  #          alpha=0.5) +
-  facet_wrap(~Taxon+traj, scales = "free", ncol=2,
+ # geom_line() +
+  geom_area(aes(color = year, fill = year),
+            position = "identity", stat = "identity", #position = stack
+            alpha=0.5) +
+  facet_wrap(~Taxon, scales = "free_y", ncol=2,
              labeller = labeller(.multi_line = FALSE)) +
   scale_x_date(expand = c(0,0), labels = 
                        scales::date_format("%b",tz="EST5EDT"))+
   scale_y_continuous(expand = c(0,0))+
-  scale_color_manual(values = c(
-    "#003366","#0099CC","#339999","#660000","#CC0000","#CC6666"))+
-  scale_fill_manual(values = c(
-    "#003366","#0099CC","#339999","#660000","#CC0000","#CC6666"))+
+  scale_color_manual(values = year_cols)+
+  scale_fill_manual(values = year_cols)+
   xlab("") + ylab("Density (#/L)") +
-  guides(#color= "none",
-         color = guide_legend(ncol=1)) + #fill = 
+  guides(color = guide_legend(ncol=1)) + 
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
@@ -409,7 +405,7 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_4taxa_lines.jpg", width=6, height=7) 
+#ggsave("Figures/BVR_succession_alltaxa.jpg", width=6, height=7) 
 
 #order taxa depending on year 
 zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon, 
@@ -457,46 +453,6 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.spacing = unit(0.5, "lines"))
 #ggsave("Figures/BVR_succession_alltaxa_2014.jpg", width=6, height=7) 
 
-
-
-#order years
-zoops_10_groups$year <- factor(zoops_10_groups$year, levels = c( 
-                                 "2014","2019","2021", 
-                                 "2015","2016", "2020"))
-
-#line plots - colors = trajectories
-ggplot(data = subset(zoops_10_groups, month %in% 
-                       c("05","06","07","08","09") &
-                       Taxon %in% "Bosmina"), 
-       aes(as.Date("2019-12-31") + yday(as.Date(paste0(
-         year,"-",month,"-01"))), avg, color=year)) +
-  geom_point(cex=3) + geom_line(lwd=1) + 
-  scale_x_date(expand = c(0,0), labels = 
-                 scales::date_format("%b",tz="EST5EDT"))+
-  scale_color_manual(values = c(rep("#01586D",3),rep("#8B0C13",3)))+
-  scale_fill_manual(values = c(rep("#01586D",3),rep("#8B0C13",3)))+
-  xlab("") + ylab("Density (#/L)") + 
-  guides(color= "none",
-         fill = guide_legend(ncol=1)) +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"),
-        legend.key = element_blank(),
-        legend.background = element_blank(),
-        legend.position = "right",
-        legend.direction = "vertical",
-        text = element_text(size=10), 
-        axis.text.y = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA),
-        strip.text.x = element_text(face = "bold",hjust = 0),
-        axis.text.x = element_text(angle=90),
-        strip.background.x = element_blank(),
-        axis.title.y = element_text(size = 11),
-        plot.margin = unit(c(0.4, 1, 0, 0), "cm"),
-        panel.background = element_rect(
-          fill = "white"),
-        panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_lines_raw_dens_bosmina.jpg", width=7, height=4) 
 
 #----------------------------------------------------------------#
 #zooming in on clads - raw density
@@ -721,14 +677,17 @@ zoops_3_groups_years <- all_zoops |>
 zoops_3_groups_years$month <- format(zoops_3_groups_years$DateTime,"%m") 
 
 zoops_3_groups_years <- zoops_3_groups_years |> 
-  group_by(month, year) |> mutate(C_R_sd = sd(C_R))
+  group_by(month, year) |> mutate(C_R_sd = sd(C_R)) |> 
+  ungroup() |> group_by(DateTime) |> 
+  mutate(Total = sum(avg))
 
 #plot crustacean:rotifer over time
-ggplot(zoops_3_groups_years,aes(as.Date("2019-12-31") + 
-      yday(as.Date(DateTime)), C_R, color=year)) +
+ggplot(zoops_3_groups_years,aes(as.Date("2019-12-31") +
+                                  yday(DateTime), C_R, color=year)) +
   geom_point() + geom_line() + xlab("") +
-  scale_color_manual(values = NatParksPalettes::
-                       natparks.pals("Triglav", 6))+
+  scale_color_manual(values = year_cols)+
+  scale_x_date(labels = scales::date_format("%b",tz="EST5EDT"),
+               date_breaks = "1 month") +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
@@ -749,163 +708,6 @@ ggplot(zoops_3_groups_years,aes(as.Date("2019-12-31") +
         panel.spacing = unit(0.5, "lines"))
 #ggsave("Figures/BVR_yearly_crustacean_rotifer_ratio.jpg", width=7, height=4) 
 
-#C:R boxplots
-zoops_3_groups_years |> group_by(month,year) |> 
-  summarise(C_R = mean(C_R),
-            C_R_sd = sd(C_R_sd)) |> 
-ggplot(aes(x=as.factor(month), y=C_R, fill=year)) + xlab("") +
-  geom_bar(position = "dodge", stat = "identity") +
-  geom_errorbar(aes(ymin = C_R - C_R_sd, 
-                    ymax = C_R + C_R_sd),
-    width=0.3, alpha=0.9, size=1.3,
-    position = position_dodge(0.9)) +
-  scale_x_discrete(labels= c("May","June","July",
-                             "August","September")) +
-  scale_fill_manual(values = c("#01586D", "#8B0C13", "#8B0C13",
-                               "#01586D", "#8B0C13", "#01586D")) +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"),
-        legend.position = "none",
-        text = element_text(size=10), 
-        axis.text.y = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA),
-        strip.text.x = element_text(face = "bold",hjust = 0),
-        strip.background.x = element_blank(),
-        axis.title.y = element_text(size = 11),
-        plot.margin = unit(c(0, 1, 0, 0), "cm"),
-        panel.background = element_rect(
-          fill = "white"),
-        panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_barplot_crustacean_rotifer_ratio_months.jpg", width=7, height=4) 
-
-#percent barplots
-zoops_3_groups_years |> group_by(month,year) |> 
-  summarise(cladocera_mean = mean(percent_clad),
-            cladocera_sd = sd(percent_clad),
-            copepoda_mean = mean(percent_cope),
-            copepoda_sd = sd(percent_cope),
-            rotifera_mean = mean(percent_rot),
-            rotifera_sd = sd(percent_rot)) |> 
-  pivot_longer(-c(month,year),
-               names_to = c("Taxon", ".value"),
-               names_sep="_" )  |> 
-  ggplot(aes(x=as.factor(month), y=mean, fill=year)) + xlab("") +
-  geom_bar(position = "dodge", stat = "identity") +
-  geom_errorbar(aes(ymin = mean - sd, 
-                    ymax = mean + sd),
-                width=0.3, alpha=0.9, size=1.3,
-                position = position_dodge(0.9)) +
-  facet_wrap(~Taxon, nrow=3) +
-  scale_x_discrete(labels= c("May","June","July",
-                             "August","September")) +
-  scale_fill_manual(values = c("#01586D", "#8B0C13", "#8B0C13",
-                               "#01586D", "#8B0C13", "#01586D")) +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"),
-        legend.position = "none",
-        text = element_text(size=10), 
-        axis.text.y = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA),
-        strip.text.x = element_text(face = "bold",hjust = 0),
-        strip.background.x = element_blank(),
-        axis.title.y = element_text(size = 11),
-        plot.margin = unit(c(0, 1, 0, 0), "cm"),
-        panel.background = element_rect(
-          fill = "white"),
-        panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_barplot_percent_taxon_month.jpg", width=7, height=4) 
-
-#percent barplots
-zoops_3_groups_years |> group_by(month) |> 
-  summarise(cladocera_mean = mean(percent_clad),
-            cladocera_sd = sd(percent_clad),
-            copepoda_mean = mean(percent_cope),
-            copepoda_sd = sd(percent_cope),
-            rotifera_mean = mean(percent_rot),
-            rotifera_sd = sd(percent_rot)) |> 
-  pivot_longer(-c(month),
-               names_to = c("Taxon", ".value"),
-               names_sep="_" )  |> 
-  ggplot(aes(x=as.factor(month), y=mean, fill=Taxon)) + xlab("") +
-  geom_bar(position = "dodge", stat = "identity") +
-  geom_errorbar(aes(ymin = mean - sd, 
-                    ymax = mean + sd),
-                width=0.3, alpha=0.9, size=1.3,
-                position = position_dodge(0.9)) +
-  scale_x_discrete(labels= c("May","June","July",
-                             "August","September")) +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"),
-        legend.position = "right",
-        text = element_text(size=10), 
-        axis.text.y = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA),
-        strip.text.x = element_text(face = "bold",hjust = 0),
-        strip.background.x = element_blank(),
-        axis.title.y = element_text(size = 11),
-        plot.margin = unit(c(0, 1, 0, 0), "cm"),
-        panel.background = element_rect(
-          fill = "white"),
-        panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_barplot_percent_taxon_vs_month.jpg", width=7, height=4) 
-
-#numbers
-mean(zoops_3_groups_years$percent_rot[zoops_3_groups_years$month=="05"])
-mean(zoops_3_groups_years$percent_rot[zoops_3_groups_years$month=="06"])
-mean(zoops_3_groups_years$percent_rot[zoops_3_groups_years$month=="07"])
-mean(zoops_3_groups_years$percent_rot[zoops_3_groups_years$month=="08"])
-mean(zoops_3_groups_years$percent_rot[zoops_3_groups_years$month=="09"])
-
-mean(zoops_3_groups_years$percent_clad[zoops_3_groups_years$month=="05"])
-mean(zoops_3_groups_years$percent_clad[zoops_3_groups_years$month=="06"])
-mean(zoops_3_groups_years$percent_clad[zoops_3_groups_years$month=="07"])
-mean(zoops_3_groups_years$percent_clad[zoops_3_groups_years$month=="08"])
-mean(zoops_3_groups_years$percent_clad[zoops_3_groups_years$month=="09"])
-
-mean(zoops_3_groups_years$percent_cope[zoops_3_groups_years$month=="05"])
-mean(zoops_3_groups_years$percent_cope[zoops_3_groups_years$month=="06"])
-mean(zoops_3_groups_years$percent_cope[zoops_3_groups_years$month=="07"])
-mean(zoops_3_groups_years$percent_cope[zoops_3_groups_years$month=="08"])
-mean(zoops_3_groups_years$percent_cope[zoops_3_groups_years$month=="09"])
-
-#percent barplots
-zoops_3_groups_years |> group_by(year) |> 
-  summarise(cladocera_mean = mean(percent_clad),
-            cladocera_sd = sd(percent_clad),
-            copepoda_mean = mean(percent_cope),
-            copepoda_sd = sd(percent_cope),
-            rotifera_mean = mean(percent_rot),
-            rotifera_sd = sd(percent_rot)) |> 
-  pivot_longer(-c(year),
-               names_to = c("Taxon", ".value"),
-               names_sep="_" )  |> 
-  ggplot(aes(x=as.factor(year), y=mean, fill=Taxon)) + xlab("") +
-  geom_bar(position = "dodge", stat = "identity") +
-  geom_errorbar(aes(ymin = mean - sd, 
-                    ymax = mean + sd),
-                width=0.3, alpha=0.9, size=1.3,
-                position = position_dodge(0.9)) +
-  scale_x_discrete(labels= c("2014","2015","2016",
-                             "2019","2020","2021")) +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"),
-        legend.position = "right",
-        text = element_text(size=10), 
-        axis.text.y = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA),
-        strip.text.x = element_text(face = "bold",hjust = 0),
-        strip.background.x = element_blank(),
-        axis.title.y = element_text(size = 11),
-        plot.margin = unit(c(0, 1, 0, 0), "cm"),
-        panel.background = element_rect(
-          fill = "white"),
-        panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_barplot_percent_taxon_vs_year.jpg", width=7, height=4) 
-
 #C:R barplots - years
 zoops_3_groups_years |> group_by(year) |> 
   summarise(C_R = mean(C_R),
@@ -918,8 +720,7 @@ zoops_3_groups_years |> group_by(year) |>
                 position = position_dodge(0.9)) +
   scale_x_discrete(labels= c("2014","2015","2016",
                              "2019","2020","2021")) +
-  scale_fill_manual(values = c("#01586D", "#8B0C13", "#8B0C13",
-                               "#01586D", "#8B0C13", "#01586D")) +
+  scale_fill_manual(values = year_cols) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
@@ -936,53 +737,30 @@ zoops_3_groups_years |> group_by(year) |>
         panel.spacing = unit(0.5, "lines"))
 #ggsave("Figures/BVR_barplot_crustacean_rotifer_ratio_year.jpg", width=7, height=4) 
 
-#C:R boxplots - months
-zoops_3_groups_years |> group_by(month) |> 
-  summarise(C_R = mean(C_R),
-            C_R_sd = sd(C_R_sd)) |> 
-  ggplot(aes(x=as.factor(month), y=C_R)) + xlab("") +
-  geom_bar(position = "dodge", stat = "identity") +
-  geom_errorbar(aes(ymin = C_R - C_R_sd, 
-                    ymax = C_R + C_R_sd),
-                width=0.3, alpha=0.9, size=1.3,
-                position = position_dodge(0.9)) +
-  scale_x_discrete(labels= c("May","June","July",
-                             "August","September")) +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"),
-        legend.position = "none",
-        text = element_text(size=10), 
-        axis.text.y = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA),
-        strip.text.x = element_text(face = "bold",hjust = 0),
-        strip.background.x = element_blank(),
-        axis.title.y = element_text(size = 11),
-        plot.margin = unit(c(0, 1, 0, 0), "cm"),
-        panel.background = element_rect(
-          fill = "white"),
-        panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_barplot_crustacean_rotifer_ratio_month.jpg", width=7, height=4) 
+
+mean(zoops_3_groups_years$C_R[zoops_3_groups_years$year %in% c(2014,2019)])
+mean(zoops_3_groups_years$C_R[zoops_3_groups_years$year %in% c(2015,2016,2020,2021)])
+#mean(zoops_3_groups_years$C_R[zoops_3_groups_years$year %in% c(2015,2020)])
+#mean(zoops_3_groups_years$C_R[zoops_3_groups_years$year %in% c(2016,2021)])
 
 
-mean(zoops_3_groups_years$C_R[zoops_3_groups_years$year %in% c(2014,2019,2021)]) #C
-mean(zoops_3_groups_years$C_R[zoops_3_groups_years$year %in% c(2015,2016,2020)]) #CC
-#CC has higher mean + median C:R than C
-
+#------------------------------------------------------------------------------#
 #shaded line plot time
 ggplot(zoops_3_groups_years, aes(as.Date("2019-12-31") + yday(as.Date(DateTime)), 
-           standardized_dens, color=Taxon)) +
-  geom_area(aes(color = Taxon, fill = Taxon),
-            position = "stack", stat = "identity",
+           Total, color=Taxon)) +
+  geom_area(aes(color = year, fill = year),
+            position = "identity", 
+            stat = "align",
             alpha=0.7) +
   facet_wrap(~year, scales = "free")+
-  scale_color_manual(values = NatParksPalettes::natparks.pals("KingsCanyon", 3, direction=-1))+
-  scale_fill_manual(values = NatParksPalettes::natparks.pals("KingsCanyon", 3, direction=-1),
-                    breaks = c("Cladocera","Copepoda","Rotifera"))+
+  scale_color_manual(values = year_cols) +
+                       #NatParksPalettes::natparks.pals("KingsCanyon", 6, direction=-1))+
+  scale_fill_manual(values = year_cols) +#,
+                    #breaks = c("Cladocera","Copepoda","Rotifera"))+
   scale_x_date(expand = c(0,0),
                    labels = scales::date_format("%b",tz="EST5EDT")) +
   scale_y_continuous(expand = c(0,0))+
-  xlab("") + ylab("standardized density") +
+  xlab("") + ylab("total density") +
   guides(color= "none",
          fill = guide_legend(ncol=1)) +
   theme(panel.grid.major = element_blank(), 
@@ -1046,12 +824,12 @@ ggplot(zoops_3_groups_years, aes(as.Date("2019-12-31") + yday(as.Date(DateTime))
 all_phytos_std <- read.csv("Output/phytos.csv") |> 
   select(month, year, Total_ugL) |> 
   group_by(year) |> 
-  mutate(min_val = min(Total_ugL),
-         max_val = max(Total_ugL)) |> 
+  mutate(min_val = min(Total_ugL, na.rm=T),
+         max_val = max(Total_ugL,na.rm=T)) |> 
   mutate(phyto_abund = (Total_ugL - min_val) / (max_val - min_val)) |> 
   select(month, year, phyto_abund) |> 
   arrange(year, month)
-  
+
 all_zoops_std <- all_zoops |> 
   mutate(year = format(DateTime, "%Y"),
          month = format(DateTime, "%m")) |> 
@@ -1113,3 +891,51 @@ ggplot(zoops_phytos, aes(as.Date("2023-12-31") + yday(as.Date(
 
 #ggsave("Figures/phyto_zoop_annual_peg_plus_secchi.jpg", width=6, height=4)
 
+#-----------------------------------------------------------------#
+# read in phytos
+phytos <- read.csv("Output/phytos.csv") |> 
+  select(-Total_ugL) |> 
+  pivot_longer(-c(month,year),
+                names_to = c("Taxon")) |> 
+  mutate(datetime = as.Date(paste0(year,"-",month,"-01-")))
+
+#order phytos
+phytos$Taxon <- factor(phytos$Taxon, levels = c("Green_ugL", "Brown_ugL",
+                                                "Mixed_ugL","Bluegreen_ugL"))
+
+#shaded line plot for phytos
+ggplot(phytos, aes(datetime, value, group=Taxon)) +
+  geom_area(aes(color = Taxon, fill = Taxon),
+            position = "identity", 
+            stat = "identity",
+            alpha=0.7) +
+  facet_wrap(~year, scales = "free")+
+ scale_color_manual(values = c("#339933","#996633","#CC3366","#389EB3"))+
+ scale_fill_manual(values = c("#339933","#996633","#CC3366","#389EB3"),
+                   labels = c("Green","Brown","Mixed","Bluegreen"))+
+  scale_x_date(expand = c(0,0),
+               labels = scales::date_format("%b",tz="EST5EDT"),
+               date_breaks = "1 month") +
+  scale_y_continuous(expand = c(0,0))+
+  xlab("") + ylab("biomass") +
+  guides(color= "none",
+         fill = guide_legend(ncol=1)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.key = element_blank(),
+        legend.background = element_blank(),
+        legend.position = "right",
+        legend.direction = "vertical",
+        text = element_text(size=10), 
+        axis.text.y = element_text(size = 10),
+        panel.border = element_rect(colour = "black", fill = NA),
+        strip.text.x = element_text(face = "bold",hjust = 0),
+        axis.text.x = element_text(angle=90),
+        strip.background.x = element_blank(),
+        axis.title.y = element_text(size = 11),
+        plot.margin = unit(c(0, 1, 0, 0), "cm"),
+        panel.background = element_rect(
+          fill = "white"),
+        panel.spacing = unit(0.5, "lines"))
+#ggsave("Figures/BVR_succession_phytos.jpg", width=7, height=4) 

@@ -98,4 +98,3 @@ do_temp <- interp_do  |>
   ggsave(sprintf("Figures/BVR_DO_heatmap_%s.jpg", years[i]), width=6, height=6)
 
 }
-

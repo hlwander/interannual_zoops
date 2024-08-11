@@ -15,7 +15,7 @@ pacman::p_load(httr, EcoHydRology, GSODR, curl, elevatr, devtools, sf,
 #soil data
 #url="https://websoilsurvey.sc.egov.usda.gov/DSD/Download/AOI/hdbxgq2us0dl32ysxprivmbf/wss_aoi_2023-03-01_08-53-36.zip"
 #download.file(url,"mysoil.zip") #Note: will probably have to update wss_aoi date if it's been a while - go to wss homepage and click on start wss link on right of page
-#unzip("mysoil.zip")            #zoom in to site, use define aoi tool to select desired area, go to download soils data tab, scroll to bottom of page and click "create download link", right click and copy link address, paste on line 10
+#unzip("mysoil.zip")            #zoom in to site, use define aoi tool to select desired area, go to download soils data tab, scroll to bottom of page and click "create download link", right click and copy link address, paste on line 16
 list.files()
 
 list.files(paste0(getwd(), "/TMWB_data/wss_aoi_2021-03-22_13-16-30/spatial/"),pattern = "shp")
