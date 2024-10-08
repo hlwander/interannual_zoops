@@ -4,7 +4,7 @@ Code for the analysis of monthly summer zooplankton in Beaverdam Reservoir over 
 
 # Repo structure
 
-This repository contains three main folders: 1) Output contains zooplankton and environmental data files used for analysis and figure generation, 2) Scripts contains all code necessary to reproduce figures and analyses for assessing changes in zooplankton community structure over six summer stratified periods, and 3) Inputs contains the meteorological driver file necessary to calculate reservoir discharge (see TMWB_inflow.R in Scripts file).
+This repository contains three main folders: 1) Output contains zooplankton and environmental data files used for analysis and figure generation, 2) Scripts contains all code necessary to reproduce figures and analyses for assessing changes in zooplankton community structure over six summer stratified periods, and 3) Inputs contains the meteorological driver file necessary to calculate reservoir discharge (see `TMWB_inflow.R` in Scripts file).
 
 # Instructions to reproduce figures and analyses
 
