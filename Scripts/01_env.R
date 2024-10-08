@@ -156,13 +156,6 @@ water_level <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |>
   mutate(wl_cv = sd(waterlevel)/mean(waterlevel)) |> 
   ungroup()
 
-ggplot(water_level, aes(yday(as.Date(paste0(year,"-",month,"-01"), "%Y-%m-%d")),
-                        waterlevel, color=as.factor(year))) +
-  geom_point() + geom_line() + theme_bw() + xlab("doy") +
-  scale_x_continuous(labels = scales::date_format("%b",tz="EST5EDT")) +
-  scale_color_manual("",values=NatParksPalettes::natparks.pals("Glacier", 6))
-#ggsave("Figures/waterlevel_vs_doy.jpg", width=6, height=3) 
-
 wl <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |> 
   select(Date, WaterLevel_m) |> 
   mutate(WaterLevel_m = as.numeric(WaterLevel_m)) |> 
@@ -374,4 +367,4 @@ all_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("month", "yea
                           c("month","year")])
 
 #export csv
-write.csv(all_drivers, "./Output/all_drivers.csv", row.names=FALSE)
+#write.csv(all_drivers, "./Output/all_drivers.csv", row.names=FALSE)

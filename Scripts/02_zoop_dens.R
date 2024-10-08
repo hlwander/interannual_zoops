@@ -304,9 +304,6 @@ mean(c(zoops_10_groups$p_dens[zoops_10_groups$year=="2021" & zoops_10_groups$mon
        zoops_10_groups$p_dens[zoops_10_groups$year=="2021" & zoops_10_groups$month=="09" &
                                     zoops_10_groups$Taxon %in% c("Keratella")]))
 
-mean(zoops_10_groups$avg[zoops_10_groups$year=="2014" &
-                         zoops_10_groups$Taxon %in% c("Bosmina")])
-
 #cyclopoids
 mean(c(zoops_10_groups$p_dens[zoops_10_groups$year=="2021" & zoops_10_groups$month=="05" &
                                 zoops_10_groups$Taxon %in% c("Cyclopoida")],
@@ -376,15 +373,19 @@ mean(c(sum(zoops_10_groups$avg[zoops_10_groups$year=="2014" & zoops_10_groups$mo
 # different taxa ratios
 zoop_ratios <- all_zoops |> 
   filter(Taxon %in% c("Cladocera","Cyclopoida","Nauplii","Keratella",
-                      "Kellicottia","Conochilus","Rotifera")) |> 
+                      "Kellicottia","Conochilus","Rotifera","Copepoda")) |> 
   mutate(year = year(DateTime),
          month = format(DateTime, "%m")) |> 
   filter(month %in% c("05","06","07","08","09")) |> 
   group_by(DateTime) |> 
   mutate(total_dens = sum(dens),
+         crust_dens = sum(dens[Taxon=="Cladocera"],na.rm=T, 
+                          dens[Taxon=="Copepoda"],na.rm=T),
          p_dens = dens / total_dens) |> 
   ungroup() |> group_by(year) |>
-  summarise(cyc_nau = mean(dens[Taxon=="Cyclopoida"], na.rm=T) /
+  summarise(C_R =  mean(crust_dens) /
+               mean(dens[Taxon=="Rotifera"], na.rm=T),
+            cyc_nau = mean(dens[Taxon=="Cyclopoida"], na.rm=T) /
               mean(dens[Taxon=="Nauplii"], na.rm=T),
             ker_kel = mean(dens[Taxon=="Keratella"], na.rm=T) /
               mean(dens[Taxon=="Kellicottia"], na.rm=T),
@@ -409,15 +410,10 @@ zoop_ratios <- all_zoops |>
             p_con = mean(p_dens[Taxon=="Conochilus"],na.rm=T),
             p_rot = mean(p_dens[Taxon=="Rotifera"],na.rm=T))
 
+#write.csv(zoop_ratios, "Output/zoop_proportions.csv")
+
 nmds1 <- read.csv("Output/ss_nmds1.csv")
-
-c_r <- zoops_3_groups_years |> group_by(year) |> 
-  select(C_R, year) |> summarise_all(list(mean))
-
-nmds1$C_R <- c_r$C_R
-
 zoop_ratios$nmds1 <- nmds1$nmds1
-zoop_ratios$C_R <- nmds1$C_R
 
 #convert from wide to long
 zoop_ratios_long <- zoop_ratios |> 

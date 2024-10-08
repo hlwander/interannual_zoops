@@ -38,7 +38,7 @@ zoop_drivers$nmds1 <- ifelse(zoop_drivers$year=="2014",nmds1$nmds1[1],
                                                        nmds1$nmds1[6])))))
 
 #read in proportion metrics
-prop <- read.csv("Output/zoop_proportions.csv")
+prop <- read.csv("Output/zoop_proportions.csv") #HERE
 
 #convert from wide to long
 zoop_drivers_long <- zoop_drivers |> 
@@ -96,12 +96,12 @@ zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |>
 #ggsave("Figures/p_cyc_vs_all_drivers.jpg", width=7, height=5)
 
 #hand-picking the vars that are most different
-vars <- c( "residence time", 
+vars <- c("air temp", 
            "wind speed",
-          "air temp", 
-          "Secchi depth", 
           "Schmidt stability",
-          "epilimnetic TN")
+          "Secchi depth", 
+          "epilimnetic TN",
+          "epilimnetic TP")
 
 #order variables
 zoop_drivers_long$variable <- factor(zoop_drivers_long$variable, 
@@ -114,15 +114,15 @@ zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |>
   ungroup() |> 
   filter(variable %in% vars) |> 
   mutate(variable = factor(variable,
-                          labels = c("residence~time (d)",
+                          labels = c(bquote('air temp ('*degree*'C)'),
                                      "wind~speed~(m~s^{-1})",
-                                     bquote('air temp ('*degree*'C)'),
-                                     "Secchi~depth~(m)",
                                      "Schmidt~stability~(J~m^{-2})",
-                                     bquote('epilimnetic TN ('*mu*g~L^-1~')')))) |> 
+                                     "Secchi~depth~(m)",
+                                     bquote('epilimnetic TN ('*mu*g~L^-1~')'),
+                                     bquote('epilimnetic TP ('*mu*g~L^-1~')')))) |> 
   ggplot(aes(x=median, y=prop_cyclopoid*100, group = year)) +
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
-  facet_wrap(~variable, nrow=5, scales = "free_x", 
+  facet_wrap(~variable, nrow=3, scales = "free_x", 
              labeller = label_parsed) +
   theme_bw() + ylab("Percent Cyclopoid (%)") + 
   guides(alpha = "none", fill = "none", color = guide_legend(nrow=1)) +
@@ -145,45 +145,18 @@ res <- zoop_drivers_long |> group_by(year, variable) |>
           summarize(median = median(value, na.rm=T)) |> 
           filter(variable %in% vars)
 
-(mean(res$median[res$variable %in% 'residence time' & 
+(mean(res$median[res$variable %in% 'air temp' & 
              res$year %in% c("2014","2019")]) -
-mean(res$median[res$variable %in% 'residence time' & 
+mean(res$median[res$variable %in% 'air temp' & 
                   res$year %in% c("2015","2016","2020","2021")])) /
-  mean(res$median[res$variable %in% 'residence time' & 
+  mean(res$median[res$variable %in% 'air temp' & 
                     res$year %in% c("2015","2016","2020","2021")]) * 100
-
-mean(c(zoop_drivers_long$value[zoop_drivers_long$variable=="residence time" &
-                          !zoop_drivers_long$month %in% "9" &
-                          zoop_drivers_long$year=="2019"],
-zoop_drivers_long$value[zoop_drivers_long$variable=="residence time" &
-                          zoop_drivers_long$year=="2014"]))
-
-mean(c(zoop_drivers_long$value[zoop_drivers_long$variable=="residence time" &
-                                 zoop_drivers_long$year=="2019"],
-       zoop_drivers_long$value[zoop_drivers_long$variable=="residence time" &
-                                 zoop_drivers_long$year=="2014"]))
-#sep 2019 really draws mean up by ~20 days (27 days vs. 46 days)
-
 
 (mean(res$median[res$variable %in% 'wind speed' & 
                    res$year %in% c("2014","2019")]) -
     mean(res$median[res$variable %in% 'wind speed' & 
                       res$year %in% c("2015","2016","2020","2021")])) /
   mean(res$median[res$variable %in% 'wind speed' & 
-                    res$year %in% c("2015","2016","2020","2021")]) * 100
-
-(mean(res$median[res$variable %in% 'air temp' & 
-                   res$year %in% c("2014","2019")]) -
-    mean(res$median[res$variable %in% 'air temp' & 
-                      res$year %in% c("2015","2016","2020","2021")])) /
-  mean(res$median[res$variable %in% 'air temp' & 
-                    res$year %in% c("2015","2016","2020","2021")]) * 100
-
-(mean(res$median[res$variable %in% 'Secchi depth' & 
-                   res$year %in% c("2014","2019")]) -
-    mean(res$median[res$variable %in% 'Secchi depth' & 
-                      res$year %in% c("2015","2016","2020","2021")])) /
-  mean(res$median[res$variable %in% 'Secchi depth' & 
                     res$year %in% c("2015","2016","2020","2021")]) * 100
 
 (mean(res$median[res$variable %in% 'Schmidt stability' & 
@@ -193,6 +166,13 @@ mean(c(zoop_drivers_long$value[zoop_drivers_long$variable=="residence time" &
   mean(res$median[res$variable %in% 'Schmidt stability' & 
                     res$year %in% c("2015","2016","2020","2021")]) * 100
 
+(mean(res$median[res$variable %in% 'Secchi depth' & 
+                   res$year %in% c("2014","2019")]) -
+    mean(res$median[res$variable %in% 'Secchi depth' & 
+                      res$year %in% c("2015","2016","2020","2021")])) /
+  mean(res$median[res$variable %in% 'Secchi depth' & 
+                    res$year %in% c("2015","2016","2020","2021")]) * 100
+
 (mean(res$median[res$variable %in% 'epilimnetic TN' & 
                    res$year %in% c("2014","2019")]) -
     mean(res$median[res$variable %in% 'epilimnetic TN' & 
@@ -200,22 +180,30 @@ mean(c(zoop_drivers_long$value[zoop_drivers_long$variable=="residence time" &
   mean(res$median[res$variable %in% 'epilimnetic TN' & 
                     res$year %in% c("2015","2016","2020","2021")]) * 100
 
+(mean(res$median[res$variable %in% 'epilimnetic TP' & 
+                   res$year %in% c("2014","2019")]) -
+    mean(res$median[res$variable %in% 'epilimnetic TP' & 
+                      res$year %in% c("2015","2016","2020","2021")])) /
+  mean(res$median[res$variable %in% 'epilimnetic TP' & 
+                    res$year %in% c("2015","2016","2020","2021")]) * 100
+
 #month on x and colored points for years - all drivers
 zoop_drivers_long |> group_by(month, year, variable) |> 
   summarize(median = median(value, na.rm=T)) |> 
   ungroup() |> 
   mutate(variable = factor(variable, labels = c(
-    "residence~time (d)", "wind~speed~(m~s^{-1})",
-    bquote('air temp ('*degree*'C)'),  "Secchi~depth~(m)",
-    "Schmidt~stability~(J~m^{-2})", bquote('epilimnetic TN ('*mu*g~L^-1~')'),
-    bquote('hypolimnetic TN ('*mu*g~L^-1~')'), bquote('epilimnetic TP ('*mu*g~L^-1~')'),
-    bquote('hypolimnetic TP ('*mu*g~L^-1~')'), bquote('epilimnetic temp ('*degree*'C)'), 
-    bquote('hypolimnetic temp ('*degree*'C)'),  "epilimnetic~DO~(mg~L^{-1})",
-    "water~level~(m)", "water~level~cv", "thermocline~depth~(m)", 
-    "oxycline~depth~(m)", bquote('green ('*mu*g~L^-1~')'),
-    bquote('bluegreen ('*mu*g~L^-1~')'), bquote('brown ('*mu*g~L^-1~')'),
-    bquote('mixed ('*mu*g~L^-1~')'), bquote('phytoplankton biomass ('*mu*g~L^-1~')'),
-     "longwave~(W~m^{-2})", "relative~humidity~('%')", "rain~(m~d^{-1})"))) |> 
+    bquote('air temp ('*degree*'C)'), "wind~speed~(m~s^{-1})",
+    "Schmidt~stability~(J~m^{-2})", "Secchi~depth~(m)",
+    bquote('epilimnetic TN ('*mu*g~L^-1~')'), bquote('epilimnetic TP ('*mu*g~L^-1~')'),
+    bquote('hypolimnetic TN ('*mu*g~L^-1~')'), bquote('hypolimnetic TP ('*mu*g~L^-1~')'),
+    bquote('epilimnetic temp ('*degree*'C)'), bquote('hypolimnetic temp ('*degree*'C)'),
+    "epilimnetic~DO~(mg~L^{-1})", "water~level~(m)", "water~level~cv",
+    "thermocline~depth~(m)", "oxycline~depth~(m)",
+    bquote('green ('*mu*g~L^-1~')'), bquote('bluegreen ('*mu*g~L^-1~')'),
+    bquote('brown ('*mu*g~L^-1~')'), bquote('mixed ('*mu*g~L^-1~')'),
+    bquote('phytoplankton biomass ('*mu*g~L^-1~')'),
+    "longwave~(W~m^{-2})", "relative~humidity~('%')", 
+    "rain~(m~d^{-1})", "residence~time (d)"))) |> 
   ggplot(aes(x=as.factor(month), y=median, group = year)) +
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
   geom_line(aes(color=year, alpha = 0.95)) +

@@ -256,6 +256,7 @@ env_drivers <- read.csv("./Output/all_drivers.csv") |>
          "thermocline depth" = "therm_depth",
          "oxycline depth" = "oxy_depth",
          "Schmidt stability" = "SS",
+         "Secchi depth" = "secchi",
          "air temp" = "AirTemp",
          "shortwave" = "Shortwave",
          "longwave" = "Longwave",
@@ -509,8 +510,6 @@ year_box <- ggboxplot(within_year_dist, x = "group", y = "dist",
         axis.text.x = element_text(angle=45, vjust=0.8, hjust=0.8)) +
   annotate("text",label=c("ns"), x=c(3.5), size=4, 
            y=c(0.04), fontface = "italic") +
-  #annotate("text", x=1.5, y=0.5, label= "a: years",
-  #         fontface = "italic", size=5) +
   guides (fill = "none")
 
 month_box <- ggboxplot(within_month_dist, x = "group", y = "dist", 
@@ -524,8 +523,6 @@ month_box <- ggboxplot(within_month_dist, x = "group", y = "dist",
         axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
   annotate("text",label=c("a","b","b","b","ab"), x=c(1.2, 2.2, 3.2, 4.2, 5.2), size=4,
            y=c(0.35, 0.26, 0.25, 0.27, 0.27)) +
-  #annotate("text", x=1.5, y=0.5, label= "b: months",
-  #         fontface = "italic", size=5) +
   guides (fill = "none")
 
 var <- egg::ggarrange(ggarrange(YvsM, ncol = 2, labels = c("A", " "), widths = c(4,0)), 
