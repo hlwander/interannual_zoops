@@ -67,7 +67,7 @@ zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |>
     bquote('epilimnetic temp ('*degree*'C)'), bquote('epilimnetic TN ('*mu*g~L^-1~')'),
     bquote('epilimnetic TP ('*mu*g~L^-1~')'), bquote('green ('*mu*g~L^-1~')'),
     bquote('hypolimnetic temp ('*degree*'C)'), bquote('hypolimnetic TN ('*mu*g~L^-1~')'),
-    bquote('hypolimnetic TP ('*mu*g~L^-1~')'), "longwave~W~m^{-2}",
+    bquote('hypolimnetic TP ('*mu*g~L^-1~')'), "longwave~(W~m^{-2})",
     bquote('mixed ('*mu*g~L^-1~')'), "oxycline~depth~(m)",
     bquote('phytoplankton biomass ('*mu*g~L^-1~')'), "rain~(m~d^{-1})",
     "relative~humidity~('%')", "residence~time (d)",
@@ -215,7 +215,7 @@ zoop_drivers_long |> group_by(month, year, variable) |>
     "oxycline~depth~(m)", bquote('green ('*mu*g~L^-1~')'),
     bquote('bluegreen ('*mu*g~L^-1~')'), bquote('brown ('*mu*g~L^-1~')'),
     bquote('mixed ('*mu*g~L^-1~')'), bquote('phytoplankton biomass ('*mu*g~L^-1~')'),
-     "longwave~W~m^{-2}", "relative~humidity~('%')", "rain~(m~d^{-1})"))) |> 
+     "longwave~(W~m^{-2})", "relative~humidity~('%')", "rain~(m~d^{-1})"))) |> 
   ggplot(aes(x=as.factor(month), y=median, group = year)) +
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
   geom_line(aes(color=year, alpha = 0.95)) +

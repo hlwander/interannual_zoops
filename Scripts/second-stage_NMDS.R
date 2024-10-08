@@ -361,6 +361,10 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
   geom_segment(data = scores,
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
+  geom_segment(data = scores[scores$env %in% c("Schmidt stability", 
+                                                "phytoplankton biomass", "secchi"),],
+               aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
+               arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS3, label = env), 
                   size = 1.5, box.padding = 0.2)
 
