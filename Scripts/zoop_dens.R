@@ -55,10 +55,6 @@ zoops_pre <- zoops_2016_2018 |>
     Taxon %in% c("D. catawba","D. ambigua")]),
     Daphnia_sd = sd(Density_IndPerL[
       Taxon %in% c("D. catawba","D. ambigua")]),
-    #Calanoida_dens = sum(Density_IndPerL[
-    #  Taxon %in% c("Diaptomus")]),
-    #Calanoida_sd = sd(Density_IndPerL[
-    #  Taxon %in% c("Diaptomus")]),
     Cyclopoida_dens = sum(Density_IndPerL[
       Taxon %in% c("Cyclopoids")]),
     Cyclopoida_sd = sd(Density_IndPerL[
@@ -71,26 +67,14 @@ zoops_pre <- zoops_2016_2018 |>
       Taxon %in% c("Bosmina")]),
     Bosmina_sd = sd(Density_IndPerL[
       Taxon %in% c("Bosmina")]),
-    #Chydorus_dens = sum(Density_IndPerL[
-    #  Taxon %in% c("Chydorus")]),
-    #Chydorus_sd = sd(Density_IndPerL[
-    #  Taxon %in% c("Chydorus")]),
     Ceriodaphnia_dens = sum(Density_IndPerL[
       Taxon %in% c("Ceriodaphnia")]),
     Ceriodaphnia_sd = sd(Density_IndPerL[
       Taxon %in% c("Ceriodaphnia")]),
-    #Diaphanosoma_dens = sum(Density_IndPerL[
-    #  Taxon %in% c("Diaphanosoma")]),
-    #Diaphanosoma_sd = sd(Density_IndPerL[
-    #  Taxon %in% c("Diaphanosoma")]),
     Ascomorpha_dens = sum(Density_IndPerL[
       Taxon %in% c("Ascomorpha")]),
     Ascomorpha_sd = sd(Density_IndPerL[
       Taxon %in% c("Ascomorpha")]),
-    #Asplanchna_dens = sum(Density_IndPerL[
-    #  Taxon %in% c("Asplanchna")]),
-    #Asplanchna_sd = sd(Density_IndPerL[
-    #  Taxon %in% c("Asplanchna")]),
     Conochilus_dens = sum(Density_IndPerL[
       Taxon %in% c("Conochilus")]),
     Conochilus_sd = sd(Density_IndPerL[
@@ -99,18 +83,10 @@ zoops_pre <- zoops_2016_2018 |>
       Taxon %in% c("Keratella")]),
     Keratella_sd = sd(Density_IndPerL[
       Taxon %in% c("Keratella")]),
-    #Trichocerca_dens = sum(Density_IndPerL[
-    #  Taxon %in% c("Trichocerca")]),
-    #Trichocerca_sd = sd(Density_IndPerL[
-    #  Taxon %in% c("Trichocerca")]),
     Kellicottia_dens = sum(Density_IndPerL[
       Taxon %in% c("Kellicottia")]),
     Kellicottia_sd = sd(Density_IndPerL[
       Taxon %in% c("Kellicottia")]),
-    #Lecane_dens = sum(Density_IndPerL[
-    #  Taxon %in% c("Lecane")]),
-    #Lecane_sd = sd(Density_IndPerL[
-    #  Taxon %in% c("Lecane")]),
     Polyarthra_dens = sum(Density_IndPerL[
       Taxon %in% c("Polyarthra")]),
     Polyarthra_sd = sd(Density_IndPerL[
@@ -249,8 +225,6 @@ zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon,
                                          "Conochilus","Kellicottia","Keratella",
                                          "Polyarthra"))
 
-#write.csv(zoops_10_groups,"Output/std_dens_10taxa.csv", row.names = F)
-
 #create new column w/ date bc leap years are really messing up my tick marks
 zoops_10_groups$date <- as.Date(paste0(zoops_10_groups$year,"-",
                                        zoops_10_groups$month,"-01"))
@@ -261,7 +235,6 @@ ggplot(data = subset(zoops_10_groups, month %in%
        aes(x=date, y = avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
             position = "fill", 
-            #position = "stack",
             stat = "identity", 
             alpha=0.7) +
   facet_wrap(~year, scales = "free")+
@@ -436,15 +409,15 @@ zoop_ratios <- all_zoops |>
             p_con = mean(p_dens[Taxon=="Conochilus"],na.rm=T),
             p_rot = mean(p_dens[Taxon=="Rotifera"],na.rm=T))
 
-div_nmds <- read.csv("Output/div_nmds1.csv")
+nmds1 <- read.csv("Output/ss_nmds1.csv")
 
 c_r <- zoops_3_groups_years |> group_by(year) |> 
   select(C_R, year) |> summarise_all(list(mean))
 
-div_nmds$C_R <- c_r$C_R
+nmds1$C_R <- c_r$C_R
 
-zoop_ratios$nmds1 <- div_nmds$nmds1
-zoop_ratios$C_R <- div_nmds$C_R
+zoop_ratios$nmds1 <- nmds1$nmds1
+zoop_ratios$C_R <- nmds1$C_R
 
 #convert from wide to long
 zoop_ratios_long <- zoop_ratios |> 

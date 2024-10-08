@@ -299,23 +299,6 @@ nldas <- read.csv("./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |>
                    RelHum = mean(RelHum),
                    WindSpeed = mean(WindSpeed),
                    Rain = mean(Rain))
-#------------------------------------------------------------------------------#
-#make an environmental driver df for each month/year
-#env_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% 
-#                                       c("month", "year")],
-#                         water_level[!colnames(water_level) %in% 
-#                                       c("month", "year")],
-#                         ctd_thermo_depth[!colnames(ctd_thermo_depth) %in%
-#                                        c("month","year")],
-#                         ctd_oxy_depth[!colnames(ctd_oxy_depth) %in%
-#                                        c("month","year")],
-#                         physics[!colnames(physics) %in% 
-#                                        c("month", "year")],
-#                         nldas[!colnames(nldas) %in% 
-#                                        c("month","year")])
-#
-##export env csv
-#write.csv(env_drivers, "./Output/env.csv", row.names=FALSE)
 
 #------------------------------------------------------------------------------#
 #read in fp data
@@ -340,9 +323,6 @@ fp <- read.csv(infile1) |>
                    Brown_ugL = mean(BrownAlgae_ugL, na.rm=T),
                    Mixed_ugL = mean(MixedAlgae_ugL, na.rm=T),
                    Total_ugL = mean(TotalConc_ugL, na.rm=T))
-
-#save phyto df
-write.csv(fp, "Output/phytos.csv", row.names=FALSE)
 
 #convert fp from wide to long
 fp_long <- fp |>
