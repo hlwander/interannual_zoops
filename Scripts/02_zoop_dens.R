@@ -1,7 +1,7 @@
 #zoop density succession figs
 
 #read in packages
-pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, sf, lubridate)
+pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, sf, lubridate, ggtext)
 
 #cb friendly year palette
 year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
@@ -9,7 +9,7 @@ year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
 #read in zoop data from EDI
 inUrl1  <-  "https://pasta.lternet.edu/package/data/eml/edi/197/3/9eb6db370194bd3b2824726d89a008a6" 
 infile1 <-  tempfile()
-download.file(inUrl1,infile1,method="curl")
+try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
 zoops <- read.csv(infile1, header=T) |>
   filter(CollectionMethod=="Tow" & Reservoir %in% c("BVR") &
@@ -177,12 +177,6 @@ zoop_prop_taxa <- all_zoop_taxa |> group_by(Taxon) |>
 #just keeping n=10
 
 #------------------------------------------------------------------------------#
-# new df for total zoop dens
-zoops_total <- all_zoops |> 
-  group_by(DateTime) |> 
-  summarise(Total = sum(dens[Taxon %in% c("Cladocera","Copeoda","Rotifera")]),
-            sd = mean(sd[Taxon %in% c("Cladocera","Copeoda","Rotifera")],na.rm=T))  
-
 # 10 group zoop dens
 zoops_10_groups <- all_zoops |> 
   filter(!Taxon %in% c("Cladocera","Copepoda","Rotifera")) |> 
@@ -379,7 +373,7 @@ zoop_ratios <- all_zoops |>
   filter(month %in% c("05","06","07","08","09")) |> 
   group_by(DateTime) |> 
   mutate(total_dens = sum(dens),
-         crust_dens = sum(dens[Taxon=="Cladocera"],na.rm=T, 
+         crust_dens = sum(dens[Taxon=="Cladocera"], 
                           dens[Taxon=="Copepoda"],na.rm=T),
          p_dens = dens / total_dens) |> 
   ungroup() |> group_by(year) |>
@@ -461,4 +455,4 @@ ggplot(zoop_ratios_long, aes(nmds1, value, color=as.factor(year))) +
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-ggsave("Figures/zoop_metrics_vs_nmds1.jpg", width=8, height=6)
+#ggsave("Figures/zoop_metrics_vs_nmds1.jpg", width=8, height=6)

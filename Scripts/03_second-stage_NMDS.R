@@ -1,7 +1,8 @@
 #script for second-stage NMDS
 
 pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,
-               sf,vegan,FSA,rcompanion,NatParksPalettes,ggrepel)
+               sf,vegan,FSA,rcompanion,NatParksPalettes,ggrepel,labdsv,
+               goeveg, ggordiplots)
 
 #read in all_zoops df
 all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE)

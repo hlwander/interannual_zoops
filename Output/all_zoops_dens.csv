@@ -1,1054 +1,1054 @@
-"Reservoir","DateTime","Taxon","dens","sd","trophi","feeding_type","trophic_group"
-"BVR",2014-04-04,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-04,"Cyclopoida",5.80645161290323,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-04-04,"Nauplii",28.3870967741935,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-04,"Bosmina",1.93548387096774,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-04,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-04,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2014-04-04,"Conochilus",5.80645161290323,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-04-04,"Keratella",66.4516129032258,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-04-04,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-04-04,"Polyarthra",26.7741935483871,NA,"virgate","suctors","Raptorial"
-"BVR",2014-04-04,"Rotifera",100.645161290323,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-04-04,"Cladocera",38.0645161290323,0.74953318805774,"NA","filter feeders","Microphagous"
-"BVR",2014-04-04,"Copepoda",34.1935483870968,0.494974746830583,"NA","filter feeders","Microphagous"
-"BVR",2014-04-17,"Daphnia",13.5483870967742,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-17,"Cyclopoida",24.1935483870968,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-04-17,"Nauplii",161.290322580645,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-17,"Bosmina",44.1935483870968,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-17,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-17,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2014-04-17,"Conochilus",2.90322580645161,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-04-17,"Keratella",62.258064516129,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-04-17,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-04-17,"Polyarthra",29.0322580645161,NA,"virgate","suctors","Raptorial"
-"BVR",2014-04-17,"Rotifera",94.1935483870968,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-04-17,"Cladocera",135.483870967742,0.995339138183564,"NA","filter feeders","Microphagous"
-"BVR",2014-04-17,"Copepoda",212.903225806452,2.42538656712698,"NA","filter feeders","Microphagous"
-"BVR",2014-04-30,"Daphnia",26.7741935483871,0.289913780286484,"NA","filter feeders","Herbovore"
-"BVR",2014-04-30,"Cyclopoida",26.7741935483871,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-04-30,"Nauplii",281.935483870968,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-30,"Bosmina",67.0967741935484,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-30,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-04-30,"Ascomorpha",33.5483870967742,NA,"virgate","suctors","Raptorial"
-"BVR",2014-04-30,"Conochilus",134.193548387097,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-04-30,"Keratella",47.0967741935484,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-04-30,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-04-30,"Polyarthra",13.5483870967742,NA,"virgate","suctors","Raptorial"
-"BVR",2014-04-30,"Rotifera",228.064516129032,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-04-30,"Cladocera",134.193548387097,0.814657392200345,"NA","filter feeders","Microphagous"
-"BVR",2014-04-30,"Copepoda",375.806451612903,4.25217983313657,"NA","filter feeders","Microphagous"
-"BVR",2014-05-14,"Daphnia",44.8387096774194,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-05-14,"Cyclopoida",71.6129032258065,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-05-14,"Nauplii",195.161290322581,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-05-14,"Bosmina",12.5806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-05-14,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-05-14,"Ascomorpha",17.741935483871,NA,"virgate","suctors","Raptorial"
-"BVR",2014-05-14,"Conochilus",2067.09677419355,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-05-14,"Keratella",28.7096774193548,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-05-14,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-05-14,"Polyarthra",19.6774193548387,NA,"virgate","suctors","Raptorial"
-"BVR",2014-05-14,"Rotifera",2135.16129032258,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-05-14,"Cladocera",64.5161290322581,0.632165590121238,"NA","filter feeders","Microphagous"
-"BVR",2014-05-14,"Copepoda",302.58064516129,2.59180117550196,"NA","filter feeders","Microphagous"
-"BVR",2014-05-29,"Daphnia",6.7741935483871,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-05-29,"Cyclopoida",26.7741935483871,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-05-29,"Nauplii",163.225806451613,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-05-29,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-05-29,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-05-29,"Ascomorpha",448.709677419355,NA,"virgate","suctors","Raptorial"
-"BVR",2014-05-29,"Conochilus",134.193548387097,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-05-29,"Keratella",58.0645161290323,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-05-29,"Kellicottia",4.51612903225806,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-05-29,"Polyarthra",20,NA,"virgate","suctors","Raptorial"
-"BVR",2014-05-29,"Rotifera",668.064516129032,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-05-29,"Cladocera",47.0967741935484,0.735391052434009,"NA","filter feeders","Microphagous"
-"BVR",2014-05-29,"Copepoda",190,2.9910616844191,"NA","filter feeders","Microphagous"
-"BVR",2014-06-04,"Daphnia",44.8387096774194,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-04,"Cyclopoida",105.483870967742,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-06-04,"Nauplii",534.193548387097,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-04,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-04,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-04,"Ascomorpha",805.483870967742,NA,"virgate","suctors","Raptorial"
-"BVR",2014-06-04,"Conochilus",94.8387096774194,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-06-04,"Keratella",603.870967741935,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-06-04,"Kellicottia",28.7096774193548,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-06-04,"Polyarthra",9.03225806451613,NA,"virgate","suctors","Raptorial"
-"BVR",2014-06-04,"Rotifera",1559.67741935484,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-06-04,"Cladocera",48.7096774193548,0.767875858022202,"NA","filter feeders","Microphagous"
-"BVR",2014-06-04,"Copepoda",641.612903225806,8.74812551350288,"NA","filter feeders","Microphagous"
-"BVR",2014-06-18,"Daphnia",25.1612903225806,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-18,"Cyclopoida",10.6451612903226,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-06-18,"Nauplii",57.4193548387097,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-18,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-18,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-18,"Ascomorpha",78.7096774193548,NA,"virgate","suctors","Raptorial"
-"BVR",2014-06-18,"Conochilus",91.2903225806452,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-06-18,"Keratella",148.387096774194,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-06-18,"Kellicottia",1.93548387096774,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-06-18,"Polyarthra",3.54838709677419,NA,"virgate","suctors","Raptorial"
-"BVR",2014-06-18,"Rotifera",325.806451612903,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-06-18,"Cladocera",29.0322580645161,0.415692193816531,"NA","filter feeders","Microphagous"
-"BVR",2014-06-18,"Copepoda",68.0645161290323,1.02530483272049,"NA","filter feeders","Microphagous"
-"BVR",2014-06-25,"Daphnia",87.741935483871,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-25,"Cyclopoida",82.258064516129,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-06-25,"Nauplii",234.516129032258,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-25,"Bosmina",1.93548387096774,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-25,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-06-25,"Ascomorpha",92.9032258064516,NA,"virgate","suctors","Raptorial"
-"BVR",2014-06-25,"Conochilus",148.387096774194,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-06-25,"Keratella",180.645161290323,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-06-25,"Kellicottia",98.3870967741935,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-06-25,"Polyarthra",14.1935483870968,NA,"virgate","suctors","Raptorial"
-"BVR",2014-06-25,"Rotifera",556.451612903226,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-06-25,"Cladocera",89.6774193548387,1.88090403795622,"NA","filter feeders","Microphagous"
-"BVR",2014-06-25,"Copepoda",316.774193548387,3.3375440072005,"NA","filter feeders","Microphagous"
-"BVR",2014-07-02,"Daphnia",40.3225806451613,0.360624458405139,"NA","filter feeders","Herbovore"
-"BVR",2014-07-02,"Cyclopoida",24.8387096774194,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-07-02,"Nauplii",110.967741935484,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-07-02,"Bosmina",10.9677419354839,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-07-02,"Ceriodaphnia",0.967741935483871,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-07-02,"Ascomorpha",30.3225806451613,NA,"virgate","suctors","Raptorial"
-"BVR",2014-07-02,"Conochilus",7.74193548387097,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-07-02,"Keratella",253.548387096774,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-07-02,"Kellicottia",61.9354838709677,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-07-02,"Polyarthra",10.9677419354839,NA,"virgate","suctors","Raptorial"
-"BVR",2014-07-02,"Rotifera",365.483870967742,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-07-02,"Cladocera",52.258064516129,0.351994318135961,"NA","filter feeders","Microphagous"
-"BVR",2014-07-02,"Copepoda",135.806451612903,1.88797510576808,"NA","filter feeders","Microphagous"
-"BVR",2014-07-09,"Daphnia",6.45161290322581,0.0848528137423857,"NA","filter feeders","Herbovore"
-"BVR",2014-07-09,"Cyclopoida",21.6129032258065,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-07-09,"Nauplii",90.6451612903226,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-07-09,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-07-09,"Ceriodaphnia",3.54838709677419,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-07-09,"Ascomorpha",17.4193548387097,NA,"virgate","suctors","Raptorial"
-"BVR",2014-07-09,"Conochilus",9.35483870967742,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-07-09,"Keratella",91.2903225806452,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-07-09,"Kellicottia",146.451612903226,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-07-09,"Polyarthra",2.25806451612903,NA,"virgate","suctors","Raptorial"
-"BVR",2014-07-09,"Rotifera",268.064516129032,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-07-09,"Cladocera",10.6451612903226,0.064485140407177,"NA","filter feeders","Microphagous"
-"BVR",2014-07-09,"Copepoda",112.258064516129,1.51320851173921,"NA","filter feeders","Microphagous"
-"BVR",2014-07-23,"Daphnia",42.9032258064516,0.544472221513642,"NA","filter feeders","Herbovore"
-"BVR",2014-07-23,"Cyclopoida",141.290322580645,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-07-23,"Nauplii",472.58064516129,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-07-23,"Bosmina",3.54838709677419,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-07-23,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-07-23,"Ascomorpha",12.5806451612903,NA,"virgate","suctors","Raptorial"
-"BVR",2014-07-23,"Conochilus",7.09677419354839,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-07-23,"Keratella",493.870967741935,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-07-23,"Kellicottia",1514.1935483871,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-07-23,"Polyarthra",5.48387096774194,NA,"virgate","suctors","Raptorial"
-"BVR",2014-07-23,"Rotifera",2036.77419354839,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-07-23,"Cladocera",46.4516129032258,0.500899191454728,"NA","filter feeders","Microphagous"
-"BVR",2014-07-23,"Copepoda",613.870967741935,7.26198664278584,"NA","filter feeders","Microphagous"
-"BVR",2014-08-13,"Daphnia",66.1290322580645,1.29400540957138,"NA","filter feeders","Herbovore"
-"BVR",2014-08-13,"Cyclopoida",66.1290322580645,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-08-13,"Nauplii",114.516129032258,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-08-13,"Bosmina",5.48387096774194,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-08-13,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-08-13,"Ascomorpha",10.6451612903226,NA,"virgate","suctors","Raptorial"
-"BVR",2014-08-13,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-08-13,"Keratella",193.225806451613,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-08-13,"Kellicottia",558.387096774194,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-08-13,"Polyarthra",1.93548387096774,NA,"virgate","suctors","Raptorial"
-"BVR",2014-08-13,"Rotifera",771.290322580645,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-08-13,"Cladocera",71.6129032258064,1.03966340706981,"NA","filter feeders","Microphagous"
-"BVR",2014-08-13,"Copepoda",180.645161290323,1.06066017177982,"NA","filter feeders","Microphagous"
-"BVR",2014-09-04,"Daphnia",98.3870967741935,0.190918830920368,"NA","filter feeders","Herbovore"
-"BVR",2014-09-04,"Cyclopoida",295.161290322581,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-09-04,"Nauplii",1181.29032258065,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-09-04,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-09-04,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-09-04,"Ascomorpha",67.0967741935484,NA,"virgate","suctors","Raptorial"
-"BVR",2014-09-04,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-09-04,"Keratella",192.258064516129,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-09-04,"Kellicottia",1114.1935483871,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-09-04,"Polyarthra",26.7741935483871,NA,"virgate","suctors","Raptorial"
-"BVR",2014-09-04,"Rotifera",1404.83870967742,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-09-04,"Cladocera",98.3870967741935,0.190918830920368,"NA","filter feeders","Microphagous"
-"BVR",2014-09-04,"Copepoda",1480.96774193548,19.0025059750901,"NA","filter feeders","Microphagous"
-"BVR",2014-09-25,"Daphnia",53.5483870967742,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-09-25,"Cyclopoida",382.58064516129,NA,"NA","predators","Omnicarnivore"
-"BVR",2014-09-25,"Nauplii",738.387096774194,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-09-25,"Bosmina",40.3225806451613,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-09-25,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2014-09-25,"Ascomorpha",395.806451612903,NA,"virgate","suctors","Raptorial"
-"BVR",2014-09-25,"Conochilus",114.193548387097,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2014-09-25,"Keratella",583.870967741935,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-09-25,"Kellicottia",87.0967741935484,NA,"malleate","filter feeders","Microphagous"
-"BVR",2014-09-25,"Polyarthra",416.129032258065,NA,"virgate","suctors","Raptorial"
-"BVR",2014-09-25,"Rotifera",1879.03225806452,NA,"NA","filter feeders","Microphagous"
-"BVR",2014-09-25,"Cladocera",100.645161290323,0.747462373634954,"NA","filter feeders","Microphagous"
-"BVR",2014-09-25,"Copepoda",1154.51612903226,10.925168190925,"NA","filter feeders","Microphagous"
-"BVR",2015-05-14,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-05-14,"Cyclopoida",33.5483870967742,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-05-14,"Nauplii",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-05-14,"Bosmina",2.58064516129032,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-05-14,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-05-14,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2015-05-14,"Conochilus",28.3870967741935,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-05-14,"Keratella",114.193548387097,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-05-14,"Kellicottia",1169.35483870968,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-05-14,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2015-05-14,"Rotifera",1311.93548387097,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-05-14,"Cladocera",2.58064516129032,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-05-14,"Copepoda",33.5483870967742,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-05-28,"Daphnia",2.25806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-05-28,"Cyclopoida",60,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-05-28,"Nauplii",76.1290322580645,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-05-28,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-05-28,"Ceriodaphnia",2.25806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-05-28,"Ascomorpha",25.4838709677419,NA,"virgate","suctors","Raptorial"
-"BVR",2015-05-28,"Conochilus",50.6451612903226,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-05-28,"Keratella",101.290322580645,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-05-28,"Kellicottia",279.032258064516,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-05-28,"Polyarthra",126.774193548387,NA,"virgate","suctors","Raptorial"
-"BVR",2015-05-28,"Rotifera",583.225806451613,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-05-28,"Cladocera",6.7741935483871,0,"NA","filter feeders","Microphagous"
-"BVR",2015-05-28,"Copepoda",136.129032258065,0.353553390593274,"NA","filter feeders","Microphagous"
-"BVR",2015-06-11,"Daphnia",41.6129032258065,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-06-11,"Cyclopoida",43.8709677419355,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-06-11,"Nauplii",279.032258064516,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-06-11,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-06-11,"Ceriodaphnia",2.25806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-06-11,"Ascomorpha",25.4838709677419,NA,"virgate","suctors","Raptorial"
-"BVR",2015-06-11,"Conochilus",25.4838709677419,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-06-11,"Keratella",963.548387096774,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-06-11,"Kellicottia",126.774193548387,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-06-11,"Polyarthra",25.4838709677419,NA,"virgate","suctors","Raptorial"
-"BVR",2015-06-11,"Rotifera",1166.12903225806,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-06-11,"Cladocera",43.8709677419355,0.862670273047588,"NA","filter feeders","Microphagous"
-"BVR",2015-06-11,"Copepoda",325.161290322581,4.62645652740842,"NA","filter feeders","Microphagous"
-"BVR",2015-06-25,"Daphnia",6.7741935483871,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-06-25,"Cyclopoida",32.258064516129,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-06-25,"Nauplii",50.6451612903226,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-06-25,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-06-25,"Ceriodaphnia",2.25806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-06-25,"Ascomorpha",25.4838709677419,NA,"virgate","suctors","Raptorial"
-"BVR",2015-06-25,"Conochilus",25.4838709677419,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-06-25,"Keratella",152.258064516129,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-06-25,"Kellicottia",50.6451612903226,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-06-25,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2015-06-25,"Rotifera",253.548387096774,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-06-25,"Cladocera",9.03225806451613,0.0989949493661166,"NA","filter feeders","Microphagous"
-"BVR",2015-06-25,"Copepoda",82.9032258064516,0.403050865276332,"NA","filter feeders","Microphagous"
-"BVR",2015-07-09,"Daphnia",62.258064516129,0.558614357137373,"NA","filter feeders","Herbovore"
-"BVR",2015-07-09,"Cyclopoida",149.677419354839,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-07-09,"Nauplii",405.806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-09,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-09,"Ceriodaphnia",2.25806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-09,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2015-07-09,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-07-09,"Keratella",101.290322580645,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-07-09,"Kellicottia",76.1290322580645,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-07-09,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2015-07-09,"Rotifera",228.064516129032,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-07-09,"Cladocera",64.5161290322581,0.65041012702243,"NA","filter feeders","Microphagous"
-"BVR",2015-07-09,"Copepoda",571.612903225806,6.13880552985133,"NA","filter feeders","Microphagous"
-"BVR",2015-07-23,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-23,"Cyclopoida",82.9032258064516,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-07-23,"Nauplii",507.096774193548,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-23,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-23,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-23,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2015-07-23,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-07-23,"Keratella",304.193548387097,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-07-23,"Kellicottia",50.6451612903226,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-07-23,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2015-07-23,"Rotifera",354.838709677419,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-07-23,"Cladocera",2.25806451612903,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-07-23,"Copepoda",592.258064516129,8.40728850462502,"NA","filter feeders","Microphagous"
-"BVR",2015-07-30,"Daphnia",9.03225806451613,0.0989949493661166,"NA","filter feeders","Herbovore"
-"BVR",2015-07-30,"Cyclopoida",69.0322580645161,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-07-30,"Nauplii",228.064516129032,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-30,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-30,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-07-30,"Ascomorpha",25.4838709677419,NA,"virgate","suctors","Raptorial"
-"BVR",2015-07-30,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-07-30,"Keratella",811.290322580645,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-07-30,"Kellicottia",25.4838709677419,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-07-30,"Polyarthra",25.4838709677419,NA,"virgate","suctors","Raptorial"
-"BVR",2015-07-30,"Rotifera",887.41935483871,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-07-30,"Cladocera",9.03225806451613,0.0989949493661166,"NA","filter feeders","Microphagous"
-"BVR",2015-07-30,"Copepoda",297.096774193548,3.48603643124968,"NA","filter feeders","Microphagous"
-"BVR",2015-08-13,"Daphnia",4.51612903225806,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-08-13,"Cyclopoida",46.1290322580645,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-08-13,"Nauplii",202.903225806452,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-08-13,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-08-13,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-08-13,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2015-08-13,"Conochilus",50.6451612903226,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-08-13,"Keratella",354.838709677419,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-08-13,"Kellicottia",25.4838709677419,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-08-13,"Polyarthra",25.4838709677419,NA,"virgate","suctors","Raptorial"
-"BVR",2015-08-13,"Rotifera",456.451612903226,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-08-13,"Cladocera",6.7741935483871,0.0494974746830583,"NA","filter feeders","Microphagous"
-"BVR",2015-08-13,"Copepoda",249.032258064516,3.43653895656662,"NA","filter feeders","Microphagous"
-"BVR",2015-09-04,"Daphnia",34.5161290322581,0.0494974746830583,"NA","filter feeders","Herbovore"
-"BVR",2015-09-04,"Cyclopoida",80.6451612903226,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-09-04,"Nauplii",456.451612903226,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-09-04,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-09-04,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-09-04,"Ascomorpha",202.903225806452,NA,"virgate","suctors","Raptorial"
-"BVR",2015-09-04,"Conochilus",25.4838709677419,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-09-04,"Keratella",304.193548387097,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-09-04,"Kellicottia",126.774193548387,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-09-04,"Polyarthra",25.4838709677419,NA,"virgate","suctors","Raptorial"
-"BVR",2015-09-04,"Rotifera",684.516129032258,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-09-04,"Cladocera",36.7741935483871,0.270739727413618,"NA","filter feeders","Microphagous"
-"BVR",2015-09-04,"Copepoda",541.612903225806,7.50080217932278,"NA","filter feeders","Microphagous"
-"BVR",2015-09-18,"Daphnia",9.03225806451613,0.0989949493661166,"NA","filter feeders","Herbovore"
-"BVR",2015-09-18,"Cyclopoida",90,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-09-18,"Nauplii",583.225806451613,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-09-18,"Bosmina",4.51612903225806,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-09-18,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-09-18,"Ascomorpha",50.6451612903226,NA,"virgate","suctors","Raptorial"
-"BVR",2015-09-18,"Conochilus",76.1290322580645,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-09-18,"Keratella",152.258064516129,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-09-18,"Kellicottia",50.6451612903226,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-09-18,"Polyarthra",101.290322580645,NA,"virgate","suctors","Raptorial"
-"BVR",2015-09-18,"Rotifera",456.451612903226,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-09-18,"Cladocera",13.5483870967742,0.07,"NA","filter feeders","Microphagous"
-"BVR",2015-09-18,"Copepoda",677.741935483871,9.68375099500877,"NA","filter feeders","Microphagous"
-"BVR",2015-10-02,"Daphnia",101.290322580645,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-10-02,"Cyclopoida",107.096774193548,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-10-02,"Nauplii",279.032258064516,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-10-02,"Bosmina",5.48387096774194,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-10-02,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-10-02,"Ascomorpha",50.6451612903226,NA,"virgate","suctors","Raptorial"
-"BVR",2015-10-02,"Conochilus",405.806451612903,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-10-02,"Keratella",126.774193548387,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-10-02,"Kellicottia",50.6451612903226,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-10-02,"Polyarthra",279.032258064516,NA,"virgate","suctors","Raptorial"
-"BVR",2015-10-02,"Rotifera",912.58064516129,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-10-02,"Cladocera",106.774193548387,2.10010714012405,"NA","filter feeders","Microphagous"
-"BVR",2015-10-02,"Copepoda",402.903225806452,4.13008878032099,"NA","filter feeders","Microphagous"
-"BVR",2015-10-23,"Daphnia",82.9032258064516,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-10-23,"Cyclopoida",147.41935483871,NA,"NA","predators","Omnicarnivore"
-"BVR",2015-10-23,"Nauplii",202.903225806452,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-10-23,"Bosmina",13.8709677419355,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-10-23,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2015-10-23,"Ascomorpha",126.774193548387,NA,"virgate","suctors","Raptorial"
-"BVR",2015-10-23,"Conochilus",50.6451612903226,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2015-10-23,"Keratella",177.41935483871,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-10-23,"Kellicottia",76.1290322580645,NA,"malleate","filter feeders","Microphagous"
-"BVR",2015-10-23,"Polyarthra",659.032258064516,NA,"virgate","suctors","Raptorial"
-"BVR",2015-10-23,"Rotifera",1090.32258064516,NA,"NA","filter feeders","Microphagous"
-"BVR",2015-10-23,"Cladocera",99.0322580645161,1.35149300158504,"NA","filter feeders","Microphagous"
-"BVR",2015-10-23,"Copepoda",398.709677419355,2.42649953636921,"NA","filter feeders","Microphagous"
-"BVR",2016-04-06,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-04-06,"Cyclopoida",27.4193548387097,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-04-06,"Nauplii",33.8709677419355,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-04-06,"Bosmina",7.74193548387097,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-04-06,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-04-06,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-04-06,"Conochilus",101.290322580645,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-04-06,"Keratella",253.548387096774,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-04-06,"Kellicottia",42.258064516129,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-04-06,"Polyarthra",16.7741935483871,NA,"virgate","suctors","Raptorial"
-"BVR",2016-04-06,"Rotifera",633.870967741935,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-04-06,"Cladocera",8.70967741935484,0.148492424049175,"NA","filter feeders","Microphagous"
-"BVR",2016-04-06,"Copepoda",61.2903225806452,0.14142135623731,"NA","filter feeders","Microphagous"
-"BVR",2016-04-20,"Daphnia",20.9677419354839,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-04-20,"Cyclopoida",34.8387096774194,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-04-20,"Nauplii",123.548387096774,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-04-20,"Bosmina",3.87096774193548,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-04-20,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-04-20,"Ascomorpha",47.4193548387097,NA,"virgate","suctors","Raptorial"
-"BVR",2016-04-20,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-04-20,"Keratella",313.870967741935,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-04-20,"Kellicottia",47.4193548387097,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-04-20,"Polyarthra",19.0322580645161,NA,"virgate","suctors","Raptorial"
-"BVR",2016-04-20,"Rotifera",427.741935483871,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-04-20,"Cladocera",34.8387096774194,0.268514431641951,"NA","filter feeders","Microphagous"
-"BVR",2016-04-20,"Copepoda",158.387096774194,1.94454364826301,"NA","filter feeders","Microphagous"
-"BVR",2016-05-04,"Daphnia",13.2258064516129,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-05-04,"Cyclopoida",90.6451612903226,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-05-04,"Nauplii",101.290322580645,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-05-04,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-05-04,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-05-04,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-05-04,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-05-04,"Keratella",430.967741935484,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-05-04,"Kellicottia",76.1290322580645,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-05-04,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-05-04,"Rotifera",507.096774193548,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-05-04,"Cladocera",13.2258064516129,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-05-04,"Copepoda",191.935483870968,0.233345237791561,"NA","filter feeders","Microphagous"
-"BVR",2016-05-20,"Daphnia",2.25806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-05-20,"Cyclopoida",71.2903225806452,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-05-20,"Nauplii",215.483870967742,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-05-20,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-05-20,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-05-20,"Ascomorpha",253.548387096774,NA,"virgate","suctors","Raptorial"
-"BVR",2016-05-20,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-05-20,"Keratella",684.516129032258,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-05-20,"Kellicottia",266.129032258065,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-05-20,"Polyarthra",126.774193548387,NA,"virgate","suctors","Raptorial"
-"BVR",2016-05-20,"Rotifera",1330.96774193548,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-05-20,"Cladocera",2.25806451612903,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-05-20,"Copepoda",289.032258064516,3.37274863180364,"NA","filter feeders","Microphagous"
-"BVR",2016-06-02,"Daphnia",11.6129032258065,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-06-02,"Cyclopoida",102.58064516129,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-06-02,"Nauplii",139.354838709677,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-06-02,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-06-02,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-06-02,"Ascomorpha",114.193548387097,NA,"virgate","suctors","Raptorial"
-"BVR",2016-06-02,"Conochilus",2560.64516129032,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-06-02,"Keratella",1026.77419354839,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-06-02,"Kellicottia",710,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-06-02,"Polyarthra",50.6451612903226,NA,"virgate","suctors","Raptorial"
-"BVR",2016-06-02,"Rotifera",4462.25806451613,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-06-02,"Cladocera",11.6129032258065,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-06-02,"Copepoda",241.935483870968,0.806101730552664,"NA","filter feeders","Microphagous"
-"BVR",2016-06-23,"Daphnia",60,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-06-23,"Cyclopoida",239.677419354839,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-06-23,"Nauplii",557.741935483871,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-06-23,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-06-23,"Ceriodaphnia",2.25806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-06-23,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-06-23,"Conochilus",228.064516129032,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-06-23,"Keratella",329.677419354839,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-06-23,"Kellicottia",329.677419354839,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-06-23,"Polyarthra",126.774193548387,NA,"virgate","suctors","Raptorial"
-"BVR",2016-06-23,"Rotifera",1039.35483870968,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-06-23,"Cladocera",64.5161290322581,1.03345698184943,"NA","filter feeders","Microphagous"
-"BVR",2016-06-23,"Copepoda",804.193548387097,8.57393725192808,"NA","filter feeders","Microphagous"
-"BVR",2016-07-07,"Daphnia",12.5806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-07-07,"Cyclopoida",69.6774193548387,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-07-07,"Nauplii",279.032258064516,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-07-07,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-07-07,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-07-07,"Ascomorpha",101.290322580645,NA,"virgate","suctors","Raptorial"
-"BVR",2016-07-07,"Conochilus",228.064516129032,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-07-07,"Keratella",139.354838709677,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-07-07,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-07-07,"Polyarthra",215.483870967742,NA,"virgate","suctors","Raptorial"
-"BVR",2016-07-07,"Rotifera",697.096774193548,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-07-07,"Cladocera",12.5806451612903,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-07-07,"Copepoda",348.709677419355,4.58912300990069,"NA","filter feeders","Microphagous"
-"BVR",2016-07-21,"Daphnia",4.51612903225806,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-07-21,"Cyclopoida",79.3548387096774,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-07-21,"Nauplii",380.322580645161,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-07-21,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-07-21,"Ceriodaphnia",8.70967741935484,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-07-21,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-07-21,"Conochilus",16.7741935483871,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-07-21,"Keratella",92.9032258064516,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-07-21,"Kellicottia",59.0322580645161,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-07-21,"Polyarthra",84.5161290322581,NA,"virgate","suctors","Raptorial"
-"BVR",2016-07-21,"Rotifera",253.548387096774,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-07-21,"Cladocera",13.2258064516129,0.0919238815542512,"NA","filter feeders","Microphagous"
-"BVR",2016-07-21,"Copepoda",461.935483870968,6.19299873513093,"NA","filter feeders","Microphagous"
-"BVR",2016-08-03,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-03,"Cyclopoida",326.129032258065,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-08-03,"Nauplii",718.709677419355,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-03,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-03,"Ceriodaphnia",35.8064516129032,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-03,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-08-03,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-08-03,"Keratella",764.516129032258,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-08-03,"Kellicottia",114.193548387097,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-08-03,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-08-03,"Rotifera",878.387096774194,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-08-03,"Cladocera",35.8064516129032,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-08-03,"Copepoda",1051.29032258065,11.0592600716926,"NA","filter feeders","Microphagous"
-"BVR",2016-08-04,"Daphnia",5.48387096774194,0.0777817459305202,"NA","filter feeders","Herbovore"
-"BVR",2016-08-04,"Cyclopoida",52.9032258064516,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-08-04,"Nauplii",291.935483870968,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-04,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-04,"Ceriodaphnia",2.58064516129032,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-04,"Ascomorpha",9.03225806451613,NA,"virgate","suctors","Raptorial"
-"BVR",2016-08-04,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-08-04,"Keratella",552.258064516129,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-08-04,"Kellicottia",178.064516129032,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-08-04,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-08-04,"Rotifera",743.870967741935,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-08-04,"Cladocera",8.06451612903226,0.055075705472861,"NA","filter feeders","Microphagous"
-"BVR",2016-08-04,"Copepoda",344.838709677419,5.23966124859232,"NA","filter feeders","Microphagous"
-"BVR",2016-08-11,"Daphnia",4.51612903225806,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-11,"Cyclopoida",88.0645161290323,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-08-11,"Nauplii",160.645161290323,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-11,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-11,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-11,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-08-11,"Conochilus",16.7741935483871,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-08-11,"Keratella",219.677419354839,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-08-11,"Kellicottia",25.4838709677419,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-08-11,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-08-11,"Rotifera",270.322580645161,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-08-11,"Cladocera",4.51612903225806,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-08-11,"Copepoda",248.709677419355,1.59099025766973,"NA","filter feeders","Microphagous"
-"BVR",2016-08-23,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-23,"Cyclopoida",173.225806451613,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-08-23,"Nauplii",481.612903225806,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-23,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-23,"Ceriodaphnia",69.6774193548387,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-08-23,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-08-23,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-08-23,"Keratella",164.838709677419,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-08-23,"Kellicottia",164.838709677419,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-08-23,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-08-23,"Rotifera",329.677419354839,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-08-23,"Cladocera",69.6774193548387,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-08-23,"Copepoda",654.838709677419,6.75994082814339,"NA","filter feeders","Microphagous"
-"BVR",2016-09-06,"Daphnia",12.5806451612903,0.0919238815542512,"NA","filter feeders","Herbovore"
-"BVR",2016-09-06,"Cyclopoida",101.290322580645,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-09-06,"Nauplii",253.548387096774,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-09-06,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-09-06,"Ceriodaphnia",308.387096774194,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-09-06,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-09-06,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-09-06,"Keratella",101.290322580645,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-09-06,"Kellicottia",76.1290322580645,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-09-06,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-09-06,"Rotifera",177.41935483871,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-09-06,"Cladocera",320.967741935484,5.40727596238007,"NA","filter feeders","Microphagous"
-"BVR",2016-09-06,"Copepoda",354.838709677419,3.3375440072005,"NA","filter feeders","Microphagous"
-"BVR",2016-09-27,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-09-27,"Cyclopoida",133.548387096774,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-09-27,"Nauplii",253.548387096774,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-09-27,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-09-27,"Ceriodaphnia",225.806451612903,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-09-27,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2016-09-27,"Conochilus",50.6451612903226,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-09-27,"Keratella",50.6451612903226,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-09-27,"Kellicottia",50.6451612903226,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-09-27,"Polyarthra",50.6451612903226,NA,"virgate","suctors","Raptorial"
-"BVR",2016-09-27,"Rotifera",228.064516129032,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-09-27,"Cladocera",225.806451612903,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-09-27,"Copepoda",391.612903225806,3.86084619394937,"NA","filter feeders","Microphagous"
-"BVR",2016-10-25,"Daphnia",50.6451612903226,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-10-25,"Cyclopoida",35.8064516129032,NA,"NA","predators","Omnicarnivore"
-"BVR",2016-10-25,"Nauplii",101.290322580645,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-10-25,"Bosmina",8.06451612903226,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-10-25,"Ceriodaphnia",39.0322580645161,NA,"NA","filter feeders","Herbovore"
-"BVR",2016-10-25,"Ascomorpha",177.41935483871,NA,"virgate","suctors","Raptorial"
-"BVR",2016-10-25,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2016-10-25,"Keratella",50.6451612903226,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-10-25,"Kellicottia",38.0645161290323,NA,"malleate","filter feeders","Microphagous"
-"BVR",2016-10-25,"Polyarthra",139.354838709677,NA,"virgate","suctors","Raptorial"
-"BVR",2016-10-25,"Rotifera",405.806451612903,NA,"NA","filter feeders","Microphagous"
-"BVR",2016-10-25,"Cladocera",97.741935483871,0.682348884369279,"NA","filter feeders","Microphagous"
-"BVR",2016-10-25,"Copepoda",147.41935483871,1.45472792416085,"NA","filter feeders","Microphagous"
-"BVR",2019-04-08,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-04-08,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-04-08,"Ceriodaphnia",7.40480842752034,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-04-08,"Cladocera",81.4528927027237,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-04-08,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-04-08,"Copepoda",96.2625095577644,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-04-08,"Cyclopoida",29.6192337100813,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-04-08,"Daphnia",51.8336589926424,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-04-08,"Kellicottia",414.669271941139,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-04-08,"Keratella",111.072126412805,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-04-08,"Nauplii",66.643275847683,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-04-08,"Polyarthra",7.40480842752034,NA,"virgate","suctors","Raptorial"
-"BVR",2019-04-08,"Rotifera",540.551015208984,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-04-29,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-04-29,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-04-29,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-04-29,"Cladocera",152.327487651847,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-04-29,"Conochilus",9.52046797824043,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-04-29,"Copepoda",418.900591042579,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-04-29,"Cyclopoida",123.766083717126,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-04-29,"Daphnia",142.807019673606,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-04-29,"Kellicottia",266.573103390732,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-04-29,"Keratella",342.736847216656,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-04-29,"Nauplii",276.093571368972,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-04-29,"Polyarthra",19.0409359564809,NA,"virgate","suctors","Raptorial"
-"BVR",2019-04-29,"Rotifera",1094.85381749765,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-05-23,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-05-23,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-05-23,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-05-23,"Cladocera",224.92105598593,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-05-23,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-05-23,"Copepoda",258.242693909772,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-05-23,"Cyclopoida",41.6520474048019,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-05-23,"Daphnia",216.59064650497,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-05-23,"Kellicottia",249.912284428811,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-05-23,"Keratella",374.868426643217,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-05-23,"Nauplii",216.59064650497,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-05-23,"Polyarthra",33.3216379238415,NA,"virgate","suctors","Raptorial"
-"BVR",2019-05-23,"Rotifera",724.745624843553,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-06-06,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-06-06,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-06,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-06,"Cladocera",54.5263166026497,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-06-06,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-06-06,"Copepoda",133.286551695366,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-06-06,"Cyclopoida",12.1169592450333,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-06-06,"Daphnia",36.3508777350998,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-06,"Kellicottia",375.625736596032,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-06-06,"Keratella",127.228072072849,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-06-06,"Nauplii",121.169592450333,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-06,"Polyarthra",6.05847962251664,NA,"virgate","suctors","Raptorial"
-"BVR",2019-06-06,"Rotifera",527.087727158947,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-06-13,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-06-13,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-13,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-13,"Cladocera",34.9877198200336,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-06-13,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-06-13,"Copepoda",851.367848954151,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-06-13,"Cyclopoida",128.28830600679,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-06-13,"Daphnia",23.3251465466891,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-13,"Kellicottia",781.392409314083,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-06-13,"Keratella",34.9877198200336,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-06-13,"Nauplii",723.079542947361,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-13,"Polyarthra",46.6502930933781,NA,"virgate","suctors","Raptorial"
-"BVR",2019-06-13,"Rotifera",863.030422227495,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-06-27,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-06-27,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-27,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-27,"Cladocera",93.3005861867562,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-06-27,"Conochilus",226.587137882122,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-06-27,"Copepoda",413.188310255635,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-06-27,"Cyclopoida",133.286551695366,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-06-27,"Daphnia",93.3005861867562,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-27,"Kellicottia",2972.29010280666,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-06-27,"Keratella",146.615206864903,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-06-27,"Nauplii",279.901758560269,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-06-27,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-06-27,"Rotifera",5917.92289527425,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-10,"Ascomorpha",0,0,"virgate","suctors","Raptorial"
-"BVR",2019-07-10,"Bosmina",0,0,"NA","filter feeders","Herbovore"
-"BVR",2019-07-10,"Ceriodaphnia",0,0,"NA","filter feeders","Herbovore"
-"BVR",2019-07-10,"Cladocera",97.3732308218924,50.3676680398261,"NA","filter feeders","Microphagous"
-"BVR",2019-07-10,"Conochilus",476.869662732309,260.063787535081,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-07-10,"Copepoda",1672.37598335547,523.026287370175,"NA","filter feeders","Microphagous"
-"BVR",2019-07-10,"Cyclopoida",317.296041119246,103.698387079232,"NA","predators","Omnicarnivore"
-"BVR",2019-07-10,"Daphnia",89.9684223943721,37.551578841482,"NA","filter feeders","Herbovore"
-"BVR",2019-07-10,"Kellicottia",20369.5172628443,4736.95507921458,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-10,"Keratella",227.327618724874,85.9308795924223,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-10,"Nauplii",1355.07994223622,443.732797484204,"NA","filter feeders","Herbovore"
-"BVR",2019-07-10,"Polyarthra",45.169331407874,1.28255044167795,"virgate","suctors","Raptorial"
-"BVR",2019-07-10,"Rotifera",22485.8115114296,4657.27642364766,"NA","filter feeders","Microphagous"
-"BVR",2019-07-11,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-07-11,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-11,"Ceriodaphnia",44.428850565122,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-11,"Cladocera",177.715402260488,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-11,"Conochilus",533.146206781464,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-07-11,"Copepoda",1110.72126412805,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-11,"Cyclopoida",155.500976977927,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-07-11,"Daphnia",44.428850565122,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-11,"Kellicottia",1799.36844788744,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-11,"Keratella",222.14425282561,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-11,"Nauplii",910.791436585001,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-11,"Polyarthra",66.643275847683,NA,"virgate","suctors","Raptorial"
-"BVR",2019-07-11,"Rotifera",3309.94936710159,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-18,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-07-18,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-18,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-18,"Cladocera",44.428850565122,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-18,"Conochilus",1666.08189619208,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-07-18,"Copepoda",1088.50683884549,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-18,"Cyclopoida",111.072126412805,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-07-18,"Daphnia",44.428850565122,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-18,"Kellicottia",866.362586019879,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-18,"Keratella",199.929827543049,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-18,"Nauplii",955.220287150123,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-18,"Polyarthra",66.643275847683,NA,"virgate","suctors","Raptorial"
-"BVR",2019-07-18,"Rotifera",3576.52247049232,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-24,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-07-24,"Bosmina",44.428850565122,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-24,"Ceriodaphnia",88.857701130244,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-24,"Cladocera",311.001953955854,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-24,"Conochilus",844.148160737318,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-07-24,"Copepoda",15372.3822955322,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-24,"Cyclopoida",1643.86747090951,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-07-24,"Daphnia",88.857701130244,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-24,"Kellicottia",7064.1872398544,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-24,"Keratella",888.57701130244,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-24,"Nauplii",13550.7994223622,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-24,"Polyarthra",844.148160737318,NA,"virgate","suctors","Raptorial"
-"BVR",2019-07-24,"Rotifera",10351.9221816734,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-25,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-07-25,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-25,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-25,"Cladocera",266.573103390732,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-25,"Conochilus",288.787528673293,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-07-25,"Copepoda",10662.9241356293,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-07-25,"Cyclopoida",955.220287150123,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-07-25,"Daphnia",244.358678108171,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-25,"Kellicottia",5931.25155044379,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-25,"Keratella",466.502930933781,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-07-25,"Nauplii",9552.20287150123,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-07-25,"Polyarthra",666.43275847683,NA,"virgate","suctors","Raptorial"
-"BVR",2019-07-25,"Rotifera",8641.41143491623,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-08-14,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-08-14,"Bosmina",16.6608189619208,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-08-14,"Ceriodaphnia",83.3040948096038,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-08-14,"Cladocera",199.929827543049,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-08-14,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-08-14,"Copepoda",733.076034324513,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-08-14,"Cyclopoida",133.286551695366,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-08-14,"Daphnia",83.3040948096038,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-08-14,"Kellicottia",116.625732733445,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-08-14,"Keratella",1116.27487044869,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-08-14,"Nauplii",599.789482629147,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-08-14,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-08-14,"Rotifera",1332.86551695366,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-09-04,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-09-04,"Bosmina",19.9929827543049,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-09-04,"Ceriodaphnia",206.594155127817,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-09-04,"Cladocera",239.915793051659,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-09-04,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-09-04,"Copepoda",233.251465466891,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-09-04,"Cyclopoida",106.629241356293,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-09-04,"Daphnia",13.3286551695366,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-09-04,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-09-04,"Keratella",186.601172373512,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-09-04,"Nauplii",126.622224110598,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-09-04,"Polyarthra",6.6643275847683,NA,"virgate","suctors","Raptorial"
-"BVR",2019-09-04,"Rotifera",279.901758560269,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-10-04,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-10-04,"Bosmina",59.9789482629147,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-10-04,"Ceriodaphnia",186.601172373512,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-10-04,"Cladocera",253.244448221195,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-10-04,"Conochilus",179.936844788744,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-10-04,"Copepoda",439.845620594708,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-10-04,"Cyclopoida",219.922810297354,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-10-04,"Daphnia",6.6643275847683,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-10-04,"Kellicottia",6.6643275847683,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-10-04,"Keratella",33.3216379238415,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-10-04,"Nauplii",199.929827543049,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-10-04,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-10-04,"Rotifera",286.566086145037,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-11-15,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2019-11-15,"Bosmina",318.406762383374,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-11-15,"Ceriodaphnia",7.40480842752033,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-11-15,"Cladocera",340.621187665935,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-11-15,"Conochilus",385.050038231057,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2019-11-15,"Copepoda",259.168294963212,NA,"NA","filter feeders","Microphagous"
-"BVR",2019-11-15,"Cyclopoida",81.4528927027237,NA,"NA","predators","Omnicarnivore"
-"BVR",2019-11-15,"Daphnia",14.8096168550407,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-11-15,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-11-15,"Keratella",51.8336589926423,NA,"malleate","filter feeders","Microphagous"
-"BVR",2019-11-15,"Nauplii",148.096168550407,NA,"NA","filter feeders","Herbovore"
-"BVR",2019-11-15,"Polyarthra",88.857701130244,NA,"virgate","suctors","Raptorial"
-"BVR",2019-11-15,"Rotifera",584.979865774106,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-05-14,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-05-14,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-05-14,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-05-14,"Cladocera",215.412608800592,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-05-14,"Conochilus",316.387269175869,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-05-14,"Copepoda",679.896046526867,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-05-14,"Cyclopoida",188.486032700518,NA,"NA","predators","Omnicarnivore"
-"BVR",2020-05-14,"Daphnia",215.412608800592,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-05-14,"Kellicottia",13.463288050037,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-05-14,"Keratella",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-05-14,"Nauplii",491.410013826349,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-05-14,"Polyarthra",417.361929551146,NA,"virgate","suctors","Raptorial"
-"BVR",2020-05-14,"Rotifera",834.723859102292,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-06-04,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-06-04,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-06-04,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-06-04,"Cladocera",71.9444455173851,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-06-04,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-06-04,"Copepoda",242.339184900665,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-06-04,"Cyclopoida",45.4385971688748,NA,"NA","predators","Omnicarnivore"
-"BVR",2020-06-04,"Daphnia",71.9444455173851,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-06-04,"Kellicottia",3.7865497640729,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-06-04,"Keratella",3.7865497640729,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-06-04,"Nauplii",196.900587731791,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-06-04,"Polyarthra",26.5058483485103,NA,"virgate","suctors","Raptorial"
-"BVR",2020-06-04,"Rotifera",98.4502938658954,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-06-25,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-06-25,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-06-25,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-06-25,"Cladocera",82.7866780716559,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-06-25,"Conochilus",455.326729394108,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-06-25,"Copepoda",827.866780716559,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-06-25,"Cyclopoida",82.7866780716559,NA,"NA","predators","Omnicarnivore"
-"BVR",2020-06-25,"Daphnia",74.5080102644903,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-06-25,"Kellicottia",91.0653458788215,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-06-25,"Keratella",132.458684914649,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-06-25,"Nauplii",745.080102644903,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-06-25,"Polyarthra",8.27866780716559,NA,"virgate","suctors","Raptorial"
-"BVR",2020-06-25,"Rotifera",877.538787559553,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-07-02,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-07-02,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-07-02,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-07-02,"Cladocera",86.9260119752387,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-07-02,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-07-02,"Copepoda",666.43275847683,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-07-02,"Cyclopoida",135.218240850371,NA,"NA","predators","Omnicarnivore"
-"BVR",2020-07-02,"Daphnia",77.2675662002122,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-07-02,"Kellicottia",67.6091204251857,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-07-02,"Keratella",193.16891550053,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-07-02,"Nauplii",521.556071851432,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-07-02,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-07-02,"Rotifera",463.605397201273,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-08-06,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-08-06,"Bosmina",7.68960875165573,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-08-06,"Ceriodaphnia",10.2528116688743,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-08-06,"Cladocera",28.1952320894044,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-08-06,"Conochilus",62.7984714718552,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-08-06,"Copepoda",42.2928481341065,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-08-06,"Cyclopoida",6.40800729304644,NA,"NA","predators","Omnicarnivore"
-"BVR",2020-08-06,"Daphnia",10.2528116688743,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-08-06,"Kellicottia",3.84480437582787,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-08-06,"Keratella",38.4480437582787,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-08-06,"Nauplii",35.8848408410601,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-08-06,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-08-06,"Rotifera",116.625732733445,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-08-12,"Ascomorpha",0,0,"virgate","suctors","Raptorial"
-"BVR",2020-08-12,"Bosmina",0,0,"NA","filter feeders","Herbovore"
-"BVR",2020-08-12,"Ceriodaphnia",11.3899416903313,1.02815808594289,"NA","filter feeders","Herbovore"
-"BVR",2020-08-12,"Cladocera",41.9246789878151,17.82140682301,"NA","filter feeders","Microphagous"
-"BVR",2020-08-12,"Conochilus",0,0,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-08-12,"Copepoda",89.847252801922,19.9634028353914,"NA","filter feeders","Microphagous"
-"BVR",2020-08-12,"Cyclopoida",0,0,"NA","predators","Omnicarnivore"
-"BVR",2020-08-12,"Daphnia",8.54245626774846,0.77111856445717,"NA","filter feeders","Herbovore"
-"BVR",2020-08-12,"Kellicottia",1.51461990562916,2.14199601238102,"malleate","filter feeders","Microphagous"
-"BVR",2020-08-12,"Keratella",134.922341193446,36.2425725294869,"malleate","filter feeders","Microphagous"
-"BVR",2020-08-12,"Nauplii",63.3111120552988,42.4115210451441,"NA","filter feeders","Herbovore"
-"BVR",2020-08-12,"Polyarthra",0,0,"virgate","suctors","Raptorial"
-"BVR",2020-08-12,"Rotifera",153.885382411923,47.9807106773352,"NA","filter feeders","Microphagous"
-"BVR",2020-08-13,"Ascomorpha",0,0,"virgate","suctors","Raptorial"
-"BVR",2020-08-13,"Bosmina",4.6246394451877,2.256235799708,"NA","filter feeders","Herbovore"
-"BVR",2020-08-13,"Ceriodaphnia",38.1482266897797,23.1621168805467,"NA","filter feeders","Herbovore"
-"BVR",2020-08-13,"Cladocera",45.0649909254862,21.9483191401975,"NA","filter feeders","Microphagous"
-"BVR",2020-08-13,"Conochilus",2.2921247905188,1.04243805935876,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-08-13,"Copepoda",101.388656482816,70.8143881693164,"NA","filter feeders","Microphagous"
-"BVR",2020-08-13,"Cyclopoida",0,0,"NA","predators","Omnicarnivore"
-"BVR",2020-08-13,"Daphnia",2.2921247905188,1.04243805935876,"NA","filter feeders","Herbovore"
-"BVR",2020-08-13,"Kellicottia",2.2921247905188,1.04243805935876,"malleate","filter feeders","Microphagous"
-"BVR",2020-08-13,"Keratella",65.7345039043055,26.9891497560008,"malleate","filter feeders","Microphagous"
-"BVR",2020-08-13,"Nauplii",70.9346989136324,45.3389155953982,"NA","filter feeders","Herbovore"
-"BVR",2020-08-13,"Polyarthra",0.777504884889635,1.09955795302225,"virgate","suctors","Raptorial"
-"BVR",2020-08-13,"Rotifera",107.810644882683,40.3123649530104,"NA","filter feeders","Microphagous"
-"BVR",2020-09-03,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-09-03,"Bosmina",28.5614039347213,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-09-03,"Ceriodaphnia",142.807019673606,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-09-03,"Cladocera",171.368423608328,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-09-03,"Conochilus",456.982462955541,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-09-03,"Copepoda",752.116970280994,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-09-03,"Cyclopoida",285.614039347213,NA,"NA","predators","Omnicarnivore"
-"BVR",2020-09-03,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-09-03,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-09-03,"Keratella",57.1228078694426,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-09-03,"Nauplii",456.982462955541,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-09-03,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-09-03,"Rotifera",847.321650063398,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-10-01,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-10-01,"Bosmina",133.286551695366,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-10-01,"Ceriodaphnia",66.643275847683,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-10-01,"Cladocera",211.03704018433,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-10-01,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-10-01,"Copepoda",522.038994140184,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-10-01,"Cyclopoida",144.393764336647,NA,"NA","predators","Omnicarnivore"
-"BVR",2020-10-01,"Daphnia",11.1072126412805,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-10-01,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-10-01,"Keratella",11.1072126412805,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-10-01,"Nauplii",377.645229803537,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-10-01,"Polyarthra",11.1072126412805,NA,"virgate","suctors","Raptorial"
-"BVR",2020-10-01,"Rotifera",588.682269987867,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-11-10,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2020-11-10,"Bosmina",37.0240421376017,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-11-10,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-11-10,"Cladocera",44.428850565122,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-11-10,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-11-10,"Copepoda",866.362586019879,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-11-10,"Cyclopoida",718.266417469472,NA,"NA","predators","Omnicarnivore"
-"BVR",2020-11-10,"Daphnia",7.40480842752033,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-11-10,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-11-10,"Keratella",14.8096168550407,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-11-10,"Nauplii",111.072126412805,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-11-10,"Polyarthra",81.4528927027237,NA,"virgate","suctors","Raptorial"
-"BVR",2020-11-10,"Rotifera",192.525019115529,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-12-02,"Ascomorpha",24.2339184900666,NA,"virgate","suctors","Raptorial"
-"BVR",2020-12-02,"Bosmina",484.678369801331,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-12-02,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-12-02,"Cladocera",496.795329046364,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-12-02,"Conochilus",230.222225655632,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2020-12-02,"Copepoda",399.859655086098,NA,"NA","filter feeders","Microphagous"
-"BVR",2020-12-02,"Cyclopoida",169.637429430466,NA,"NA","predators","Omnicarnivore"
-"BVR",2020-12-02,"Daphnia",12.1169592450333,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-12-02,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-12-02,"Keratella",48.4678369801331,NA,"malleate","filter feeders","Microphagous"
-"BVR",2020-12-02,"Nauplii",205.988307165566,NA,"NA","filter feeders","Herbovore"
-"BVR",2020-12-02,"Polyarthra",230.222225655632,NA,"virgate","suctors","Raptorial"
-"BVR",2020-12-02,"Rotifera",1066.29241356293,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-03-08,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-03-08,"Bosmina",38.8752442444818,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-03-08,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-03-08,"Cladocera",55.5360632064025,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-03-08,"Conochilus",1110.72126412805,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-03-08,"Copepoda",11.1072126412805,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-03-08,"Cyclopoida",0,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-03-08,"Daphnia",16.6608189619208,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-03-08,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-03-08,"Keratella",16.6608189619208,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-03-08,"Nauplii",11.1072126412805,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-03-08,"Polyarthra",94.4113074508843,NA,"virgate","suctors","Raptorial"
-"BVR",2021-03-08,"Rotifera",1227.3469968615,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-04-05,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-04-05,"Bosmina",6.6643275847683,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-04-05,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-04-05,"Cladocera",29.9894741314574,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-04-05,"Conochilus",46.6502930933781,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-04-05,"Copepoda",93.3005861867562,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-04-05,"Cyclopoida",53.3146206781464,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-04-05,"Daphnia",16.6608189619208,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-04-05,"Kellicottia",26.6573103390732,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-04-05,"Keratella",9.99649137715245,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-04-05,"Nauplii",39.9859655086098,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-04-05,"Polyarthra",29.9894741314574,NA,"virgate","suctors","Raptorial"
-"BVR",2021-04-05,"Rotifera",236.583629259275,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-05-14,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-05-14,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-05-14,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-05-14,"Cladocera",0,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-05-14,"Conochilus",1880.82134059017,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-05-14,"Copepoda",873.7673944474,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-05-14,"Cyclopoida",133.286551695366,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-05-14,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-05-14,"Kellicottia",14.8096168550407,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-05-14,"Keratella",14.8096168550407,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-05-14,"Nauplii",740.480842752034,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-05-14,"Polyarthra",1273.6270495335,NA,"virgate","suctors","Raptorial"
-"BVR",2021-05-14,"Rotifera",3287.73494181903,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-06-15,"Ascomorpha",0,0,"virgate","suctors","Raptorial"
-"BVR",2021-06-15,"Bosmina",22.214425282561,31.4159415149215,"NA","filter feeders","Herbovore"
-"BVR",2021-06-15,"Ceriodaphnia",88.857701130244,62.8318830298431,"NA","filter feeders","Herbovore"
-"BVR",2021-06-15,"Cladocera",666.43275847683,125.663766059686,"NA","filter feeders","Microphagous"
-"BVR",2021-06-15,"Conochilus",2132.58482712586,2890.26661937278,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-06-15,"Copepoda",4731.6725851855,1665.04490029084,"NA","filter feeders","Microphagous"
-"BVR",2021-06-15,"Cyclopoida",1510.58091921415,691.150713328271,"NA","predators","Omnicarnivore"
-"BVR",2021-06-15,"Daphnia",510.931781498903,31.4159415149215,"NA","filter feeders","Herbovore"
-"BVR",2021-06-15,"Kellicottia",0,0,"malleate","filter feeders","Microphagous"
-"BVR",2021-06-15,"Keratella",1510.58091921415,251.327532119375,"malleate","filter feeders","Microphagous"
-"BVR",2021-06-15,"Nauplii",3221.09166597134,973.894186962574,"NA","filter feeders","Herbovore"
-"BVR",2021-06-15,"Polyarthra",0,0,"virgate","suctors","Raptorial"
-"BVR",2021-06-15,"Rotifera",3798.66672331794,2607.52314573849,"NA","filter feeders","Microphagous"
-"BVR",2021-06-16,"Ascomorpha",0,0,"virgate","suctors","Raptorial"
-"BVR",2021-06-16,"Bosmina",0,0,"NA","filter feeders","Herbovore"
-"BVR",2021-06-16,"Ceriodaphnia",44.428850565122,0,"NA","filter feeders","Herbovore"
-"BVR",2021-06-16,"Cladocera",599.789482629147,219.911590604451,"NA","filter feeders","Microphagous"
-"BVR",2021-06-16,"Conochilus",755.290459607075,1068.14201150733,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-06-16,"Copepoda",4065.23982670866,596.902888783511,"NA","filter feeders","Microphagous"
-"BVR",2021-06-16,"Cyclopoida",1288.43666638854,188.495649089528,"NA","predators","Omnicarnivore"
-"BVR",2021-06-16,"Daphnia",510.931781498903,157.079707574608,"NA","filter feeders","Herbovore"
-"BVR",2021-06-16,"Kellicottia",22.214425282561,31.4159415149215,"malleate","filter feeders","Microphagous"
-"BVR",2021-06-16,"Keratella",888.577011302441,251.327532119374,"malleate","filter feeders","Microphagous"
-"BVR",2021-06-16,"Nauplii",2754.58873503757,439.823181208903,"NA","filter feeders","Herbovore"
-"BVR",2021-06-16,"Polyarthra",0,0,"virgate","suctors","Raptorial"
-"BVR",2021-06-16,"Rotifera",1888.22614901769,973.894186962573,"NA","filter feeders","Microphagous"
-"BVR",2021-06-28,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-06-28,"Bosmina",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-06-28,"Ceriodaphnia",33.3216379238415,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-06-28,"Cladocera",55.5360632064025,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-06-28,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-06-28,"Copepoda",522.038994140184,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-06-28,"Cyclopoida",166.608189619208,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-06-28,"Daphnia",22.214425282561,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-06-28,"Kellicottia",0,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-06-28,"Keratella",977.434712432684,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-06-28,"Nauplii",355.430804520976,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-06-28,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-06-28,"Rotifera",1010.75635035653,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-07-07,"Ascomorpha",0,0,"virgate","suctors","Raptorial"
-"BVR",2021-07-07,"Bosmina",111.072126412805,31.4159415149215,"NA","filter feeders","Herbovore"
-"BVR",2021-07-07,"Ceriodaphnia",22.214425282561,31.4159415149215,"NA","filter feeders","Herbovore"
-"BVR",2021-07-07,"Cladocera",333.216379238415,157.079707574608,"NA","filter feeders","Microphagous"
-"BVR",2021-07-07,"Conochilus",355.430804520976,502.655064238745,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-07-07,"Copepoda",3687.59459690512,502.655064238743,"NA","filter feeders","Microphagous"
-"BVR",2021-07-07,"Cyclopoida",1177.36453997574,157.079707574608,"NA","predators","Omnicarnivore"
-"BVR",2021-07-07,"Daphnia",133.286551695366,62.8318830298431,"NA","filter feeders","Herbovore"
-"BVR",2021-07-07,"Kellicottia",66.643275847683,31.4159415149215,"malleate","filter feeders","Microphagous"
-"BVR",2021-07-07,"Keratella",2288.08580410378,722.566654843198,"malleate","filter feeders","Microphagous"
-"BVR",2021-07-07,"Nauplii",2488.01563164683,376.991298179056,"NA","filter feeders","Herbovore"
-"BVR",2021-07-07,"Polyarthra",44.428850565122,0,"virgate","suctors","Raptorial"
-"BVR",2021-07-07,"Rotifera",3443.23591879696,282.743473634288,"NA","filter feeders","Microphagous"
-"BVR",2021-07-08,"Ascomorpha",0,0,"virgate","suctors","Raptorial"
-"BVR",2021-07-08,"Bosmina",83.304094809604,117.809780680956,"NA","filter feeders","Herbovore"
-"BVR",2021-07-08,"Ceriodaphnia",0,0,"NA","filter feeders","Herbovore"
-"BVR",2021-07-08,"Cladocera",188.822614901769,204.20361984699,"NA","filter feeders","Microphagous"
-"BVR",2021-07-08,"Conochilus",22.214425282561,31.4159415149215,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-07-08,"Copepoda",2515.78366325003,966.040201583837,"NA","filter feeders","Microphagous"
-"BVR",2021-07-08,"Cyclopoida",422.074080368659,31.4159415149216,"NA","predators","Omnicarnivore"
-"BVR",2021-07-08,"Daphnia",88.857701130244,62.8318830298431,"NA","filter feeders","Herbovore"
-"BVR",2021-07-08,"Kellicottia",22.214425282561,31.4159415149215,"malleate","filter feeders","Microphagous"
-"BVR",2021-07-08,"Keratella",1360.63354855687,463.385137345093,"malleate","filter feeders","Microphagous"
-"BVR",2021-07-08,"Nauplii",2093.70958288137,934.624260068916,"NA","filter feeders","Herbovore"
-"BVR",2021-07-08,"Polyarthra",22.214425282561,31.4159415149215,"virgate","suctors","Raptorial"
-"BVR",2021-07-08,"Rotifera",1704.95714043656,479.093108102553,"NA","filter feeders","Microphagous"
-"BVR",2021-07-26,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-07-26,"Bosmina",26.6573103390732,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-07-26,"Ceriodaphnia",13.3286551695366,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-07-26,"Cladocera",66.643275847683,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-07-26,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-07-26,"Copepoda",1572.78131000532,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-07-26,"Cyclopoida",533.146206781464,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-07-26,"Daphnia",26.6573103390732,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-07-26,"Kellicottia",39.9859655086098,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-07-26,"Keratella",106.629241356293,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-07-26,"Nauplii",1039.63510322386,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-07-26,"Polyarthra",13.3286551695366,NA,"virgate","suctors","Raptorial"
-"BVR",2021-07-26,"Rotifera",186.601172373512,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-08-23,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-08-23,"Bosmina",666.43275847683,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-08-23,"Ceriodaphnia",311.001953955854,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-08-23,"Cladocera",999.649137715245,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-08-23,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-08-23,"Copepoda",688.647183759391,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-08-23,"Cyclopoida",444.28850565122,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-08-23,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-08-23,"Kellicottia",288.787528673293,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-08-23,"Keratella",2488.01563164683,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-08-23,"Nauplii",244.358678108171,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-08-23,"Polyarthra",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-08-23,"Rotifera",3709.80902218769,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-09-21,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-09-21,"Bosmina",199.929827543049,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-09-21,"Ceriodaphnia",33.3216379238415,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-09-21,"Cladocera",277.680316032013,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-09-21,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-09-21,"Copepoda",1077.39962620421,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-09-21,"Cyclopoida",433.18129300994,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-09-21,"Daphnia",11.1072126412805,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-09-21,"Kellicottia",55.5360632064025,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-09-21,"Keratella",88.857701130244,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-09-21,"Nauplii",577.575057346586,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-09-21,"Polyarthra",22.214425282561,NA,"virgate","suctors","Raptorial"
-"BVR",2021-09-21,"Rotifera",377.645229803537,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-10-26,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-10-26,"Bosmina",530.677937305624,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-10-26,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-10-26,"Cladocera",530.677937305624,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-10-26,"Conochilus",950.283748198443,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-10-26,"Copepoda",246.826947584011,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-10-26,"Cyclopoida",123.413473792006,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-10-26,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-10-26,"Kellicottia",37.0240421376017,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-10-26,"Keratella",283.850989721613,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-10-26,"Nauplii",98.7307790336045,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-10-26,"Polyarthra",37.0240421376017,NA,"virgate","suctors","Raptorial"
-"BVR",2021-10-26,"Rotifera",1789.49536998408,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-11-09,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-11-09,"Bosmina",459.098122506261,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-11-09,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-11-09,"Cladocera",459.098122506261,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-11-09,"Conochilus",0,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-11-09,"Copepoda",784.909693317156,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-11-09,"Cyclopoida",533.146206781464,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-11-09,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-11-09,"Kellicottia",281.382720245773,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-11-09,"Keratella",236.953869680651,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-11-09,"Nauplii",192.525019115529,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-11-09,"Polyarthra",133.286551695366,NA,"virgate","suctors","Raptorial"
-"BVR",2021-11-09,"Rotifera",770.100076462115,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-12-06,"Ascomorpha",0,NA,"virgate","suctors","Raptorial"
-"BVR",2021-12-06,"Bosmina",138.840158016006,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-12-06,"Ceriodaphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-12-06,"Cladocera",138.840158016006,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-12-06,"Conochilus",101.816115878405,NA,"malleoramate","filter feeders","Microphagous"
-"BVR",2021-12-06,"Copepoda",472.056537254421,NA,"NA","filter feeders","Microphagous"
-"BVR",2021-12-06,"Cyclopoida",268.424305497612,NA,"NA","predators","Omnicarnivore"
-"BVR",2021-12-06,"Daphnia",0,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-12-06,"Kellicottia",166.608189619208,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-12-06,"Keratella",194.376221222409,NA,"malleate","filter feeders","Microphagous"
-"BVR",2021-12-06,"Nauplii",185.120210688008,NA,"NA","filter feeders","Herbovore"
-"BVR",2021-12-06,"Polyarthra",101.816115878405,NA,"virgate","suctors","Raptorial"
-"BVR",2021-12-06,"Rotifera",573.872653132826,NA,"NA","filter feeders","Microphagous"
+"Reservoir","DateTime","Taxon","dens","sd"
+"BVR",2014-04-04,"Daphnia",0,NA
+"BVR",2014-04-04,"Cyclopoida",5.80645161290323,NA
+"BVR",2014-04-04,"Nauplii",28.3870967741935,NA
+"BVR",2014-04-04,"Bosmina",1.93548387096774,NA
+"BVR",2014-04-04,"Ceriodaphnia",0,NA
+"BVR",2014-04-04,"Ascomorpha",0,NA
+"BVR",2014-04-04,"Conochilus",5.80645161290323,NA
+"BVR",2014-04-04,"Keratella",66.4516129032258,NA
+"BVR",2014-04-04,"Kellicottia",0,NA
+"BVR",2014-04-04,"Polyarthra",26.7741935483871,NA
+"BVR",2014-04-04,"Rotifera",100.645161290323,NA
+"BVR",2014-04-04,"Cladocera",38.0645161290323,0.74953318805774
+"BVR",2014-04-04,"Copepoda",34.1935483870968,0.494974746830583
+"BVR",2014-04-17,"Daphnia",13.5483870967742,NA
+"BVR",2014-04-17,"Cyclopoida",24.1935483870968,NA
+"BVR",2014-04-17,"Nauplii",161.290322580645,NA
+"BVR",2014-04-17,"Bosmina",44.1935483870968,NA
+"BVR",2014-04-17,"Ceriodaphnia",0,NA
+"BVR",2014-04-17,"Ascomorpha",0,NA
+"BVR",2014-04-17,"Conochilus",2.90322580645161,NA
+"BVR",2014-04-17,"Keratella",62.258064516129,NA
+"BVR",2014-04-17,"Kellicottia",0,NA
+"BVR",2014-04-17,"Polyarthra",29.0322580645161,NA
+"BVR",2014-04-17,"Rotifera",94.1935483870968,NA
+"BVR",2014-04-17,"Cladocera",135.483870967742,0.995339138183564
+"BVR",2014-04-17,"Copepoda",212.903225806452,2.42538656712698
+"BVR",2014-04-30,"Daphnia",26.7741935483871,0.289913780286484
+"BVR",2014-04-30,"Cyclopoida",26.7741935483871,NA
+"BVR",2014-04-30,"Nauplii",281.935483870968,NA
+"BVR",2014-04-30,"Bosmina",67.0967741935484,NA
+"BVR",2014-04-30,"Ceriodaphnia",0,NA
+"BVR",2014-04-30,"Ascomorpha",33.5483870967742,NA
+"BVR",2014-04-30,"Conochilus",134.193548387097,NA
+"BVR",2014-04-30,"Keratella",47.0967741935484,NA
+"BVR",2014-04-30,"Kellicottia",0,NA
+"BVR",2014-04-30,"Polyarthra",13.5483870967742,NA
+"BVR",2014-04-30,"Rotifera",228.064516129032,NA
+"BVR",2014-04-30,"Cladocera",134.193548387097,0.814657392200345
+"BVR",2014-04-30,"Copepoda",375.806451612903,4.25217983313657
+"BVR",2014-05-14,"Daphnia",44.8387096774194,NA
+"BVR",2014-05-14,"Cyclopoida",71.6129032258065,NA
+"BVR",2014-05-14,"Nauplii",195.161290322581,NA
+"BVR",2014-05-14,"Bosmina",12.5806451612903,NA
+"BVR",2014-05-14,"Ceriodaphnia",0,NA
+"BVR",2014-05-14,"Ascomorpha",17.741935483871,NA
+"BVR",2014-05-14,"Conochilus",2067.09677419355,NA
+"BVR",2014-05-14,"Keratella",28.7096774193548,NA
+"BVR",2014-05-14,"Kellicottia",0,NA
+"BVR",2014-05-14,"Polyarthra",19.6774193548387,NA
+"BVR",2014-05-14,"Rotifera",2135.16129032258,NA
+"BVR",2014-05-14,"Cladocera",64.5161290322581,0.632165590121238
+"BVR",2014-05-14,"Copepoda",302.58064516129,2.59180117550196
+"BVR",2014-05-29,"Daphnia",6.7741935483871,NA
+"BVR",2014-05-29,"Cyclopoida",26.7741935483871,NA
+"BVR",2014-05-29,"Nauplii",163.225806451613,NA
+"BVR",2014-05-29,"Bosmina",0,NA
+"BVR",2014-05-29,"Ceriodaphnia",0,NA
+"BVR",2014-05-29,"Ascomorpha",448.709677419355,NA
+"BVR",2014-05-29,"Conochilus",134.193548387097,NA
+"BVR",2014-05-29,"Keratella",58.0645161290323,NA
+"BVR",2014-05-29,"Kellicottia",4.51612903225806,NA
+"BVR",2014-05-29,"Polyarthra",20,NA
+"BVR",2014-05-29,"Rotifera",668.064516129032,NA
+"BVR",2014-05-29,"Cladocera",47.0967741935484,0.735391052434009
+"BVR",2014-05-29,"Copepoda",190,2.9910616844191
+"BVR",2014-06-04,"Daphnia",44.8387096774194,NA
+"BVR",2014-06-04,"Cyclopoida",105.483870967742,NA
+"BVR",2014-06-04,"Nauplii",534.193548387097,NA
+"BVR",2014-06-04,"Bosmina",0,NA
+"BVR",2014-06-04,"Ceriodaphnia",0,NA
+"BVR",2014-06-04,"Ascomorpha",805.483870967742,NA
+"BVR",2014-06-04,"Conochilus",94.8387096774194,NA
+"BVR",2014-06-04,"Keratella",603.870967741935,NA
+"BVR",2014-06-04,"Kellicottia",28.7096774193548,NA
+"BVR",2014-06-04,"Polyarthra",9.03225806451613,NA
+"BVR",2014-06-04,"Rotifera",1559.67741935484,NA
+"BVR",2014-06-04,"Cladocera",48.7096774193548,0.767875858022202
+"BVR",2014-06-04,"Copepoda",641.612903225806,8.74812551350288
+"BVR",2014-06-18,"Daphnia",25.1612903225806,NA
+"BVR",2014-06-18,"Cyclopoida",10.6451612903226,NA
+"BVR",2014-06-18,"Nauplii",57.4193548387097,NA
+"BVR",2014-06-18,"Bosmina",0,NA
+"BVR",2014-06-18,"Ceriodaphnia",0,NA
+"BVR",2014-06-18,"Ascomorpha",78.7096774193548,NA
+"BVR",2014-06-18,"Conochilus",91.2903225806452,NA
+"BVR",2014-06-18,"Keratella",148.387096774194,NA
+"BVR",2014-06-18,"Kellicottia",1.93548387096774,NA
+"BVR",2014-06-18,"Polyarthra",3.54838709677419,NA
+"BVR",2014-06-18,"Rotifera",325.806451612903,NA
+"BVR",2014-06-18,"Cladocera",29.0322580645161,0.415692193816531
+"BVR",2014-06-18,"Copepoda",68.0645161290323,1.02530483272049
+"BVR",2014-06-25,"Daphnia",87.741935483871,NA
+"BVR",2014-06-25,"Cyclopoida",82.258064516129,NA
+"BVR",2014-06-25,"Nauplii",234.516129032258,NA
+"BVR",2014-06-25,"Bosmina",1.93548387096774,NA
+"BVR",2014-06-25,"Ceriodaphnia",0,NA
+"BVR",2014-06-25,"Ascomorpha",92.9032258064516,NA
+"BVR",2014-06-25,"Conochilus",148.387096774194,NA
+"BVR",2014-06-25,"Keratella",180.645161290323,NA
+"BVR",2014-06-25,"Kellicottia",98.3870967741935,NA
+"BVR",2014-06-25,"Polyarthra",14.1935483870968,NA
+"BVR",2014-06-25,"Rotifera",556.451612903226,NA
+"BVR",2014-06-25,"Cladocera",89.6774193548387,1.88090403795622
+"BVR",2014-06-25,"Copepoda",316.774193548387,3.3375440072005
+"BVR",2014-07-02,"Daphnia",40.3225806451613,0.360624458405139
+"BVR",2014-07-02,"Cyclopoida",24.8387096774194,NA
+"BVR",2014-07-02,"Nauplii",110.967741935484,NA
+"BVR",2014-07-02,"Bosmina",10.9677419354839,NA
+"BVR",2014-07-02,"Ceriodaphnia",0.967741935483871,NA
+"BVR",2014-07-02,"Ascomorpha",30.3225806451613,NA
+"BVR",2014-07-02,"Conochilus",7.74193548387097,NA
+"BVR",2014-07-02,"Keratella",253.548387096774,NA
+"BVR",2014-07-02,"Kellicottia",61.9354838709677,NA
+"BVR",2014-07-02,"Polyarthra",10.9677419354839,NA
+"BVR",2014-07-02,"Rotifera",365.483870967742,NA
+"BVR",2014-07-02,"Cladocera",52.258064516129,0.351994318135961
+"BVR",2014-07-02,"Copepoda",135.806451612903,1.88797510576808
+"BVR",2014-07-09,"Daphnia",6.45161290322581,0.0848528137423857
+"BVR",2014-07-09,"Cyclopoida",21.6129032258065,NA
+"BVR",2014-07-09,"Nauplii",90.6451612903226,NA
+"BVR",2014-07-09,"Bosmina",0,NA
+"BVR",2014-07-09,"Ceriodaphnia",3.54838709677419,NA
+"BVR",2014-07-09,"Ascomorpha",17.4193548387097,NA
+"BVR",2014-07-09,"Conochilus",9.35483870967742,NA
+"BVR",2014-07-09,"Keratella",91.2903225806452,NA
+"BVR",2014-07-09,"Kellicottia",146.451612903226,NA
+"BVR",2014-07-09,"Polyarthra",2.25806451612903,NA
+"BVR",2014-07-09,"Rotifera",268.064516129032,NA
+"BVR",2014-07-09,"Cladocera",10.6451612903226,0.064485140407177
+"BVR",2014-07-09,"Copepoda",112.258064516129,1.51320851173921
+"BVR",2014-07-23,"Daphnia",42.9032258064516,0.544472221513642
+"BVR",2014-07-23,"Cyclopoida",141.290322580645,NA
+"BVR",2014-07-23,"Nauplii",472.58064516129,NA
+"BVR",2014-07-23,"Bosmina",3.54838709677419,NA
+"BVR",2014-07-23,"Ceriodaphnia",0,NA
+"BVR",2014-07-23,"Ascomorpha",12.5806451612903,NA
+"BVR",2014-07-23,"Conochilus",7.09677419354839,NA
+"BVR",2014-07-23,"Keratella",493.870967741935,NA
+"BVR",2014-07-23,"Kellicottia",1514.1935483871,NA
+"BVR",2014-07-23,"Polyarthra",5.48387096774194,NA
+"BVR",2014-07-23,"Rotifera",2036.77419354839,NA
+"BVR",2014-07-23,"Cladocera",46.4516129032258,0.500899191454728
+"BVR",2014-07-23,"Copepoda",613.870967741935,7.26198664278584
+"BVR",2014-08-13,"Daphnia",66.1290322580645,1.29400540957138
+"BVR",2014-08-13,"Cyclopoida",66.1290322580645,NA
+"BVR",2014-08-13,"Nauplii",114.516129032258,NA
+"BVR",2014-08-13,"Bosmina",5.48387096774194,NA
+"BVR",2014-08-13,"Ceriodaphnia",0,NA
+"BVR",2014-08-13,"Ascomorpha",10.6451612903226,NA
+"BVR",2014-08-13,"Conochilus",0,NA
+"BVR",2014-08-13,"Keratella",193.225806451613,NA
+"BVR",2014-08-13,"Kellicottia",558.387096774194,NA
+"BVR",2014-08-13,"Polyarthra",1.93548387096774,NA
+"BVR",2014-08-13,"Rotifera",771.290322580645,NA
+"BVR",2014-08-13,"Cladocera",71.6129032258064,1.03966340706981
+"BVR",2014-08-13,"Copepoda",180.645161290323,1.06066017177982
+"BVR",2014-09-04,"Daphnia",98.3870967741935,0.190918830920368
+"BVR",2014-09-04,"Cyclopoida",295.161290322581,NA
+"BVR",2014-09-04,"Nauplii",1181.29032258065,NA
+"BVR",2014-09-04,"Bosmina",0,NA
+"BVR",2014-09-04,"Ceriodaphnia",0,NA
+"BVR",2014-09-04,"Ascomorpha",67.0967741935484,NA
+"BVR",2014-09-04,"Conochilus",0,NA
+"BVR",2014-09-04,"Keratella",192.258064516129,NA
+"BVR",2014-09-04,"Kellicottia",1114.1935483871,NA
+"BVR",2014-09-04,"Polyarthra",26.7741935483871,NA
+"BVR",2014-09-04,"Rotifera",1404.83870967742,NA
+"BVR",2014-09-04,"Cladocera",98.3870967741935,0.190918830920368
+"BVR",2014-09-04,"Copepoda",1480.96774193548,19.0025059750901
+"BVR",2014-09-25,"Daphnia",53.5483870967742,NA
+"BVR",2014-09-25,"Cyclopoida",382.58064516129,NA
+"BVR",2014-09-25,"Nauplii",738.387096774194,NA
+"BVR",2014-09-25,"Bosmina",40.3225806451613,NA
+"BVR",2014-09-25,"Ceriodaphnia",0,NA
+"BVR",2014-09-25,"Ascomorpha",395.806451612903,NA
+"BVR",2014-09-25,"Conochilus",114.193548387097,NA
+"BVR",2014-09-25,"Keratella",583.870967741935,NA
+"BVR",2014-09-25,"Kellicottia",87.0967741935484,NA
+"BVR",2014-09-25,"Polyarthra",416.129032258065,NA
+"BVR",2014-09-25,"Rotifera",1879.03225806452,NA
+"BVR",2014-09-25,"Cladocera",100.645161290323,0.747462373634954
+"BVR",2014-09-25,"Copepoda",1154.51612903226,10.925168190925
+"BVR",2015-05-14,"Daphnia",0,NA
+"BVR",2015-05-14,"Cyclopoida",33.5483870967742,NA
+"BVR",2015-05-14,"Nauplii",0,NA
+"BVR",2015-05-14,"Bosmina",2.58064516129032,NA
+"BVR",2015-05-14,"Ceriodaphnia",0,NA
+"BVR",2015-05-14,"Ascomorpha",0,NA
+"BVR",2015-05-14,"Conochilus",28.3870967741935,NA
+"BVR",2015-05-14,"Keratella",114.193548387097,NA
+"BVR",2015-05-14,"Kellicottia",1169.35483870968,NA
+"BVR",2015-05-14,"Polyarthra",0,NA
+"BVR",2015-05-14,"Rotifera",1311.93548387097,NA
+"BVR",2015-05-14,"Cladocera",2.58064516129032,NA
+"BVR",2015-05-14,"Copepoda",33.5483870967742,NA
+"BVR",2015-05-28,"Daphnia",2.25806451612903,NA
+"BVR",2015-05-28,"Cyclopoida",60,NA
+"BVR",2015-05-28,"Nauplii",76.1290322580645,NA
+"BVR",2015-05-28,"Bosmina",0,NA
+"BVR",2015-05-28,"Ceriodaphnia",2.25806451612903,NA
+"BVR",2015-05-28,"Ascomorpha",25.4838709677419,NA
+"BVR",2015-05-28,"Conochilus",50.6451612903226,NA
+"BVR",2015-05-28,"Keratella",101.290322580645,NA
+"BVR",2015-05-28,"Kellicottia",279.032258064516,NA
+"BVR",2015-05-28,"Polyarthra",126.774193548387,NA
+"BVR",2015-05-28,"Rotifera",583.225806451613,NA
+"BVR",2015-05-28,"Cladocera",6.7741935483871,0
+"BVR",2015-05-28,"Copepoda",136.129032258065,0.353553390593274
+"BVR",2015-06-11,"Daphnia",41.6129032258065,NA
+"BVR",2015-06-11,"Cyclopoida",43.8709677419355,NA
+"BVR",2015-06-11,"Nauplii",279.032258064516,NA
+"BVR",2015-06-11,"Bosmina",0,NA
+"BVR",2015-06-11,"Ceriodaphnia",2.25806451612903,NA
+"BVR",2015-06-11,"Ascomorpha",25.4838709677419,NA
+"BVR",2015-06-11,"Conochilus",25.4838709677419,NA
+"BVR",2015-06-11,"Keratella",963.548387096774,NA
+"BVR",2015-06-11,"Kellicottia",126.774193548387,NA
+"BVR",2015-06-11,"Polyarthra",25.4838709677419,NA
+"BVR",2015-06-11,"Rotifera",1166.12903225806,NA
+"BVR",2015-06-11,"Cladocera",43.8709677419355,0.862670273047588
+"BVR",2015-06-11,"Copepoda",325.161290322581,4.62645652740842
+"BVR",2015-06-25,"Daphnia",6.7741935483871,NA
+"BVR",2015-06-25,"Cyclopoida",32.258064516129,NA
+"BVR",2015-06-25,"Nauplii",50.6451612903226,NA
+"BVR",2015-06-25,"Bosmina",0,NA
+"BVR",2015-06-25,"Ceriodaphnia",2.25806451612903,NA
+"BVR",2015-06-25,"Ascomorpha",25.4838709677419,NA
+"BVR",2015-06-25,"Conochilus",25.4838709677419,NA
+"BVR",2015-06-25,"Keratella",152.258064516129,NA
+"BVR",2015-06-25,"Kellicottia",50.6451612903226,NA
+"BVR",2015-06-25,"Polyarthra",0,NA
+"BVR",2015-06-25,"Rotifera",253.548387096774,NA
+"BVR",2015-06-25,"Cladocera",9.03225806451613,0.0989949493661166
+"BVR",2015-06-25,"Copepoda",82.9032258064516,0.403050865276332
+"BVR",2015-07-09,"Daphnia",62.258064516129,0.558614357137373
+"BVR",2015-07-09,"Cyclopoida",149.677419354839,NA
+"BVR",2015-07-09,"Nauplii",405.806451612903,NA
+"BVR",2015-07-09,"Bosmina",0,NA
+"BVR",2015-07-09,"Ceriodaphnia",2.25806451612903,NA
+"BVR",2015-07-09,"Ascomorpha",0,NA
+"BVR",2015-07-09,"Conochilus",0,NA
+"BVR",2015-07-09,"Keratella",101.290322580645,NA
+"BVR",2015-07-09,"Kellicottia",76.1290322580645,NA
+"BVR",2015-07-09,"Polyarthra",0,NA
+"BVR",2015-07-09,"Rotifera",228.064516129032,NA
+"BVR",2015-07-09,"Cladocera",64.5161290322581,0.65041012702243
+"BVR",2015-07-09,"Copepoda",571.612903225806,6.13880552985133
+"BVR",2015-07-23,"Daphnia",0,NA
+"BVR",2015-07-23,"Cyclopoida",82.9032258064516,NA
+"BVR",2015-07-23,"Nauplii",507.096774193548,NA
+"BVR",2015-07-23,"Bosmina",0,NA
+"BVR",2015-07-23,"Ceriodaphnia",0,NA
+"BVR",2015-07-23,"Ascomorpha",0,NA
+"BVR",2015-07-23,"Conochilus",0,NA
+"BVR",2015-07-23,"Keratella",304.193548387097,NA
+"BVR",2015-07-23,"Kellicottia",50.6451612903226,NA
+"BVR",2015-07-23,"Polyarthra",0,NA
+"BVR",2015-07-23,"Rotifera",354.838709677419,NA
+"BVR",2015-07-23,"Cladocera",2.25806451612903,NA
+"BVR",2015-07-23,"Copepoda",592.258064516129,8.40728850462502
+"BVR",2015-07-30,"Daphnia",9.03225806451613,0.0989949493661166
+"BVR",2015-07-30,"Cyclopoida",69.0322580645161,NA
+"BVR",2015-07-30,"Nauplii",228.064516129032,NA
+"BVR",2015-07-30,"Bosmina",0,NA
+"BVR",2015-07-30,"Ceriodaphnia",0,NA
+"BVR",2015-07-30,"Ascomorpha",25.4838709677419,NA
+"BVR",2015-07-30,"Conochilus",0,NA
+"BVR",2015-07-30,"Keratella",811.290322580645,NA
+"BVR",2015-07-30,"Kellicottia",25.4838709677419,NA
+"BVR",2015-07-30,"Polyarthra",25.4838709677419,NA
+"BVR",2015-07-30,"Rotifera",887.41935483871,NA
+"BVR",2015-07-30,"Cladocera",9.03225806451613,0.0989949493661166
+"BVR",2015-07-30,"Copepoda",297.096774193548,3.48603643124968
+"BVR",2015-08-13,"Daphnia",4.51612903225806,NA
+"BVR",2015-08-13,"Cyclopoida",46.1290322580645,NA
+"BVR",2015-08-13,"Nauplii",202.903225806452,NA
+"BVR",2015-08-13,"Bosmina",0,NA
+"BVR",2015-08-13,"Ceriodaphnia",0,NA
+"BVR",2015-08-13,"Ascomorpha",0,NA
+"BVR",2015-08-13,"Conochilus",50.6451612903226,NA
+"BVR",2015-08-13,"Keratella",354.838709677419,NA
+"BVR",2015-08-13,"Kellicottia",25.4838709677419,NA
+"BVR",2015-08-13,"Polyarthra",25.4838709677419,NA
+"BVR",2015-08-13,"Rotifera",456.451612903226,NA
+"BVR",2015-08-13,"Cladocera",6.7741935483871,0.0494974746830583
+"BVR",2015-08-13,"Copepoda",249.032258064516,3.43653895656662
+"BVR",2015-09-04,"Daphnia",34.5161290322581,0.0494974746830583
+"BVR",2015-09-04,"Cyclopoida",80.6451612903226,NA
+"BVR",2015-09-04,"Nauplii",456.451612903226,NA
+"BVR",2015-09-04,"Bosmina",0,NA
+"BVR",2015-09-04,"Ceriodaphnia",0,NA
+"BVR",2015-09-04,"Ascomorpha",202.903225806452,NA
+"BVR",2015-09-04,"Conochilus",25.4838709677419,NA
+"BVR",2015-09-04,"Keratella",304.193548387097,NA
+"BVR",2015-09-04,"Kellicottia",126.774193548387,NA
+"BVR",2015-09-04,"Polyarthra",25.4838709677419,NA
+"BVR",2015-09-04,"Rotifera",684.516129032258,NA
+"BVR",2015-09-04,"Cladocera",36.7741935483871,0.270739727413618
+"BVR",2015-09-04,"Copepoda",541.612903225806,7.50080217932278
+"BVR",2015-09-18,"Daphnia",9.03225806451613,0.0989949493661166
+"BVR",2015-09-18,"Cyclopoida",90,NA
+"BVR",2015-09-18,"Nauplii",583.225806451613,NA
+"BVR",2015-09-18,"Bosmina",4.51612903225806,NA
+"BVR",2015-09-18,"Ceriodaphnia",0,NA
+"BVR",2015-09-18,"Ascomorpha",50.6451612903226,NA
+"BVR",2015-09-18,"Conochilus",76.1290322580645,NA
+"BVR",2015-09-18,"Keratella",152.258064516129,NA
+"BVR",2015-09-18,"Kellicottia",50.6451612903226,NA
+"BVR",2015-09-18,"Polyarthra",101.290322580645,NA
+"BVR",2015-09-18,"Rotifera",456.451612903226,NA
+"BVR",2015-09-18,"Cladocera",13.5483870967742,0.07
+"BVR",2015-09-18,"Copepoda",677.741935483871,9.68375099500877
+"BVR",2015-10-02,"Daphnia",101.290322580645,NA
+"BVR",2015-10-02,"Cyclopoida",107.096774193548,NA
+"BVR",2015-10-02,"Nauplii",279.032258064516,NA
+"BVR",2015-10-02,"Bosmina",5.48387096774194,NA
+"BVR",2015-10-02,"Ceriodaphnia",0,NA
+"BVR",2015-10-02,"Ascomorpha",50.6451612903226,NA
+"BVR",2015-10-02,"Conochilus",405.806451612903,NA
+"BVR",2015-10-02,"Keratella",126.774193548387,NA
+"BVR",2015-10-02,"Kellicottia",50.6451612903226,NA
+"BVR",2015-10-02,"Polyarthra",279.032258064516,NA
+"BVR",2015-10-02,"Rotifera",912.58064516129,NA
+"BVR",2015-10-02,"Cladocera",106.774193548387,2.10010714012405
+"BVR",2015-10-02,"Copepoda",402.903225806452,4.13008878032099
+"BVR",2015-10-23,"Daphnia",82.9032258064516,NA
+"BVR",2015-10-23,"Cyclopoida",147.41935483871,NA
+"BVR",2015-10-23,"Nauplii",202.903225806452,NA
+"BVR",2015-10-23,"Bosmina",13.8709677419355,NA
+"BVR",2015-10-23,"Ceriodaphnia",0,NA
+"BVR",2015-10-23,"Ascomorpha",126.774193548387,NA
+"BVR",2015-10-23,"Conochilus",50.6451612903226,NA
+"BVR",2015-10-23,"Keratella",177.41935483871,NA
+"BVR",2015-10-23,"Kellicottia",76.1290322580645,NA
+"BVR",2015-10-23,"Polyarthra",659.032258064516,NA
+"BVR",2015-10-23,"Rotifera",1090.32258064516,NA
+"BVR",2015-10-23,"Cladocera",99.0322580645161,1.35149300158504
+"BVR",2015-10-23,"Copepoda",398.709677419355,2.42649953636921
+"BVR",2016-04-06,"Daphnia",0,NA
+"BVR",2016-04-06,"Cyclopoida",27.4193548387097,NA
+"BVR",2016-04-06,"Nauplii",33.8709677419355,NA
+"BVR",2016-04-06,"Bosmina",7.74193548387097,NA
+"BVR",2016-04-06,"Ceriodaphnia",0,NA
+"BVR",2016-04-06,"Ascomorpha",0,NA
+"BVR",2016-04-06,"Conochilus",101.290322580645,NA
+"BVR",2016-04-06,"Keratella",253.548387096774,NA
+"BVR",2016-04-06,"Kellicottia",42.258064516129,NA
+"BVR",2016-04-06,"Polyarthra",16.7741935483871,NA
+"BVR",2016-04-06,"Rotifera",633.870967741935,NA
+"BVR",2016-04-06,"Cladocera",8.70967741935484,0.148492424049175
+"BVR",2016-04-06,"Copepoda",61.2903225806452,0.14142135623731
+"BVR",2016-04-20,"Daphnia",20.9677419354839,NA
+"BVR",2016-04-20,"Cyclopoida",34.8387096774194,NA
+"BVR",2016-04-20,"Nauplii",123.548387096774,NA
+"BVR",2016-04-20,"Bosmina",3.87096774193548,NA
+"BVR",2016-04-20,"Ceriodaphnia",0,NA
+"BVR",2016-04-20,"Ascomorpha",47.4193548387097,NA
+"BVR",2016-04-20,"Conochilus",0,NA
+"BVR",2016-04-20,"Keratella",313.870967741935,NA
+"BVR",2016-04-20,"Kellicottia",47.4193548387097,NA
+"BVR",2016-04-20,"Polyarthra",19.0322580645161,NA
+"BVR",2016-04-20,"Rotifera",427.741935483871,NA
+"BVR",2016-04-20,"Cladocera",34.8387096774194,0.268514431641951
+"BVR",2016-04-20,"Copepoda",158.387096774194,1.94454364826301
+"BVR",2016-05-04,"Daphnia",13.2258064516129,NA
+"BVR",2016-05-04,"Cyclopoida",90.6451612903226,NA
+"BVR",2016-05-04,"Nauplii",101.290322580645,NA
+"BVR",2016-05-04,"Bosmina",0,NA
+"BVR",2016-05-04,"Ceriodaphnia",0,NA
+"BVR",2016-05-04,"Ascomorpha",0,NA
+"BVR",2016-05-04,"Conochilus",0,NA
+"BVR",2016-05-04,"Keratella",430.967741935484,NA
+"BVR",2016-05-04,"Kellicottia",76.1290322580645,NA
+"BVR",2016-05-04,"Polyarthra",0,NA
+"BVR",2016-05-04,"Rotifera",507.096774193548,NA
+"BVR",2016-05-04,"Cladocera",13.2258064516129,NA
+"BVR",2016-05-04,"Copepoda",191.935483870968,0.233345237791561
+"BVR",2016-05-20,"Daphnia",2.25806451612903,NA
+"BVR",2016-05-20,"Cyclopoida",71.2903225806452,NA
+"BVR",2016-05-20,"Nauplii",215.483870967742,NA
+"BVR",2016-05-20,"Bosmina",0,NA
+"BVR",2016-05-20,"Ceriodaphnia",0,NA
+"BVR",2016-05-20,"Ascomorpha",253.548387096774,NA
+"BVR",2016-05-20,"Conochilus",0,NA
+"BVR",2016-05-20,"Keratella",684.516129032258,NA
+"BVR",2016-05-20,"Kellicottia",266.129032258065,NA
+"BVR",2016-05-20,"Polyarthra",126.774193548387,NA
+"BVR",2016-05-20,"Rotifera",1330.96774193548,NA
+"BVR",2016-05-20,"Cladocera",2.25806451612903,NA
+"BVR",2016-05-20,"Copepoda",289.032258064516,3.37274863180364
+"BVR",2016-06-02,"Daphnia",11.6129032258065,NA
+"BVR",2016-06-02,"Cyclopoida",102.58064516129,NA
+"BVR",2016-06-02,"Nauplii",139.354838709677,NA
+"BVR",2016-06-02,"Bosmina",0,NA
+"BVR",2016-06-02,"Ceriodaphnia",0,NA
+"BVR",2016-06-02,"Ascomorpha",114.193548387097,NA
+"BVR",2016-06-02,"Conochilus",2560.64516129032,NA
+"BVR",2016-06-02,"Keratella",1026.77419354839,NA
+"BVR",2016-06-02,"Kellicottia",710,NA
+"BVR",2016-06-02,"Polyarthra",50.6451612903226,NA
+"BVR",2016-06-02,"Rotifera",4462.25806451613,NA
+"BVR",2016-06-02,"Cladocera",11.6129032258065,NA
+"BVR",2016-06-02,"Copepoda",241.935483870968,0.806101730552664
+"BVR",2016-06-23,"Daphnia",60,NA
+"BVR",2016-06-23,"Cyclopoida",239.677419354839,NA
+"BVR",2016-06-23,"Nauplii",557.741935483871,NA
+"BVR",2016-06-23,"Bosmina",0,NA
+"BVR",2016-06-23,"Ceriodaphnia",2.25806451612903,NA
+"BVR",2016-06-23,"Ascomorpha",0,NA
+"BVR",2016-06-23,"Conochilus",228.064516129032,NA
+"BVR",2016-06-23,"Keratella",329.677419354839,NA
+"BVR",2016-06-23,"Kellicottia",329.677419354839,NA
+"BVR",2016-06-23,"Polyarthra",126.774193548387,NA
+"BVR",2016-06-23,"Rotifera",1039.35483870968,NA
+"BVR",2016-06-23,"Cladocera",64.5161290322581,1.03345698184943
+"BVR",2016-06-23,"Copepoda",804.193548387097,8.57393725192808
+"BVR",2016-07-07,"Daphnia",12.5806451612903,NA
+"BVR",2016-07-07,"Cyclopoida",69.6774193548387,NA
+"BVR",2016-07-07,"Nauplii",279.032258064516,NA
+"BVR",2016-07-07,"Bosmina",0,NA
+"BVR",2016-07-07,"Ceriodaphnia",0,NA
+"BVR",2016-07-07,"Ascomorpha",101.290322580645,NA
+"BVR",2016-07-07,"Conochilus",228.064516129032,NA
+"BVR",2016-07-07,"Keratella",139.354838709677,NA
+"BVR",2016-07-07,"Kellicottia",0,NA
+"BVR",2016-07-07,"Polyarthra",215.483870967742,NA
+"BVR",2016-07-07,"Rotifera",697.096774193548,NA
+"BVR",2016-07-07,"Cladocera",12.5806451612903,NA
+"BVR",2016-07-07,"Copepoda",348.709677419355,4.58912300990069
+"BVR",2016-07-21,"Daphnia",4.51612903225806,NA
+"BVR",2016-07-21,"Cyclopoida",79.3548387096774,NA
+"BVR",2016-07-21,"Nauplii",380.322580645161,NA
+"BVR",2016-07-21,"Bosmina",0,NA
+"BVR",2016-07-21,"Ceriodaphnia",8.70967741935484,NA
+"BVR",2016-07-21,"Ascomorpha",0,NA
+"BVR",2016-07-21,"Conochilus",16.7741935483871,NA
+"BVR",2016-07-21,"Keratella",92.9032258064516,NA
+"BVR",2016-07-21,"Kellicottia",59.0322580645161,NA
+"BVR",2016-07-21,"Polyarthra",84.5161290322581,NA
+"BVR",2016-07-21,"Rotifera",253.548387096774,NA
+"BVR",2016-07-21,"Cladocera",13.2258064516129,0.0919238815542512
+"BVR",2016-07-21,"Copepoda",461.935483870968,6.19299873513093
+"BVR",2016-08-03,"Daphnia",0,NA
+"BVR",2016-08-03,"Cyclopoida",326.129032258065,NA
+"BVR",2016-08-03,"Nauplii",718.709677419355,NA
+"BVR",2016-08-03,"Bosmina",0,NA
+"BVR",2016-08-03,"Ceriodaphnia",35.8064516129032,NA
+"BVR",2016-08-03,"Ascomorpha",0,NA
+"BVR",2016-08-03,"Conochilus",0,NA
+"BVR",2016-08-03,"Keratella",764.516129032258,NA
+"BVR",2016-08-03,"Kellicottia",114.193548387097,NA
+"BVR",2016-08-03,"Polyarthra",0,NA
+"BVR",2016-08-03,"Rotifera",878.387096774194,NA
+"BVR",2016-08-03,"Cladocera",35.8064516129032,NA
+"BVR",2016-08-03,"Copepoda",1051.29032258065,11.0592600716926
+"BVR",2016-08-04,"Daphnia",5.48387096774194,0.0777817459305202
+"BVR",2016-08-04,"Cyclopoida",52.9032258064516,NA
+"BVR",2016-08-04,"Nauplii",291.935483870968,NA
+"BVR",2016-08-04,"Bosmina",0,NA
+"BVR",2016-08-04,"Ceriodaphnia",2.58064516129032,NA
+"BVR",2016-08-04,"Ascomorpha",9.03225806451613,NA
+"BVR",2016-08-04,"Conochilus",0,NA
+"BVR",2016-08-04,"Keratella",552.258064516129,NA
+"BVR",2016-08-04,"Kellicottia",178.064516129032,NA
+"BVR",2016-08-04,"Polyarthra",0,NA
+"BVR",2016-08-04,"Rotifera",743.870967741935,NA
+"BVR",2016-08-04,"Cladocera",8.06451612903226,0.055075705472861
+"BVR",2016-08-04,"Copepoda",344.838709677419,5.23966124859232
+"BVR",2016-08-11,"Daphnia",4.51612903225806,NA
+"BVR",2016-08-11,"Cyclopoida",88.0645161290323,NA
+"BVR",2016-08-11,"Nauplii",160.645161290323,NA
+"BVR",2016-08-11,"Bosmina",0,NA
+"BVR",2016-08-11,"Ceriodaphnia",0,NA
+"BVR",2016-08-11,"Ascomorpha",0,NA
+"BVR",2016-08-11,"Conochilus",16.7741935483871,NA
+"BVR",2016-08-11,"Keratella",219.677419354839,NA
+"BVR",2016-08-11,"Kellicottia",25.4838709677419,NA
+"BVR",2016-08-11,"Polyarthra",0,NA
+"BVR",2016-08-11,"Rotifera",270.322580645161,NA
+"BVR",2016-08-11,"Cladocera",4.51612903225806,NA
+"BVR",2016-08-11,"Copepoda",248.709677419355,1.59099025766973
+"BVR",2016-08-23,"Daphnia",0,NA
+"BVR",2016-08-23,"Cyclopoida",173.225806451613,NA
+"BVR",2016-08-23,"Nauplii",481.612903225806,NA
+"BVR",2016-08-23,"Bosmina",0,NA
+"BVR",2016-08-23,"Ceriodaphnia",69.6774193548387,NA
+"BVR",2016-08-23,"Ascomorpha",0,NA
+"BVR",2016-08-23,"Conochilus",0,NA
+"BVR",2016-08-23,"Keratella",164.838709677419,NA
+"BVR",2016-08-23,"Kellicottia",164.838709677419,NA
+"BVR",2016-08-23,"Polyarthra",0,NA
+"BVR",2016-08-23,"Rotifera",329.677419354839,NA
+"BVR",2016-08-23,"Cladocera",69.6774193548387,NA
+"BVR",2016-08-23,"Copepoda",654.838709677419,6.75994082814339
+"BVR",2016-09-06,"Daphnia",12.5806451612903,0.0919238815542512
+"BVR",2016-09-06,"Cyclopoida",101.290322580645,NA
+"BVR",2016-09-06,"Nauplii",253.548387096774,NA
+"BVR",2016-09-06,"Bosmina",0,NA
+"BVR",2016-09-06,"Ceriodaphnia",308.387096774194,NA
+"BVR",2016-09-06,"Ascomorpha",0,NA
+"BVR",2016-09-06,"Conochilus",0,NA
+"BVR",2016-09-06,"Keratella",101.290322580645,NA
+"BVR",2016-09-06,"Kellicottia",76.1290322580645,NA
+"BVR",2016-09-06,"Polyarthra",0,NA
+"BVR",2016-09-06,"Rotifera",177.41935483871,NA
+"BVR",2016-09-06,"Cladocera",320.967741935484,5.40727596238007
+"BVR",2016-09-06,"Copepoda",354.838709677419,3.3375440072005
+"BVR",2016-09-27,"Daphnia",0,NA
+"BVR",2016-09-27,"Cyclopoida",133.548387096774,NA
+"BVR",2016-09-27,"Nauplii",253.548387096774,NA
+"BVR",2016-09-27,"Bosmina",0,NA
+"BVR",2016-09-27,"Ceriodaphnia",225.806451612903,NA
+"BVR",2016-09-27,"Ascomorpha",0,NA
+"BVR",2016-09-27,"Conochilus",50.6451612903226,NA
+"BVR",2016-09-27,"Keratella",50.6451612903226,NA
+"BVR",2016-09-27,"Kellicottia",50.6451612903226,NA
+"BVR",2016-09-27,"Polyarthra",50.6451612903226,NA
+"BVR",2016-09-27,"Rotifera",228.064516129032,NA
+"BVR",2016-09-27,"Cladocera",225.806451612903,NA
+"BVR",2016-09-27,"Copepoda",391.612903225806,3.86084619394937
+"BVR",2016-10-25,"Daphnia",50.6451612903226,NA
+"BVR",2016-10-25,"Cyclopoida",35.8064516129032,NA
+"BVR",2016-10-25,"Nauplii",101.290322580645,NA
+"BVR",2016-10-25,"Bosmina",8.06451612903226,NA
+"BVR",2016-10-25,"Ceriodaphnia",39.0322580645161,NA
+"BVR",2016-10-25,"Ascomorpha",177.41935483871,NA
+"BVR",2016-10-25,"Conochilus",0,NA
+"BVR",2016-10-25,"Keratella",50.6451612903226,NA
+"BVR",2016-10-25,"Kellicottia",38.0645161290323,NA
+"BVR",2016-10-25,"Polyarthra",139.354838709677,NA
+"BVR",2016-10-25,"Rotifera",405.806451612903,NA
+"BVR",2016-10-25,"Cladocera",97.741935483871,0.682348884369279
+"BVR",2016-10-25,"Copepoda",147.41935483871,1.45472792416085
+"BVR",2019-04-08,"Ascomorpha",0,NA
+"BVR",2019-04-08,"Bosmina",0,NA
+"BVR",2019-04-08,"Ceriodaphnia",7.40480842752034,NA
+"BVR",2019-04-08,"Cladocera",81.4528927027237,NA
+"BVR",2019-04-08,"Conochilus",0,NA
+"BVR",2019-04-08,"Copepoda",96.2625095577644,NA
+"BVR",2019-04-08,"Cyclopoida",29.6192337100813,NA
+"BVR",2019-04-08,"Daphnia",51.8336589926424,NA
+"BVR",2019-04-08,"Kellicottia",414.669271941139,NA
+"BVR",2019-04-08,"Keratella",111.072126412805,NA
+"BVR",2019-04-08,"Nauplii",66.643275847683,NA
+"BVR",2019-04-08,"Polyarthra",7.40480842752034,NA
+"BVR",2019-04-08,"Rotifera",540.551015208984,NA
+"BVR",2019-04-29,"Ascomorpha",0,NA
+"BVR",2019-04-29,"Bosmina",0,NA
+"BVR",2019-04-29,"Ceriodaphnia",0,NA
+"BVR",2019-04-29,"Cladocera",152.327487651847,NA
+"BVR",2019-04-29,"Conochilus",9.52046797824043,NA
+"BVR",2019-04-29,"Copepoda",418.900591042579,NA
+"BVR",2019-04-29,"Cyclopoida",123.766083717126,NA
+"BVR",2019-04-29,"Daphnia",142.807019673606,NA
+"BVR",2019-04-29,"Kellicottia",266.573103390732,NA
+"BVR",2019-04-29,"Keratella",342.736847216656,NA
+"BVR",2019-04-29,"Nauplii",276.093571368972,NA
+"BVR",2019-04-29,"Polyarthra",19.0409359564809,NA
+"BVR",2019-04-29,"Rotifera",1094.85381749765,NA
+"BVR",2019-05-23,"Ascomorpha",0,NA
+"BVR",2019-05-23,"Bosmina",0,NA
+"BVR",2019-05-23,"Ceriodaphnia",0,NA
+"BVR",2019-05-23,"Cladocera",224.92105598593,NA
+"BVR",2019-05-23,"Conochilus",0,NA
+"BVR",2019-05-23,"Copepoda",258.242693909772,NA
+"BVR",2019-05-23,"Cyclopoida",41.6520474048019,NA
+"BVR",2019-05-23,"Daphnia",216.59064650497,NA
+"BVR",2019-05-23,"Kellicottia",249.912284428811,NA
+"BVR",2019-05-23,"Keratella",374.868426643217,NA
+"BVR",2019-05-23,"Nauplii",216.59064650497,NA
+"BVR",2019-05-23,"Polyarthra",33.3216379238415,NA
+"BVR",2019-05-23,"Rotifera",724.745624843553,NA
+"BVR",2019-06-06,"Ascomorpha",0,NA
+"BVR",2019-06-06,"Bosmina",0,NA
+"BVR",2019-06-06,"Ceriodaphnia",0,NA
+"BVR",2019-06-06,"Cladocera",54.5263166026497,NA
+"BVR",2019-06-06,"Conochilus",0,NA
+"BVR",2019-06-06,"Copepoda",133.286551695366,NA
+"BVR",2019-06-06,"Cyclopoida",12.1169592450333,NA
+"BVR",2019-06-06,"Daphnia",36.3508777350998,NA
+"BVR",2019-06-06,"Kellicottia",375.625736596032,NA
+"BVR",2019-06-06,"Keratella",127.228072072849,NA
+"BVR",2019-06-06,"Nauplii",121.169592450333,NA
+"BVR",2019-06-06,"Polyarthra",6.05847962251664,NA
+"BVR",2019-06-06,"Rotifera",527.087727158947,NA
+"BVR",2019-06-13,"Ascomorpha",0,NA
+"BVR",2019-06-13,"Bosmina",0,NA
+"BVR",2019-06-13,"Ceriodaphnia",0,NA
+"BVR",2019-06-13,"Cladocera",34.9877198200336,NA
+"BVR",2019-06-13,"Conochilus",0,NA
+"BVR",2019-06-13,"Copepoda",851.367848954151,NA
+"BVR",2019-06-13,"Cyclopoida",128.28830600679,NA
+"BVR",2019-06-13,"Daphnia",23.3251465466891,NA
+"BVR",2019-06-13,"Kellicottia",781.392409314083,NA
+"BVR",2019-06-13,"Keratella",34.9877198200336,NA
+"BVR",2019-06-13,"Nauplii",723.079542947361,NA
+"BVR",2019-06-13,"Polyarthra",46.6502930933781,NA
+"BVR",2019-06-13,"Rotifera",863.030422227495,NA
+"BVR",2019-06-27,"Ascomorpha",0,NA
+"BVR",2019-06-27,"Bosmina",0,NA
+"BVR",2019-06-27,"Ceriodaphnia",0,NA
+"BVR",2019-06-27,"Cladocera",93.3005861867562,NA
+"BVR",2019-06-27,"Conochilus",226.587137882122,NA
+"BVR",2019-06-27,"Copepoda",413.188310255635,NA
+"BVR",2019-06-27,"Cyclopoida",133.286551695366,NA
+"BVR",2019-06-27,"Daphnia",93.3005861867562,NA
+"BVR",2019-06-27,"Kellicottia",2972.29010280666,NA
+"BVR",2019-06-27,"Keratella",146.615206864903,NA
+"BVR",2019-06-27,"Nauplii",279.901758560269,NA
+"BVR",2019-06-27,"Polyarthra",0,NA
+"BVR",2019-06-27,"Rotifera",5917.92289527425,NA
+"BVR",2019-07-10,"Ascomorpha",0,0
+"BVR",2019-07-10,"Bosmina",0,0
+"BVR",2019-07-10,"Ceriodaphnia",0,0
+"BVR",2019-07-10,"Cladocera",97.3732308218924,50.3676680398261
+"BVR",2019-07-10,"Conochilus",476.869662732309,260.063787535081
+"BVR",2019-07-10,"Copepoda",1672.37598335547,523.026287370175
+"BVR",2019-07-10,"Cyclopoida",317.296041119246,103.698387079232
+"BVR",2019-07-10,"Daphnia",89.9684223943721,37.551578841482
+"BVR",2019-07-10,"Kellicottia",20369.5172628443,4736.95507921458
+"BVR",2019-07-10,"Keratella",227.327618724874,85.9308795924223
+"BVR",2019-07-10,"Nauplii",1355.07994223622,443.732797484204
+"BVR",2019-07-10,"Polyarthra",45.169331407874,1.28255044167795
+"BVR",2019-07-10,"Rotifera",22485.8115114296,4657.27642364766
+"BVR",2019-07-11,"Ascomorpha",0,NA
+"BVR",2019-07-11,"Bosmina",0,NA
+"BVR",2019-07-11,"Ceriodaphnia",44.428850565122,NA
+"BVR",2019-07-11,"Cladocera",177.715402260488,NA
+"BVR",2019-07-11,"Conochilus",533.146206781464,NA
+"BVR",2019-07-11,"Copepoda",1110.72126412805,NA
+"BVR",2019-07-11,"Cyclopoida",155.500976977927,NA
+"BVR",2019-07-11,"Daphnia",44.428850565122,NA
+"BVR",2019-07-11,"Kellicottia",1799.36844788744,NA
+"BVR",2019-07-11,"Keratella",222.14425282561,NA
+"BVR",2019-07-11,"Nauplii",910.791436585001,NA
+"BVR",2019-07-11,"Polyarthra",66.643275847683,NA
+"BVR",2019-07-11,"Rotifera",3309.94936710159,NA
+"BVR",2019-07-18,"Ascomorpha",0,NA
+"BVR",2019-07-18,"Bosmina",0,NA
+"BVR",2019-07-18,"Ceriodaphnia",0,NA
+"BVR",2019-07-18,"Cladocera",44.428850565122,NA
+"BVR",2019-07-18,"Conochilus",1666.08189619208,NA
+"BVR",2019-07-18,"Copepoda",1088.50683884549,NA
+"BVR",2019-07-18,"Cyclopoida",111.072126412805,NA
+"BVR",2019-07-18,"Daphnia",44.428850565122,NA
+"BVR",2019-07-18,"Kellicottia",866.362586019879,NA
+"BVR",2019-07-18,"Keratella",199.929827543049,NA
+"BVR",2019-07-18,"Nauplii",955.220287150123,NA
+"BVR",2019-07-18,"Polyarthra",66.643275847683,NA
+"BVR",2019-07-18,"Rotifera",3576.52247049232,NA
+"BVR",2019-07-24,"Ascomorpha",0,NA
+"BVR",2019-07-24,"Bosmina",44.428850565122,NA
+"BVR",2019-07-24,"Ceriodaphnia",88.857701130244,NA
+"BVR",2019-07-24,"Cladocera",311.001953955854,NA
+"BVR",2019-07-24,"Conochilus",844.148160737318,NA
+"BVR",2019-07-24,"Copepoda",15372.3822955322,NA
+"BVR",2019-07-24,"Cyclopoida",1643.86747090951,NA
+"BVR",2019-07-24,"Daphnia",88.857701130244,NA
+"BVR",2019-07-24,"Kellicottia",7064.1872398544,NA
+"BVR",2019-07-24,"Keratella",888.57701130244,NA
+"BVR",2019-07-24,"Nauplii",13550.7994223622,NA
+"BVR",2019-07-24,"Polyarthra",844.148160737318,NA
+"BVR",2019-07-24,"Rotifera",10351.9221816734,NA
+"BVR",2019-07-25,"Ascomorpha",0,NA
+"BVR",2019-07-25,"Bosmina",0,NA
+"BVR",2019-07-25,"Ceriodaphnia",0,NA
+"BVR",2019-07-25,"Cladocera",266.573103390732,NA
+"BVR",2019-07-25,"Conochilus",288.787528673293,NA
+"BVR",2019-07-25,"Copepoda",10662.9241356293,NA
+"BVR",2019-07-25,"Cyclopoida",955.220287150123,NA
+"BVR",2019-07-25,"Daphnia",244.358678108171,NA
+"BVR",2019-07-25,"Kellicottia",5931.25155044379,NA
+"BVR",2019-07-25,"Keratella",466.502930933781,NA
+"BVR",2019-07-25,"Nauplii",9552.20287150123,NA
+"BVR",2019-07-25,"Polyarthra",666.43275847683,NA
+"BVR",2019-07-25,"Rotifera",8641.41143491623,NA
+"BVR",2019-08-14,"Ascomorpha",0,NA
+"BVR",2019-08-14,"Bosmina",16.6608189619208,NA
+"BVR",2019-08-14,"Ceriodaphnia",83.3040948096038,NA
+"BVR",2019-08-14,"Cladocera",199.929827543049,NA
+"BVR",2019-08-14,"Conochilus",0,NA
+"BVR",2019-08-14,"Copepoda",733.076034324513,NA
+"BVR",2019-08-14,"Cyclopoida",133.286551695366,NA
+"BVR",2019-08-14,"Daphnia",83.3040948096038,NA
+"BVR",2019-08-14,"Kellicottia",116.625732733445,NA
+"BVR",2019-08-14,"Keratella",1116.27487044869,NA
+"BVR",2019-08-14,"Nauplii",599.789482629147,NA
+"BVR",2019-08-14,"Polyarthra",0,NA
+"BVR",2019-08-14,"Rotifera",1332.86551695366,NA
+"BVR",2019-09-04,"Ascomorpha",0,NA
+"BVR",2019-09-04,"Bosmina",19.9929827543049,NA
+"BVR",2019-09-04,"Ceriodaphnia",206.594155127817,NA
+"BVR",2019-09-04,"Cladocera",239.915793051659,NA
+"BVR",2019-09-04,"Conochilus",0,NA
+"BVR",2019-09-04,"Copepoda",233.251465466891,NA
+"BVR",2019-09-04,"Cyclopoida",106.629241356293,NA
+"BVR",2019-09-04,"Daphnia",13.3286551695366,NA
+"BVR",2019-09-04,"Kellicottia",0,NA
+"BVR",2019-09-04,"Keratella",186.601172373512,NA
+"BVR",2019-09-04,"Nauplii",126.622224110598,NA
+"BVR",2019-09-04,"Polyarthra",6.6643275847683,NA
+"BVR",2019-09-04,"Rotifera",279.901758560269,NA
+"BVR",2019-10-04,"Ascomorpha",0,NA
+"BVR",2019-10-04,"Bosmina",59.9789482629147,NA
+"BVR",2019-10-04,"Ceriodaphnia",186.601172373512,NA
+"BVR",2019-10-04,"Cladocera",253.244448221195,NA
+"BVR",2019-10-04,"Conochilus",179.936844788744,NA
+"BVR",2019-10-04,"Copepoda",439.845620594708,NA
+"BVR",2019-10-04,"Cyclopoida",219.922810297354,NA
+"BVR",2019-10-04,"Daphnia",6.6643275847683,NA
+"BVR",2019-10-04,"Kellicottia",6.6643275847683,NA
+"BVR",2019-10-04,"Keratella",33.3216379238415,NA
+"BVR",2019-10-04,"Nauplii",199.929827543049,NA
+"BVR",2019-10-04,"Polyarthra",0,NA
+"BVR",2019-10-04,"Rotifera",286.566086145037,NA
+"BVR",2019-11-15,"Ascomorpha",0,NA
+"BVR",2019-11-15,"Bosmina",318.406762383374,NA
+"BVR",2019-11-15,"Ceriodaphnia",7.40480842752033,NA
+"BVR",2019-11-15,"Cladocera",340.621187665935,NA
+"BVR",2019-11-15,"Conochilus",385.050038231057,NA
+"BVR",2019-11-15,"Copepoda",259.168294963212,NA
+"BVR",2019-11-15,"Cyclopoida",81.4528927027237,NA
+"BVR",2019-11-15,"Daphnia",14.8096168550407,NA
+"BVR",2019-11-15,"Kellicottia",0,NA
+"BVR",2019-11-15,"Keratella",51.8336589926423,NA
+"BVR",2019-11-15,"Nauplii",148.096168550407,NA
+"BVR",2019-11-15,"Polyarthra",88.857701130244,NA
+"BVR",2019-11-15,"Rotifera",584.979865774106,NA
+"BVR",2020-05-14,"Ascomorpha",0,NA
+"BVR",2020-05-14,"Bosmina",0,NA
+"BVR",2020-05-14,"Ceriodaphnia",0,NA
+"BVR",2020-05-14,"Cladocera",215.412608800592,NA
+"BVR",2020-05-14,"Conochilus",316.387269175869,NA
+"BVR",2020-05-14,"Copepoda",679.896046526867,NA
+"BVR",2020-05-14,"Cyclopoida",188.486032700518,NA
+"BVR",2020-05-14,"Daphnia",215.412608800592,NA
+"BVR",2020-05-14,"Kellicottia",13.463288050037,NA
+"BVR",2020-05-14,"Keratella",0,NA
+"BVR",2020-05-14,"Nauplii",491.410013826349,NA
+"BVR",2020-05-14,"Polyarthra",417.361929551146,NA
+"BVR",2020-05-14,"Rotifera",834.723859102292,NA
+"BVR",2020-06-04,"Ascomorpha",0,NA
+"BVR",2020-06-04,"Bosmina",0,NA
+"BVR",2020-06-04,"Ceriodaphnia",0,NA
+"BVR",2020-06-04,"Cladocera",71.9444455173851,NA
+"BVR",2020-06-04,"Conochilus",0,NA
+"BVR",2020-06-04,"Copepoda",242.339184900665,NA
+"BVR",2020-06-04,"Cyclopoida",45.4385971688748,NA
+"BVR",2020-06-04,"Daphnia",71.9444455173851,NA
+"BVR",2020-06-04,"Kellicottia",3.7865497640729,NA
+"BVR",2020-06-04,"Keratella",3.7865497640729,NA
+"BVR",2020-06-04,"Nauplii",196.900587731791,NA
+"BVR",2020-06-04,"Polyarthra",26.5058483485103,NA
+"BVR",2020-06-04,"Rotifera",98.4502938658954,NA
+"BVR",2020-06-25,"Ascomorpha",0,NA
+"BVR",2020-06-25,"Bosmina",0,NA
+"BVR",2020-06-25,"Ceriodaphnia",0,NA
+"BVR",2020-06-25,"Cladocera",82.7866780716559,NA
+"BVR",2020-06-25,"Conochilus",455.326729394108,NA
+"BVR",2020-06-25,"Copepoda",827.866780716559,NA
+"BVR",2020-06-25,"Cyclopoida",82.7866780716559,NA
+"BVR",2020-06-25,"Daphnia",74.5080102644903,NA
+"BVR",2020-06-25,"Kellicottia",91.0653458788215,NA
+"BVR",2020-06-25,"Keratella",132.458684914649,NA
+"BVR",2020-06-25,"Nauplii",745.080102644903,NA
+"BVR",2020-06-25,"Polyarthra",8.27866780716559,NA
+"BVR",2020-06-25,"Rotifera",877.538787559553,NA
+"BVR",2020-07-02,"Ascomorpha",0,NA
+"BVR",2020-07-02,"Bosmina",0,NA
+"BVR",2020-07-02,"Ceriodaphnia",0,NA
+"BVR",2020-07-02,"Cladocera",86.9260119752387,NA
+"BVR",2020-07-02,"Conochilus",0,NA
+"BVR",2020-07-02,"Copepoda",666.43275847683,NA
+"BVR",2020-07-02,"Cyclopoida",135.218240850371,NA
+"BVR",2020-07-02,"Daphnia",77.2675662002122,NA
+"BVR",2020-07-02,"Kellicottia",67.6091204251857,NA
+"BVR",2020-07-02,"Keratella",193.16891550053,NA
+"BVR",2020-07-02,"Nauplii",521.556071851432,NA
+"BVR",2020-07-02,"Polyarthra",0,NA
+"BVR",2020-07-02,"Rotifera",463.605397201273,NA
+"BVR",2020-08-06,"Ascomorpha",0,NA
+"BVR",2020-08-06,"Bosmina",7.68960875165573,NA
+"BVR",2020-08-06,"Ceriodaphnia",10.2528116688743,NA
+"BVR",2020-08-06,"Cladocera",28.1952320894044,NA
+"BVR",2020-08-06,"Conochilus",62.7984714718552,NA
+"BVR",2020-08-06,"Copepoda",42.2928481341065,NA
+"BVR",2020-08-06,"Cyclopoida",6.40800729304644,NA
+"BVR",2020-08-06,"Daphnia",10.2528116688743,NA
+"BVR",2020-08-06,"Kellicottia",3.84480437582787,NA
+"BVR",2020-08-06,"Keratella",38.4480437582787,NA
+"BVR",2020-08-06,"Nauplii",35.8848408410601,NA
+"BVR",2020-08-06,"Polyarthra",0,NA
+"BVR",2020-08-06,"Rotifera",116.625732733445,NA
+"BVR",2020-08-12,"Ascomorpha",0,0
+"BVR",2020-08-12,"Bosmina",0,0
+"BVR",2020-08-12,"Ceriodaphnia",11.3899416903313,1.02815808594289
+"BVR",2020-08-12,"Cladocera",41.9246789878151,17.82140682301
+"BVR",2020-08-12,"Conochilus",0,0
+"BVR",2020-08-12,"Copepoda",89.847252801922,19.9634028353914
+"BVR",2020-08-12,"Cyclopoida",0,0
+"BVR",2020-08-12,"Daphnia",8.54245626774846,0.77111856445717
+"BVR",2020-08-12,"Kellicottia",1.51461990562916,2.14199601238102
+"BVR",2020-08-12,"Keratella",134.922341193446,36.2425725294869
+"BVR",2020-08-12,"Nauplii",63.3111120552988,42.4115210451441
+"BVR",2020-08-12,"Polyarthra",0,0
+"BVR",2020-08-12,"Rotifera",153.885382411923,47.9807106773352
+"BVR",2020-08-13,"Ascomorpha",0,0
+"BVR",2020-08-13,"Bosmina",4.6246394451877,2.256235799708
+"BVR",2020-08-13,"Ceriodaphnia",38.1482266897797,23.1621168805467
+"BVR",2020-08-13,"Cladocera",45.0649909254862,21.9483191401975
+"BVR",2020-08-13,"Conochilus",2.2921247905188,1.04243805935876
+"BVR",2020-08-13,"Copepoda",101.388656482816,70.8143881693164
+"BVR",2020-08-13,"Cyclopoida",0,0
+"BVR",2020-08-13,"Daphnia",2.2921247905188,1.04243805935876
+"BVR",2020-08-13,"Kellicottia",2.2921247905188,1.04243805935876
+"BVR",2020-08-13,"Keratella",65.7345039043055,26.9891497560008
+"BVR",2020-08-13,"Nauplii",70.9346989136324,45.3389155953982
+"BVR",2020-08-13,"Polyarthra",0.777504884889635,1.09955795302225
+"BVR",2020-08-13,"Rotifera",107.810644882683,40.3123649530104
+"BVR",2020-09-03,"Ascomorpha",0,NA
+"BVR",2020-09-03,"Bosmina",28.5614039347213,NA
+"BVR",2020-09-03,"Ceriodaphnia",142.807019673606,NA
+"BVR",2020-09-03,"Cladocera",171.368423608328,NA
+"BVR",2020-09-03,"Conochilus",456.982462955541,NA
+"BVR",2020-09-03,"Copepoda",752.116970280994,NA
+"BVR",2020-09-03,"Cyclopoida",285.614039347213,NA
+"BVR",2020-09-03,"Daphnia",0,NA
+"BVR",2020-09-03,"Kellicottia",0,NA
+"BVR",2020-09-03,"Keratella",57.1228078694426,NA
+"BVR",2020-09-03,"Nauplii",456.982462955541,NA
+"BVR",2020-09-03,"Polyarthra",0,NA
+"BVR",2020-09-03,"Rotifera",847.321650063398,NA
+"BVR",2020-10-01,"Ascomorpha",0,NA
+"BVR",2020-10-01,"Bosmina",133.286551695366,NA
+"BVR",2020-10-01,"Ceriodaphnia",66.643275847683,NA
+"BVR",2020-10-01,"Cladocera",211.03704018433,NA
+"BVR",2020-10-01,"Conochilus",0,NA
+"BVR",2020-10-01,"Copepoda",522.038994140184,NA
+"BVR",2020-10-01,"Cyclopoida",144.393764336647,NA
+"BVR",2020-10-01,"Daphnia",11.1072126412805,NA
+"BVR",2020-10-01,"Kellicottia",0,NA
+"BVR",2020-10-01,"Keratella",11.1072126412805,NA
+"BVR",2020-10-01,"Nauplii",377.645229803537,NA
+"BVR",2020-10-01,"Polyarthra",11.1072126412805,NA
+"BVR",2020-10-01,"Rotifera",588.682269987867,NA
+"BVR",2020-11-10,"Ascomorpha",0,NA
+"BVR",2020-11-10,"Bosmina",37.0240421376017,NA
+"BVR",2020-11-10,"Ceriodaphnia",0,NA
+"BVR",2020-11-10,"Cladocera",44.428850565122,NA
+"BVR",2020-11-10,"Conochilus",0,NA
+"BVR",2020-11-10,"Copepoda",866.362586019879,NA
+"BVR",2020-11-10,"Cyclopoida",718.266417469472,NA
+"BVR",2020-11-10,"Daphnia",7.40480842752033,NA
+"BVR",2020-11-10,"Kellicottia",0,NA
+"BVR",2020-11-10,"Keratella",14.8096168550407,NA
+"BVR",2020-11-10,"Nauplii",111.072126412805,NA
+"BVR",2020-11-10,"Polyarthra",81.4528927027237,NA
+"BVR",2020-11-10,"Rotifera",192.525019115529,NA
+"BVR",2020-12-02,"Ascomorpha",24.2339184900666,NA
+"BVR",2020-12-02,"Bosmina",484.678369801331,NA
+"BVR",2020-12-02,"Ceriodaphnia",0,NA
+"BVR",2020-12-02,"Cladocera",496.795329046364,NA
+"BVR",2020-12-02,"Conochilus",230.222225655632,NA
+"BVR",2020-12-02,"Copepoda",399.859655086098,NA
+"BVR",2020-12-02,"Cyclopoida",169.637429430466,NA
+"BVR",2020-12-02,"Daphnia",12.1169592450333,NA
+"BVR",2020-12-02,"Kellicottia",0,NA
+"BVR",2020-12-02,"Keratella",48.4678369801331,NA
+"BVR",2020-12-02,"Nauplii",205.988307165566,NA
+"BVR",2020-12-02,"Polyarthra",230.222225655632,NA
+"BVR",2020-12-02,"Rotifera",1066.29241356293,NA
+"BVR",2021-03-08,"Ascomorpha",0,NA
+"BVR",2021-03-08,"Bosmina",38.8752442444818,NA
+"BVR",2021-03-08,"Ceriodaphnia",0,NA
+"BVR",2021-03-08,"Cladocera",55.5360632064025,NA
+"BVR",2021-03-08,"Conochilus",1110.72126412805,NA
+"BVR",2021-03-08,"Copepoda",11.1072126412805,NA
+"BVR",2021-03-08,"Cyclopoida",0,NA
+"BVR",2021-03-08,"Daphnia",16.6608189619208,NA
+"BVR",2021-03-08,"Kellicottia",0,NA
+"BVR",2021-03-08,"Keratella",16.6608189619208,NA
+"BVR",2021-03-08,"Nauplii",11.1072126412805,NA
+"BVR",2021-03-08,"Polyarthra",94.4113074508843,NA
+"BVR",2021-03-08,"Rotifera",1227.3469968615,NA
+"BVR",2021-04-05,"Ascomorpha",0,NA
+"BVR",2021-04-05,"Bosmina",6.6643275847683,NA
+"BVR",2021-04-05,"Ceriodaphnia",0,NA
+"BVR",2021-04-05,"Cladocera",29.9894741314574,NA
+"BVR",2021-04-05,"Conochilus",46.6502930933781,NA
+"BVR",2021-04-05,"Copepoda",93.3005861867562,NA
+"BVR",2021-04-05,"Cyclopoida",53.3146206781464,NA
+"BVR",2021-04-05,"Daphnia",16.6608189619208,NA
+"BVR",2021-04-05,"Kellicottia",26.6573103390732,NA
+"BVR",2021-04-05,"Keratella",9.99649137715245,NA
+"BVR",2021-04-05,"Nauplii",39.9859655086098,NA
+"BVR",2021-04-05,"Polyarthra",29.9894741314574,NA
+"BVR",2021-04-05,"Rotifera",236.583629259275,NA
+"BVR",2021-05-14,"Ascomorpha",0,NA
+"BVR",2021-05-14,"Bosmina",0,NA
+"BVR",2021-05-14,"Ceriodaphnia",0,NA
+"BVR",2021-05-14,"Cladocera",0,NA
+"BVR",2021-05-14,"Conochilus",1880.82134059017,NA
+"BVR",2021-05-14,"Copepoda",873.7673944474,NA
+"BVR",2021-05-14,"Cyclopoida",133.286551695366,NA
+"BVR",2021-05-14,"Daphnia",0,NA
+"BVR",2021-05-14,"Kellicottia",14.8096168550407,NA
+"BVR",2021-05-14,"Keratella",14.8096168550407,NA
+"BVR",2021-05-14,"Nauplii",740.480842752034,NA
+"BVR",2021-05-14,"Polyarthra",1273.6270495335,NA
+"BVR",2021-05-14,"Rotifera",3287.73494181903,NA
+"BVR",2021-06-15,"Ascomorpha",0,0
+"BVR",2021-06-15,"Bosmina",22.214425282561,31.4159415149215
+"BVR",2021-06-15,"Ceriodaphnia",88.857701130244,62.8318830298431
+"BVR",2021-06-15,"Cladocera",666.43275847683,125.663766059686
+"BVR",2021-06-15,"Conochilus",2132.58482712586,2890.26661937278
+"BVR",2021-06-15,"Copepoda",4731.6725851855,1665.04490029084
+"BVR",2021-06-15,"Cyclopoida",1510.58091921415,691.150713328271
+"BVR",2021-06-15,"Daphnia",510.931781498903,31.4159415149215
+"BVR",2021-06-15,"Kellicottia",0,0
+"BVR",2021-06-15,"Keratella",1510.58091921415,251.327532119375
+"BVR",2021-06-15,"Nauplii",3221.09166597134,973.894186962574
+"BVR",2021-06-15,"Polyarthra",0,0
+"BVR",2021-06-15,"Rotifera",3798.66672331794,2607.52314573849
+"BVR",2021-06-16,"Ascomorpha",0,0
+"BVR",2021-06-16,"Bosmina",0,0
+"BVR",2021-06-16,"Ceriodaphnia",44.428850565122,0
+"BVR",2021-06-16,"Cladocera",599.789482629147,219.911590604451
+"BVR",2021-06-16,"Conochilus",755.290459607075,1068.14201150733
+"BVR",2021-06-16,"Copepoda",4065.23982670866,596.902888783511
+"BVR",2021-06-16,"Cyclopoida",1288.43666638854,188.495649089528
+"BVR",2021-06-16,"Daphnia",510.931781498903,157.079707574608
+"BVR",2021-06-16,"Kellicottia",22.214425282561,31.4159415149215
+"BVR",2021-06-16,"Keratella",888.577011302441,251.327532119374
+"BVR",2021-06-16,"Nauplii",2754.58873503757,439.823181208903
+"BVR",2021-06-16,"Polyarthra",0,0
+"BVR",2021-06-16,"Rotifera",1888.22614901769,973.894186962573
+"BVR",2021-06-28,"Ascomorpha",0,NA
+"BVR",2021-06-28,"Bosmina",0,NA
+"BVR",2021-06-28,"Ceriodaphnia",33.3216379238415,NA
+"BVR",2021-06-28,"Cladocera",55.5360632064025,NA
+"BVR",2021-06-28,"Conochilus",0,NA
+"BVR",2021-06-28,"Copepoda",522.038994140184,NA
+"BVR",2021-06-28,"Cyclopoida",166.608189619208,NA
+"BVR",2021-06-28,"Daphnia",22.214425282561,NA
+"BVR",2021-06-28,"Kellicottia",0,NA
+"BVR",2021-06-28,"Keratella",977.434712432684,NA
+"BVR",2021-06-28,"Nauplii",355.430804520976,NA
+"BVR",2021-06-28,"Polyarthra",0,NA
+"BVR",2021-06-28,"Rotifera",1010.75635035653,NA
+"BVR",2021-07-07,"Ascomorpha",0,0
+"BVR",2021-07-07,"Bosmina",111.072126412805,31.4159415149215
+"BVR",2021-07-07,"Ceriodaphnia",22.214425282561,31.4159415149215
+"BVR",2021-07-07,"Cladocera",333.216379238415,157.079707574608
+"BVR",2021-07-07,"Conochilus",355.430804520976,502.655064238745
+"BVR",2021-07-07,"Copepoda",3687.59459690512,502.655064238743
+"BVR",2021-07-07,"Cyclopoida",1177.36453997574,157.079707574608
+"BVR",2021-07-07,"Daphnia",133.286551695366,62.8318830298431
+"BVR",2021-07-07,"Kellicottia",66.643275847683,31.4159415149215
+"BVR",2021-07-07,"Keratella",2288.08580410378,722.566654843198
+"BVR",2021-07-07,"Nauplii",2488.01563164683,376.991298179056
+"BVR",2021-07-07,"Polyarthra",44.428850565122,0
+"BVR",2021-07-07,"Rotifera",3443.23591879696,282.743473634288
+"BVR",2021-07-08,"Ascomorpha",0,0
+"BVR",2021-07-08,"Bosmina",83.304094809604,117.809780680956
+"BVR",2021-07-08,"Ceriodaphnia",0,0
+"BVR",2021-07-08,"Cladocera",188.822614901769,204.20361984699
+"BVR",2021-07-08,"Conochilus",22.214425282561,31.4159415149215
+"BVR",2021-07-08,"Copepoda",2515.78366325003,966.040201583837
+"BVR",2021-07-08,"Cyclopoida",422.074080368659,31.4159415149216
+"BVR",2021-07-08,"Daphnia",88.857701130244,62.8318830298431
+"BVR",2021-07-08,"Kellicottia",22.214425282561,31.4159415149215
+"BVR",2021-07-08,"Keratella",1360.63354855687,463.385137345093
+"BVR",2021-07-08,"Nauplii",2093.70958288137,934.624260068916
+"BVR",2021-07-08,"Polyarthra",22.214425282561,31.4159415149215
+"BVR",2021-07-08,"Rotifera",1704.95714043656,479.093108102553
+"BVR",2021-07-26,"Ascomorpha",0,NA
+"BVR",2021-07-26,"Bosmina",26.6573103390732,NA
+"BVR",2021-07-26,"Ceriodaphnia",13.3286551695366,NA
+"BVR",2021-07-26,"Cladocera",66.643275847683,NA
+"BVR",2021-07-26,"Conochilus",0,NA
+"BVR",2021-07-26,"Copepoda",1572.78131000532,NA
+"BVR",2021-07-26,"Cyclopoida",533.146206781464,NA
+"BVR",2021-07-26,"Daphnia",26.6573103390732,NA
+"BVR",2021-07-26,"Kellicottia",39.9859655086098,NA
+"BVR",2021-07-26,"Keratella",106.629241356293,NA
+"BVR",2021-07-26,"Nauplii",1039.63510322386,NA
+"BVR",2021-07-26,"Polyarthra",13.3286551695366,NA
+"BVR",2021-07-26,"Rotifera",186.601172373512,NA
+"BVR",2021-08-23,"Ascomorpha",0,NA
+"BVR",2021-08-23,"Bosmina",666.43275847683,NA
+"BVR",2021-08-23,"Ceriodaphnia",311.001953955854,NA
+"BVR",2021-08-23,"Cladocera",999.649137715245,NA
+"BVR",2021-08-23,"Conochilus",0,NA
+"BVR",2021-08-23,"Copepoda",688.647183759391,NA
+"BVR",2021-08-23,"Cyclopoida",444.28850565122,NA
+"BVR",2021-08-23,"Daphnia",0,NA
+"BVR",2021-08-23,"Kellicottia",288.787528673293,NA
+"BVR",2021-08-23,"Keratella",2488.01563164683,NA
+"BVR",2021-08-23,"Nauplii",244.358678108171,NA
+"BVR",2021-08-23,"Polyarthra",0,NA
+"BVR",2021-08-23,"Rotifera",3709.80902218769,NA
+"BVR",2021-09-21,"Ascomorpha",0,NA
+"BVR",2021-09-21,"Bosmina",199.929827543049,NA
+"BVR",2021-09-21,"Ceriodaphnia",33.3216379238415,NA
+"BVR",2021-09-21,"Cladocera",277.680316032013,NA
+"BVR",2021-09-21,"Conochilus",0,NA
+"BVR",2021-09-21,"Copepoda",1077.39962620421,NA
+"BVR",2021-09-21,"Cyclopoida",433.18129300994,NA
+"BVR",2021-09-21,"Daphnia",11.1072126412805,NA
+"BVR",2021-09-21,"Kellicottia",55.5360632064025,NA
+"BVR",2021-09-21,"Keratella",88.857701130244,NA
+"BVR",2021-09-21,"Nauplii",577.575057346586,NA
+"BVR",2021-09-21,"Polyarthra",22.214425282561,NA
+"BVR",2021-09-21,"Rotifera",377.645229803537,NA
+"BVR",2021-10-26,"Ascomorpha",0,NA
+"BVR",2021-10-26,"Bosmina",530.677937305624,NA
+"BVR",2021-10-26,"Ceriodaphnia",0,NA
+"BVR",2021-10-26,"Cladocera",530.677937305624,NA
+"BVR",2021-10-26,"Conochilus",950.283748198443,NA
+"BVR",2021-10-26,"Copepoda",246.826947584011,NA
+"BVR",2021-10-26,"Cyclopoida",123.413473792006,NA
+"BVR",2021-10-26,"Daphnia",0,NA
+"BVR",2021-10-26,"Kellicottia",37.0240421376017,NA
+"BVR",2021-10-26,"Keratella",283.850989721613,NA
+"BVR",2021-10-26,"Nauplii",98.7307790336045,NA
+"BVR",2021-10-26,"Polyarthra",37.0240421376017,NA
+"BVR",2021-10-26,"Rotifera",1789.49536998408,NA
+"BVR",2021-11-09,"Ascomorpha",0,NA
+"BVR",2021-11-09,"Bosmina",459.098122506261,NA
+"BVR",2021-11-09,"Ceriodaphnia",0,NA
+"BVR",2021-11-09,"Cladocera",459.098122506261,NA
+"BVR",2021-11-09,"Conochilus",0,NA
+"BVR",2021-11-09,"Copepoda",784.909693317156,NA
+"BVR",2021-11-09,"Cyclopoida",533.146206781464,NA
+"BVR",2021-11-09,"Daphnia",0,NA
+"BVR",2021-11-09,"Kellicottia",281.382720245773,NA
+"BVR",2021-11-09,"Keratella",236.953869680651,NA
+"BVR",2021-11-09,"Nauplii",192.525019115529,NA
+"BVR",2021-11-09,"Polyarthra",133.286551695366,NA
+"BVR",2021-11-09,"Rotifera",770.100076462115,NA
+"BVR",2021-12-06,"Ascomorpha",0,NA
+"BVR",2021-12-06,"Bosmina",138.840158016006,NA
+"BVR",2021-12-06,"Ceriodaphnia",0,NA
+"BVR",2021-12-06,"Cladocera",138.840158016006,NA
+"BVR",2021-12-06,"Conochilus",101.816115878405,NA
+"BVR",2021-12-06,"Copepoda",472.056537254421,NA
+"BVR",2021-12-06,"Cyclopoida",268.424305497612,NA
+"BVR",2021-12-06,"Daphnia",0,NA
+"BVR",2021-12-06,"Kellicottia",166.608189619208,NA
+"BVR",2021-12-06,"Keratella",194.376221222409,NA
+"BVR",2021-12-06,"Nauplii",185.120210688008,NA
+"BVR",2021-12-06,"Polyarthra",101.816115878405,NA
+"BVR",2021-12-06,"Rotifera",573.872653132826,NA
