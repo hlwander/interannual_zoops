@@ -1,7 +1,7 @@
 #script for second-stage NMDS
 
 pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,
-               sf,vegan,FSA,rcompanion,NatParksPalettes,ggrepel,labdsv,
+               vegan,FSA,rcompanion,NatParksPalettes,ggrepel,labdsv,
                goeveg, ggordiplots, egg)
 
 #read in all_zoops df
@@ -444,7 +444,7 @@ YvsM <-ggboxplot(disp_df, x = "group", y = "value",
           fill = "group", palette = c("#A4C6B8", "#5E435D"),
           order = c("year_disp", "month_disp"),
           ylab = "Dispersion") +
-  theme(text = element_text(size=9),
+  theme(text = element_text(size=10),
         plot.margin = unit(c(0.2,0,-0.2,0.4), 'lines')) +
   annotate("text",label=c("a","b"), x=c(1.1,2.1),
            y=c(mean(disp_df$value[disp_df$group=="year_disp"]) + 

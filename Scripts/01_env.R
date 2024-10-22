@@ -30,30 +30,10 @@ ctd <-read.csv(infile1,header=T) |>
   select(Reservoir, Site, DateTime, Depth_m, 
          Temp_C, DO_mgL) #removing chl a bc fp and ctd aren't so comparable so can't fill in missing days
 
-#round ctd to nearest m (also use ysi bc some missing months w/ ctd)
-ctd_final <- ctd |>
-  dplyr::mutate(rdepth = plyr::round_any(Depth_m, 1)) |>
-  dplyr::mutate(month = month(DateTime),
-                year = year(DateTime)) |>
-  dplyr::select(-Depth_m) |> 
-  dplyr::rename(Depth_m = rdepth) |> 
-  dplyr::group_by(month, year) |> 
-  dplyr::filter(Depth_m %in% c(1,last(Depth_m))) |> 
-  dplyr::summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
-                   Temp_C_hypo = mean(Temp_C[Depth_m!=1], na.rm=T),
-                   DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T))
-
-
-#missing Aug 2015, May 2019, May 2020, Aug + Sep 2021
-missing_dates <- c(seq(as.Date("2015-08-01"), as.Date("2015-08-31"), by="days"),
-                   seq(as.Date("2019-05-01"), as.Date("2019-05-31"), by="days"),
-                   seq(as.Date("2020-05-01"), as.Date("2020-05-31"), by="days"),
-                   seq(as.Date("2021-08-01"), as.Date("2021-09-30"), by="days"))
-
 #sub missing ctd data with ysi data
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/6e5a0344231de7fcebbe6dc2bed0a1c3" 
 infile1 <- tempfile()
-try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
+try(download.file(inUrl1,infile1, timeout = max(500, getOption("timeout"))))
 
 ysi <- read.csv(infile1,header=T) |> 
   mutate(DateTime = as.Date(DateTime)) |>
@@ -62,18 +42,6 @@ ysi <- read.csv(infile1,header=T) |>
            Site ==50 & Reservoir %in% c("BVR")) |> 
   select(Reservoir, Site, DateTime, Depth_m, 
          Temp_C, DO_mgL)
-
-ysi_final <- ysi |> 
-  filter(Depth_m %in%  c(1,11)) |> 
-  mutate(month = month(DateTime),
-                year = year(DateTime)) |> 
-  group_by(month, year) |>          
-  summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
-            Temp_C_hypo = mean(Temp_C[Depth_m==11], na.rm=T),
-            DO_mgL_epi = mean(DO_mgL[Depth_m == 1], na.rm=T)) 
-  
-#combine ctd and ysi
-profiles <- bind_rows(ctd_final, ysi_final) |> arrange(month, year) 
 
 #select every 0.5m from casts for thermocline calc below
 ctd_final_temp_do <- ctd |>
@@ -114,7 +82,7 @@ ctd_thermo_depth_all <- temp_final |>
   group_by(DateTime) |> 
   summarise(therm_depth = thermo.depth(Temp_C,Depth_m)) |> 
   mutate(month = month(DateTime),
-                 year = year(DateTime)) 
+         year = year(DateTime)) 
 
 ctd_thermo_depth <- ctd_thermo_depth_all |> 
   ungroup() |>
@@ -130,6 +98,42 @@ ctd_oxy_depth <- do_final |>
   ungroup() |>
   group_by(month, year) |> 
   summarise(oxy_depth = mean(oxy_depth, na.rm=T))
+
+
+
+
+
+#round ctd to nearest m (also use ysi bc some missing months w/ ctd)
+ctd_final <- ctd |>
+  dplyr::mutate(rdepth = plyr::round_any(Depth_m, 1)) |>
+  dplyr::mutate(month = month(DateTime),
+                year = year(DateTime)) |>
+  dplyr::select(-Depth_m) |> 
+  dplyr::rename(Depth_m = rdepth) |> 
+  dplyr::group_by(month, year) |> 
+  dplyr::filter(Depth_m %in% c(1,last(Depth_m))) |> 
+  dplyr::summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
+                   Temp_C_hypo = mean(Temp_C[Depth_m!=1], na.rm=T),
+                   DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T))
+
+
+#missing Aug 2015, May 2019, May 2020, Aug + Sep 2021
+missing_dates <- c(seq(as.Date("2015-08-01"), as.Date("2015-08-31"), by="days"),
+                   seq(as.Date("2019-05-01"), as.Date("2019-05-31"), by="days"),
+                   seq(as.Date("2020-05-01"), as.Date("2020-05-31"), by="days"),
+                   seq(as.Date("2021-08-01"), as.Date("2021-09-30"), by="days"))
+
+ysi_final <- ysi |> 
+  filter(Depth_m %in%  c(1,11)) |> 
+  mutate(month = month(DateTime),
+                year = year(DateTime)) |> 
+  group_by(month, year) |>          
+  summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
+            Temp_C_hypo = mean(Temp_C[Depth_m==11], na.rm=T),
+            DO_mgL_epi = mean(DO_mgL[Depth_m == 1], na.rm=T)) 
+  
+#combine ctd and ysi
+profiles <- bind_rows(ctd_final, ysi_final) |> arrange(month, year) 
 
 #download bathymetry
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/1254/1/f7fa2a06e1229ee75ea39eb586577184" 

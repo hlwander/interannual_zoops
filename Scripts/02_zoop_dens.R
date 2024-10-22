@@ -1,7 +1,7 @@
 #zoop density succession figs
 
 #read in packages
-pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, sf, lubridate, ggtext)
+pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, lubridate, ggtext)
 
 #cb friendly year palette
 year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
