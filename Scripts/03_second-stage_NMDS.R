@@ -2,7 +2,7 @@
 
 pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,
                sf,vegan,FSA,rcompanion,NatParksPalettes,ggrepel,labdsv,
-               goeveg, ggordiplots)
+               goeveg, ggordiplots, egg)
 
 #read in all_zoops df
 all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE)
