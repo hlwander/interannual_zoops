@@ -1,6 +1,8 @@
 #code to visualize seasonal and multiannual zoop patterns
 
-#read in packages
+#read in packages, starting with the pacman package if needed (uncomment and run 
+#the next line if pacman is not already installed)
+#install.packages('pacman')
 pacman::p_load(tidyverse, NatParksPalettes, rLakeAnalyzer,
                EDIutils, xml2, gsheet)
 
@@ -19,8 +21,7 @@ dates_list <- c(seq(as.Date("2014-05-01"), as.Date("2014-09-30"), by="days"),
 #read in ctd
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/200/13/27ceda6bc7fdec2e7d79a6e4fe16ffdf" 
 infile1 <- tempfile()
-try(download.file(inUrl1,infile1,method="curl"))
-#try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
+try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
 ctd <-read.csv(infile1,header=T) |> 
   mutate(DateTime = as.Date(DateTime)) |>
@@ -52,7 +53,7 @@ missing_dates <- c(seq(as.Date("2015-08-01"), as.Date("2015-08-31"), by="days"),
 #sub missing ctd data with ysi data
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/6e5a0344231de7fcebbe6dc2bed0a1c3" 
 infile1 <- tempfile()
-try(download.file(inUrl1,infile1,method="curl"))
+try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
 ysi <- read.csv(infile1,header=T) |> 
   mutate(DateTime = as.Date(DateTime)) |>
@@ -131,12 +132,11 @@ ctd_oxy_depth <- do_final |>
   summarise(oxy_depth = mean(oxy_depth, na.rm=T))
 
 #download bathymetry
-infile <- tempfile()
-try(download.file("https://pasta.lternet.edu/package/data/eml/edi/1254/1/f7fa2a06e1229ee75ea39eb586577184",
-                  infile, method="curl"))
-if (is.na(file.size(infile))) download.file(historic_file,infile,method="auto")
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/1254/1/f7fa2a06e1229ee75ea39eb586577184" 
+infile1 <- tempfile()
+try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
-bathymetry <- readr::read_csv(infile, show_col_types = F)  |>
+bathymetry <- readr::read_csv(infile1, show_col_types = F)  |>
   dplyr::select(Reservoir, Depth_m, SA_m2) |>
   dplyr::filter(Reservoir == "BVR")
 
@@ -177,7 +177,8 @@ temp_final_wl <- temp_final |>
 
 #Create a dataframe with bathymetry at each date
 flexible_bathy <- temp_final_wl |> # takes the depth at each day
-  dplyr::rename(depth = Depth_m) |> 
+  dplyr::ungroup() |>
+  dplyr::select(-Depth_m) |> 
   dplyr::distinct(Date, WaterLevel_m, Reservoir) |>
   dplyr::full_join(bathymetry, multiple = 'all', by = 'Reservoir') |>
   dplyr::group_by(Date) |>
@@ -191,7 +192,7 @@ schmidts <- data.frame("Date" = unique(temp_final_wl$Date),
                         "SS" = NA,
                         "BF" = NA)
 
-#for loop for physcial metrics
+#for loop for physical metrics
 for(i in 1:length(unique(flexible_bathy$Date))) {
   baths <- flexible_bathy |>
     dplyr::filter(Date==unique(flexible_bathy$Date)[i])
@@ -202,7 +203,6 @@ for(i in 1:length(unique(flexible_bathy$Date))) {
                   # shallowest bathymetry (returns NA below) so these are filtered out
                   Depth_m >= min(baths$Depth_m))
   
-  
   #calculate schmidt stability
   schmidts[i,2] <- rLakeAnalyzer::schmidt.stability(wtr = temps$Temp_C,
                                                   depths = temps$Depth_m,
@@ -211,12 +211,6 @@ for(i in 1:length(unique(flexible_bathy$Date))) {
                                                   sal = rep(0,length(temps$Temp_C)))
   
 }
-
-#new wide df of temp for all dates
-temp_final_wl_wide <- temp_final_wl |>
-  pivot_wider(names_from = Depth_m, values_from = Temp_C,
-              names_glue = "wtr_{Depth_m}") |> 
-  select(-c(WaterLevel_m, Reservoir))
 
 #now calculate month/yearly means
 physics <- schmidts |> 
@@ -250,15 +244,10 @@ chem <-read.csv(infile1,header=T) |>
 #average the 10m tp from earlier in aug with the 9m tp from a later aug date so no NA (aug 2021)
 chem$TP_ugL_hypo[is.nan(chem$TP_ugL_hypo)] <-  mean(c(26.4, 23.5))
 
-#convert fp from wide to long
-chem_long <- chem |>
-  pivot_longer(cols = c(TN_ugL_epi,TP_ugL_epi), 
-               names_to = "variable")  
-
 #read in secchi data
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/81f396b3e910d3359907b7264e689052" 
 infile1 <- tempfile()
-try(download.file(inUrl1,infile1,method="curl"))
+try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
 secchi <-read.csv(infile1) |> 
   mutate(DateTime = as.Date(DateTime)) |> 
@@ -281,7 +270,7 @@ secchi_df <- bind_rows(secchi, s_missing) |>
 
 #read in nldas met data
 nldas <- read.csv("./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |> 
-  dplyr::mutate(time = as.POSIXct(time, format="%Y-%m-%d %H:%M:%S")) |> 
+  dplyr::mutate(time = date(time)) |> 
   dplyr::filter(time %in% dates_list) |> 
   dplyr::mutate(month = month(time),
                 year = year(time)) |> 
@@ -297,7 +286,7 @@ nldas <- read.csv("./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |>
 #read in fp data
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/272/8/0359840d24028e6522f8998bd41b544e" 
 infile1 <- tempfile()
-try(download.file(inUrl1,infile1,method="curl"))
+try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
 fp <- read.csv(infile1) |> 
   dplyr::mutate(DateTime = as.Date(DateTime)) |>
@@ -316,11 +305,6 @@ fp <- read.csv(infile1) |>
                    Brown_ugL = mean(BrownAlgae_ugL, na.rm=T),
                    Mixed_ugL = mean(MixedAlgae_ugL, na.rm=T),
                    Total_ugL = mean(TotalConc_ugL, na.rm=T))
-
-#convert fp from wide to long
-fp_long <- fp |>
-  pivot_longer(cols = Green_ugL:Total_ugL, 
-               names_to = "variable") 
 
 #add in NAs for missing months
 fp_missing <- data.frame("month" = c(9,5),
@@ -367,4 +351,4 @@ all_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("month", "yea
                           c("month","year")])
 
 #export csv
-#write.csv(all_drivers, "./Output/all_drivers.csv", row.names=FALSE)
+write.csv(all_drivers, "./Output/all_drivers.csv", row.names=FALSE)
