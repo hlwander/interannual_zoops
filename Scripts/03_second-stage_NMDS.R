@@ -344,7 +344,7 @@ zoops_plus_drivers_yearly <- zoops_plus_drivers |>
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,2),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord$sites, zoops_plus_drivers_yearly[,c(12:31)])
+fit_env <- envfit(ord['sites'], zoops_plus_drivers_yearly[,c(12:31)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -375,19 +375,22 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
   scale_fill_manual("",values=year_cols)+
   scale_color_manual("",values=year_cols,
                      label=c("2014","2015","2016","2019","2020","2021")) +
-  xlim(-0.6,0.7) + ylim(-1,0.9) +
+  xlim(-0.7,0.9) + ylim(-1,0.9) +
   geom_segment(data = scores,
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
+  geom_segment(data = scores[scores$env %in% c("epi TP"),],
+               aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
+               arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS2, label = env), 
-                  size = 1.5, box.padding = 0.2)
+                  size = 1.5, box.padding = 0.2, max.overlaps=Inf)
 
 
 #axis 1 vs. 3
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,3),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord$sites, zoops_plus_drivers_yearly[,c(12:31)])
+fit_env <- envfit(ord['sites'], zoops_plus_drivers_yearly[,c(12:31)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -419,16 +422,16 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
   scale_fill_manual("",values=year_cols)+
   scale_color_manual("",values=year_cols,
                      label=c("2014","2015","2016","2019","2020","2021")) +
-  xlim(-0.6,0.7) + ylim(-1,0.9) +
+  xlim(-0.7,0.9) + ylim(-1,0.9) +
   geom_segment(data = scores,
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
   geom_segment(data = scores[scores$env %in% c("Schmidt stability", 
-                                                "phytoplankton biomass", "secchi"),],
+                                                "hypo temp", "Secchi depth"),],
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS3, label = env), 
-                  size = 1.5, box.padding = 0.2)
+                  size = 1.5, box.padding = 0.2, max.overlaps=Inf)
 
 ggpubr::ggarrange(env_plot1,env_plot2,ncol=2, widths = c(2,3),
                   common.legend = F, heights = c(2,2))
@@ -585,7 +588,7 @@ month_box <- ggboxplot(within_month_dist, x = "group", y = "dist",
            y=c(0.35, 0.26, 0.25, 0.27, 0.27)) +
   guides (fill = "none")
 
-var <- egg::ggarrange(ggarrange(YvsM, ncol = 2, labels = c("A", " "), widths = c(4,0)), 
+var <- ggarrange(ggarrange(YvsM, ncol = 2, labels = c("A", " "), widths = c(4,0)), 
           ggarrange(year_box, month_box, labels = c("B","C")), 
           nrow = 2, widths = c (1.9, 1.9))
 #ggsave("Figures/variability_boxplots_dens.jpg", var, width=5, height=4)

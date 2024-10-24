@@ -1,7 +1,7 @@
 # Env drivers of nmds cluster years
 # 23 Jul 2024
 
-pacman::p_load(tidyverse, Hmisc, dplyr)
+pacman::p_load(tidyverse, Hmisc)
 
 #cb friendly year palette
 year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
