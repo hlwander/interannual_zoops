@@ -6,8 +6,8 @@ pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, lubridate, ggtext)
 #cb friendly year palette
 year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
 
-#read in zoop data from EDI
-inUrl1  <-  "https://pasta.lternet.edu/package/data/eml/edi/197/3/9eb6db370194bd3b2824726d89a008a6" 
+#read in zoop data from EDI #CONFIRM THAT THIS WORKS WHEN v4 IS PUBLISHED ON EDI!
+inUrl1  <-  "https://pasta.lternet.edu/package/data/eml/edi/197/4/9eb6db370194bd3b2824726d89a008a6" 
 infile1 <-  tempfile()
 try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
@@ -19,34 +19,6 @@ zoops <- read.csv(infile1, header=T) |>
 #split data into pre 2019 and post
 zoops_2016_2018 <- zoops[as.Date(zoops$DateTime)<"2019-01-01",]
 zoops_2019_2021 <- zoops[as.Date(zoops$DateTime)>="2019-01-01",]
-
-#-----------------------------------------------------------------------#
-# IMPORTANT - There are n=7 total rotifer densities that are INCORRECT  #
-# In this section, I'm manually updating these values, but note that    #
-# we will eventually need to change these data in the next EDI pub      #
-#-----------------------------------------------------------------------#
-# 14May2014, 29May2014, 4Jun2014, 2Jul2014, 23Jul2014, 13Aug2014, 4Sep2014
-
-zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-05-14 10:40:00" & 
-                                zoops_2016_2018$Taxon=="Total rotifers"] <- 66.19
-
-zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-05-29 11:10:00" & 
-                                zoops_2016_2018$Taxon=="Total rotifers"] <- 20.71
-
-zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-06-04 12:00:00" & 
-                                zoops_2016_2018$Taxon=="Total rotifers"] <- 48.35
-
-zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-07-02 10:50:00" & 
-                                zoops_2016_2018$Taxon=="Total rotifers"] <- 11.33
-
-zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-07-23 11:45:00" & 
-                                  zoops_2016_2018$Taxon=="Total rotifers"] <- 63.14
-
-zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-08-13 10:05:00" & 
-                                  zoops_2016_2018$Taxon=="Total rotifers"] <- 23.91
-
-zoops_2016_2018$Density_IndPerL[zoops_2016_2018$DateTime=="2014-09-04 09:45:00" & 
-                                  zoops_2016_2018$Taxon=="Total rotifers"] <- 43.55
 
 #add daphnia (D. catawba, D. ambigua), calanoida (diaptomus) for 2014-2018 data
 zoops_pre <- zoops_2016_2018 |> 

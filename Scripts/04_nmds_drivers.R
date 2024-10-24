@@ -73,7 +73,7 @@ zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |>
     bquote('hypolimnetic temp ('*degree*'C)'), bquote('hypolimnetic TN ('*mu*g~L^-1~')'),
     bquote('hypolimnetic TP ('*mu*g~L^-1~')'), "longwave~(W~m^{-2})",
     bquote('mixed ('*mu*g~L^-1~')'), "oxycline~depth~(m)",
-    bquote('phytoplankton biomass ('*mu*g~L^-1~')'), "rain~(m~d^{-1})",
+    bquote('phytoplankton biomass ('*mu*g~L^-1~')'), "precipitation~(m~d^{-1})",
     "relative~humidity~('%')", "residence~time (d)",
     "Schmidt~stability~(J~m^{-2})", "Secchi~depth~(m)",
     "thermocline~depth~(m)", "water~level~(m)",
@@ -101,7 +101,7 @@ zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |>
 
 #hand-picking the vars that are most different
 vars <- c("air temp", 
-           "wind speed",
+           "Rain",
           "Schmidt stability",
           "Secchi depth", 
           "epilimnetic TN",
@@ -119,7 +119,7 @@ zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |>
   filter(variable %in% vars) |> 
   mutate(variable = factor(variable,
                           labels = c(bquote('air temp ('*degree*'C)'),
-                                     "wind~speed~(m~s^{-1})",
+                                     "precipitation~(m~d^{-1})",
                                      "Schmidt~stability~(J~m^{-2})",
                                      "Secchi~depth~(m)",
                                      bquote('epilimnetic TN ('*mu*g~L^-1~')'),
@@ -196,7 +196,7 @@ zoop_drivers_long |> group_by(month, year, variable) |>
   summarize(median = median(value, na.rm=T)) |> 
   ungroup() |> 
   mutate(variable = factor(variable, labels = c(
-    bquote('air temp ('*degree*'C)'), "wind~speed~(m~s^{-1})",
+    bquote('air temp ('*degree*'C)'), "precipitation~(m~d^{-1})", 
     "Schmidt~stability~(J~m^{-2})", "Secchi~depth~(m)",
     bquote('epilimnetic TN ('*mu*g~L^-1~')'), bquote('epilimnetic TP ('*mu*g~L^-1~')'),
     bquote('hypolimnetic TN ('*mu*g~L^-1~')'), bquote('hypolimnetic TP ('*mu*g~L^-1~')'),
@@ -207,7 +207,7 @@ zoop_drivers_long |> group_by(month, year, variable) |>
     bquote('brown ('*mu*g~L^-1~')'), bquote('mixed ('*mu*g~L^-1~')'),
     bquote('phytoplankton biomass ('*mu*g~L^-1~')'),
     "longwave~(W~m^{-2})", "relative~humidity~('%')", 
-    "rain~(m~d^{-1})", "residence~time (d)"))) |> 
+    "wind~speed~(m~s^{-1})","residence~time (d)"))) |> 
   ggplot(aes(x=as.factor(month), y=median, group = year)) +
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
   geom_line(aes(color=year, alpha = 0.95)) +

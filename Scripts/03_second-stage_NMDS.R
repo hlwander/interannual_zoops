@@ -2,7 +2,7 @@
 
 pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,
                vegan,FSA,rcompanion,NatParksPalettes,ggrepel,labdsv,
-               goeveg, ggordiplots, egg)
+               goeveg, ggordiplots, cowplot)
 
 #read in all_zoops df
 all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE)
@@ -367,7 +367,7 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
         legend.position = "none",
-        plot.margin = unit(c(0,-3,0,0), 'lines'),
+        plot.margin = unit(c(0,-1,0,-2), 'lines'),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
   guides(color = guide_legend(nrow=1, override.aes = list(
@@ -413,7 +413,7 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
         legend.position = "right",
-        plot.margin = unit(c(0,-1,0,-1), 'lines'),
+        plot.margin = unit(c(0,0,0,-2), 'lines'),
         legend.margin = margin(-10,-10,-10,-10),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
@@ -433,8 +433,7 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS3, label = env), 
                   size = 1.5, box.padding = 0.2, max.overlaps=Inf)
 
-ggpubr::ggarrange(env_plot1,env_plot2,ncol=2, widths = c(2,3),
-                  common.legend = F, heights = c(2,2))
+ggpubr::ggarrange(env_plot1,env_plot2,ncol=2, common.legend = F)
 #ggsave("Figures/second_stage_NMDS_envfit.jpg", width=6, height=3)
 
 #-----------------------------------------------------------------#
@@ -588,9 +587,14 @@ month_box <- ggboxplot(within_month_dist, x = "group", y = "dist",
            y=c(0.35, 0.26, 0.25, 0.27, 0.27)) +
   guides (fill = "none")
 
-var <- ggarrange(ggarrange(YvsM, ncol = 2, labels = c("A", " "), widths = c(4,0)), 
-          ggarrange(year_box, month_box, labels = c("B","C")), 
-          nrow = 2, widths = c (1.9, 1.9))
+# Combine year_box and month_box in a single row
+second_row <- plot_grid(year_box, month_box, labels = c("B", "C"), ncol = 2)
+
+# Combine YvsM and the second row vertically
+final_plot <- plot_grid(YvsM, second_row, labels = c("A", ""), ncol = 1)
+
+# Print the final plot
+print(final_plot)
 #ggsave("Figures/variability_boxplots_dens.jpg", var, width=5, height=4)
 
 #create table for within scale kw test results (Supplemental Table S2)
