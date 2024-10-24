@@ -1,7 +1,7 @@
 # Env drivers of nmds cluster years
 # 23 Jul 2024
 
-pacman::p_load(tidyverse, Hmisc)
+pacman::p_load(tidyverse, Hmisc, dplyr)
 
 #cb friendly year palette
 year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
@@ -38,7 +38,7 @@ zoop_drivers$nmds1 <- ifelse(zoop_drivers$year=="2014",nmds1$nmds1[1],
                                                        nmds1$nmds1[6])))))
 
 #read in proportion metrics
-prop <- read.csv("Output/zoop_proportions.csv") #HERE
+prop <- read.csv("Output/zoop_proportions.csv") 
 
 #convert from wide to long
 zoop_drivers_long <- zoop_drivers |> 
@@ -57,7 +57,11 @@ zoop_drivers_long$year <- factor(zoop_drivers_long$year ,
                                 levels=c("2014", "2015" ,"2016", 
                                          "2019", "2020", "2021"))
 
-#median vs nmds for all vars
+#some weird glitch where you need to unload then reload dplyr before getting next chunk of code to run
+detach("package:dplyr", unload = TRUE)
+library(dplyr)
+
+#median vs nmds for all vars (Supplemental Figure S5)
 zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |> 
   summarize(median = median(value, na.rm=T)) |> 
   ungroup() |> 
@@ -108,7 +112,7 @@ zoop_drivers_long$variable <- factor(zoop_drivers_long$variable,
                                       levels=c(vars, unique(zoop_drivers_long$variable[
                                         !zoop_drivers_long$variable %in% vars]))) 
 
-#median vs trajectory
+#median vs trajectory (Manuscript Figure 5)
 zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |> 
   summarize(median = median(value, na.rm=T)) |> 
   ungroup() |> 
@@ -187,7 +191,7 @@ mean(res$median[res$variable %in% 'air temp' &
   mean(res$median[res$variable %in% 'epilimnetic TP' & 
                     res$year %in% c("2015","2016","2020","2021")]) * 100
 
-#month on x and colored points for years - all drivers
+#month on x and colored points for years - all drivers (Supplemental Figure S7)
 zoop_drivers_long |> group_by(month, year, variable) |> 
   summarize(median = median(value, na.rm=T)) |> 
   ungroup() |> 
@@ -225,4 +229,3 @@ zoop_drivers_long |> group_by(month, year, variable) |>
         legend.margin=margin(-15,-0,-0,-0),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 #ggsave("Figures/all_drivers_vs_months.jpg", width=7, height=5)
-

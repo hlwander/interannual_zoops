@@ -54,7 +54,7 @@ zoop_bray <- as.matrix(vegan::vegdist(zoop_dens_trans, method='bray'))
 #------------------------------------------------------------------------------#
 #first-stage NMDS
 #scree plot to choose dimension 
-#jpeg("figures/scree.jpg") 
+#jpeg("figures/scree.jpg") (Supplemental Figure S1)
 goeveg::dimcheckMDS(zoop_bray, distance = "bray", 
                     k = 6, trymax = 20, autotransform = TRUE)
 #dev.off()
@@ -66,8 +66,70 @@ NMDS_bray_first <- vegan::metaMDS(zoop_bray, distance='bray', k=3, trymax=20,
 NMDS_bray_first$stress
 # 0.10
 
-#plot
-ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites','species'),
+#plot axis 2 vs. 1 (Supplemental Figure S3)
+ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
+                       choices = c(1,2),type = "n")
+year <- ggordiplots::gg_ordiplot(ord, all_zoops_nmds$year,
+                                 kind = "ehull", ellipse=FALSE, hull = TRUE, 
+                                 plot = FALSE, pt.size=0.9) 
+year <- year$plot + geom_point() + theme_bw() + 
+  geom_polygon(data = year$df_hull, aes(x = x, y = y, fill = Group), 
+               alpha=0.2) +
+  geom_point(data=year$df_mean.ord, aes(x, y), 
+             color="black", pch=21, size=2, 
+             fill=year_cols) +
+  theme(text = element_text(size=10), 
+        axis.text = element_text(size=6, color="black"), 
+        legend.background = element_blank(), 
+        legend.key.height=unit(0.3,"line"),
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-0,-0,-0,-0),
+        legend.direction = "vertical",
+        axis.text.x = element_text(vjust = 0.5), 
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        legend.position = c(0.88,0.18), 
+        legend.spacing = unit(-0.5, 'cm'),
+        plot.margin = unit(c(0,0.1,0,0), 'lines'),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
+        legend.key.width =unit(0.1,"line")) +
+  scale_fill_manual("",values=year_cols)+
+  scale_color_manual("",values=year_cols,
+                     label=c('2014','2015',"2016","2019","2020","2021")) 
+
+month <- ggordiplots::gg_ordiplot(ord, all_zoops_nmds$month,
+                                  kind = "ehull", ellipse=FALSE, hull = TRUE, 
+                                  plot = FALSE, pt.size=0.9) 
+month <- month$plot + geom_point() + theme_bw() + 
+  geom_polygon(data = month$df_hull, aes(x = x, y = y, fill = Group), 
+               alpha=0.2) +
+  geom_point(data=month$df_mean.ord, aes(x, y), 
+             color="black", pch=21, size=2, 
+             fill=viridis::viridis(5, option="F")) +
+  theme(text = element_text(size=10), 
+        axis.text = element_text(size=6, color="black"), 
+        legend.background = element_blank(), 
+        legend.key.height=unit(0.3,"line"),
+        legend.box.margin=margin(-10,-10,-10,-10),
+        legend.margin=margin(-0,-0,-0,-0),
+        legend.direction = "vertical",
+        axis.text.x = element_text(vjust = 0.5), 
+        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
+        strip.background = element_rect(fill = "transparent"), 
+        legend.position = c(0.83,0.16),
+        legend.spacing = unit(-0.5, 'cm'),
+        plot.margin = unit(c(0,0.1,0,0), 'lines'),
+        panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
+        legend.key.width =unit(0.1,"line")) + guides(fill='none') +
+  scale_fill_manual("",values=viridis::viridis(5, option="F"))+
+  scale_color_manual("",values=viridis::viridis(5, option="F"),
+                     label=c('May',"June","July","August","September")) 
+
+ggpubr::ggarrange(year,month,ncol=2, common.legend = F)
+#ggsave("Figures/first_stage_NMDS_2v1_dens.jpg", width=5, height=3)
+
+#plot axis 3 vs. 1 (Supplemental Figure S4)
+ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
                        choices = c(1,3),type = "n")
 year <- ggordiplots::gg_ordiplot(ord, all_zoops_nmds$year,
                                  kind = "ehull", ellipse=FALSE, hull = TRUE, 
@@ -177,9 +239,9 @@ NMDS_bray_second$stress
 # 0.05
 
 #--------------------------------------------------------------------------#
-#NMDS plot - second-stage
+#NMDS plot - second-stage (Manuscript Figure 3)
 #Note that warnings are okay here because there is only one point per year (can't determine different df_ellipse values for years)
-ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites','species'),
+ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,2),type = "n")
 year1 <- ggordiplots::gg_ordiplot(ord, unique(all_zoops_nmds$year), kind = "ehull", 
                                  spiders = FALSE, ellipse = FALSE,
@@ -189,7 +251,6 @@ plot1 <- year1$plot + geom_point() + theme_bw() +
   geom_point(data=year1$df_mean.ord, aes(x, y), 
              pch=21, size=3, 
              fill=year_cols) +
-#  ylim(-0.4,0.4) + xlim(-0.6,0.6) +
   theme(text = element_text(size=14), 
         axis.text = element_text(size=7, color="black"), 
         axis.text.x = element_text(vjust = 0.5), 
@@ -215,7 +276,6 @@ plot2 <- year2$plot + geom_point() + theme_bw() +
   geom_point(data=year2$df_mean.ord, aes(x, y), 
              pch=21, size=3, 
              fill=year_cols) +
-  #ylim(-0.4,0.4) + xlim(-0.6,0.6) +
   theme(text = element_text(size=14), 
         axis.text = element_text(size=7, color="black"), 
         axis.text.x = element_text(vjust = 0.5), 
@@ -281,7 +341,7 @@ zoops_plus_drivers_yearly <- zoops_plus_drivers |>
   group_by(year) |> 
   summarise_at(vars(-month), funs(mean(., na.rm=TRUE)))
 
-ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites','species'),
+ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,2),type = "n")
 #fit environmental drivers onto ordination
 fit_env <- envfit(ord$sites, zoops_plus_drivers_yearly[,c(12:31)])
@@ -291,7 +351,7 @@ scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r),
                      pvals=(fit_env$vectors)$pvals)
 scores <- cbind(scores, env = rownames(scores))
 #---------------------------------------------------------------#
-#plot drivers w/ second stage NMDS
+#plot drivers w/ second stage NMDS (Manuscript Figure 4)
 ss_year <- ggordiplots::gg_ordiplot(ord, unique(all_zoops_nmds$year),
                                   kind = "ehull", ellipse=FALSE, hull = TRUE, 
                                   plot = FALSE, pt.size=0.9) 
@@ -324,7 +384,7 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
 
 
 #axis 1 vs. 3
-ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites','species'),
+ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,3),type = "n")
 #fit environmental drivers onto ordination
 fit_env <- envfit(ord$sites, zoops_plus_drivers_yearly[,c(12:31)])
@@ -439,7 +499,7 @@ disp_df <- var_results[,grepl("disp",colnames(var_results))] |>
 kw_disp <- kruskal.test(value ~ group, data = disp_df) #sig
 #dispersion among years is greater than months
 
-#plot
+#plot (Manuscript Figure 1 A)
 YvsM <-ggboxplot(disp_df, x = "group", y = "value", 
           fill = "group", palette = c("#A4C6B8", "#5E435D"),
           order = c("year_disp", "month_disp"),
@@ -456,7 +516,6 @@ YvsM <-ggboxplot(disp_df, x = "group", y = "value",
   scale_x_discrete(name ="", 
                    labels=c("year_disp"="year",
                             "month_disp"="month"))
-#ggsave("Figures/among_variability_boxplots_dens.jpg", width=4, height=4)
 
 #create table for kw test results
 kw_results <- data.frame("Scale" = c("Year", "Month"),
@@ -499,7 +558,7 @@ dunn_within_month <- dunnTest(dist ~ as.factor(group),
 
 cldList(P.adj ~ Comparison, data=dunn_within_month$res, threshold = 0.05)
 
-#within boxplot for years and months
+#within boxplot for years and months (Manuscript Figure 1 B+C)
 year_box <- ggboxplot(within_year_dist, x = "group", y = "dist", 
                       fill = "group", 
                       palette = year_cols,
@@ -531,7 +590,7 @@ var <- egg::ggarrange(ggarrange(YvsM, ncol = 2, labels = c("A", " "), widths = c
           nrow = 2, widths = c (1.9, 1.9))
 #ggsave("Figures/variability_boxplots_dens.jpg", var, width=5, height=4)
 
-#create table for within scale kw test results
+#create table for within scale kw test results (Supplemental Table S2)
 kw_results_disp <- data.frame("Group" = c("2014", "2015", "2016", "2019", 
                                           "2020", "2021", "May", "June",
                                           "July", "August", "September"),

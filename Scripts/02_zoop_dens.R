@@ -156,6 +156,7 @@ all_zoop_taxa$data <- factor(all_zoop_taxa$data, levels=c("pre", "post"))
 #------------------------------------------------------------------------------#
 #figure out dominant taxa for NMDS/other ms figs
 
+# Note that this fig corresponds to Table S1 of the manuscript
 #plot proportion of density that each taxon makes up (sum of all individual days)
 ggplot(all_zoop_taxa, aes(x=reorder(Taxon,-prop), y=prop)) +
   theme_bw() + geom_bar(stat="identity") + 
@@ -168,7 +169,7 @@ ggplot(all_zoop_taxa, aes(x=reorder(Taxon,-prop), y=prop)) +
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-#new df to average proportion for each taxon
+#new df to average proportion for each taxon (Supplemental Table S1)
 zoop_prop_taxa <- all_zoop_taxa |> group_by(Taxon) |> 
   summarise(prop_avg = mean(prop)) 
 #drop taxa that are <1% (0.01) of density 
@@ -223,7 +224,7 @@ zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon,
 zoops_10_groups$date <- as.Date(paste0(zoops_10_groups$year,"-",
                                        zoops_10_groups$month,"-01"))
 
-#shaded line plot - raw density
+#shaded line plot - raw density (Manuscript Figure 2)
 ggplot(data = subset(zoops_10_groups, month %in% 
                        c("05","06","07","08","09")),
        aes(x=date, y = avg, color=Taxon)) +
@@ -403,7 +404,6 @@ zoop_ratios <- all_zoops |>
             p_kel = mean(p_dens[Taxon=="Kellicottia"],na.rm=T),
             p_con = mean(p_dens[Taxon=="Conochilus"],na.rm=T),
             p_rot = mean(p_dens[Taxon=="Rotifera"],na.rm=T))
-
 #write.csv(zoop_ratios, "Output/zoop_proportions.csv")
 
 nmds1 <- read.csv("Output/ss_nmds1.csv")
@@ -432,8 +432,7 @@ metric_names <- c("C_R" = "Crustacean:Rotifer",
                   "p_rot" = "Percent Rotifer (%)")
 
 #-------------------------------------------------------#
-# NMDS1 vs. zoop metrics
-
+# NMDS1 vs. zoop metrics (Supplemental Figure S6)
 ggplot(zoop_ratios_long, aes(nmds1, value, color=as.factor(year))) +
   geom_point(size=4) + theme_bw() + xlab("NMDS axis 1 value") +
   scale_color_manual(values = year_cols) +

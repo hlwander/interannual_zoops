@@ -30,6 +30,12 @@ ctd <-read.csv(infile1,header=T) |>
   select(Reservoir, Site, DateTime, Depth_m, 
          Temp_C, DO_mgL) #removing chl a bc fp and ctd aren't so comparable so can't fill in missing days
 
+#missing Aug 2015, May 2019, May 2020, Aug + Sep 2021
+missing_dates <- c(seq(as.Date("2015-08-01"), as.Date("2015-08-31"), by="days"),
+                   seq(as.Date("2019-05-01"), as.Date("2019-05-31"), by="days"),
+                   seq(as.Date("2020-05-01"), as.Date("2020-05-31"), by="days"),
+                   seq(as.Date("2021-08-01"), as.Date("2021-09-30"), by="days"))
+
 #sub missing ctd data with ysi data
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/6e5a0344231de7fcebbe6dc2bed0a1c3" 
 infile1 <- tempfile()
@@ -77,7 +83,7 @@ do_final <- ctd_final_temp_do |>
   arrange(DateTime, Depth_m) |> 
   select(-c(Reservoir.x,Reservoir.y,Temp_C))
 
-#calculate thermocline depth (missing n=5 profiles...) - bring in ysi profiles too??
+#calculate thermocline depth using combined ctd and ysi df
 ctd_thermo_depth_all <- temp_final |> 
   group_by(DateTime) |> 
   summarise(therm_depth = thermo.depth(Temp_C,Depth_m)) |> 
@@ -100,39 +106,29 @@ ctd_oxy_depth <- do_final |>
   summarise(oxy_depth = mean(oxy_depth, na.rm=T))
 
 
-
-
-
-#round ctd to nearest m (also use ysi bc some missing months w/ ctd)
+#round ctd to nearest m
 ctd_final <- ctd |>
   dplyr::mutate(rdepth = plyr::round_any(Depth_m, 1)) |>
   dplyr::mutate(month = month(DateTime),
                 year = year(DateTime)) |>
   dplyr::select(-Depth_m) |> 
   dplyr::rename(Depth_m = rdepth) |> 
+  dplyr::left_join(ctd_thermo_depth, by = c("month","year")) |>
   dplyr::group_by(month, year) |> 
-  dplyr::filter(Depth_m %in% c(1,last(Depth_m))) |> 
-  dplyr::summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
-                   Temp_C_hypo = mean(Temp_C[Depth_m!=1], na.rm=T),
-                   DO_mgL_epi = mean(DO_mgL[Depth_m==1], na.rm=T))
-
-
-#missing Aug 2015, May 2019, May 2020, Aug + Sep 2021
-missing_dates <- c(seq(as.Date("2015-08-01"), as.Date("2015-08-31"), by="days"),
-                   seq(as.Date("2019-05-01"), as.Date("2019-05-31"), by="days"),
-                   seq(as.Date("2020-05-01"), as.Date("2020-05-31"), by="days"),
-                   seq(as.Date("2021-08-01"), as.Date("2021-09-30"), by="days"))
+  dplyr::summarise(Temp_C_epi = mean(Temp_C[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T),
+                   Temp_C_hypo = mean(Temp_C[Depth_m >= plyr::round_any(therm_depth,1)], na.rm=T),
+                   DO_mgL_epi = mean(DO_mgL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T))
 
 ysi_final <- ysi |> 
-  filter(Depth_m %in%  c(1,11)) |> 
   mutate(month = month(DateTime),
                 year = year(DateTime)) |> 
+  dplyr::left_join(ctd_thermo_depth, by = c("month","year")) |>
   group_by(month, year) |>          
-  summarise(Temp_C_epi = mean(Temp_C[Depth_m==1], na.rm=T),
-            Temp_C_hypo = mean(Temp_C[Depth_m==11], na.rm=T),
-            DO_mgL_epi = mean(DO_mgL[Depth_m == 1], na.rm=T)) 
+  summarise(Temp_C_epi = mean(Temp_C[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T),
+            Temp_C_hypo = mean(Temp_C[Depth_m >= plyr::round_any(therm_depth,1)], na.rm=T),
+            DO_mgL_epi = mean(DO_mgL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T))
   
-#combine ctd and ysi
+#combine ctd and ysi to account for missing ctd days
 profiles <- bind_rows(ctd_final, ysi_final) |> arrange(month, year) 
 
 #download bathymetry
@@ -236,17 +232,13 @@ chem <-read.csv(infile1,header=T) |>
                 year = year(DateTime)) |> 
   dplyr::select(Reservoir, Depth_m, Rep,
          TN_ugL, TP_ugL, month, year) |>
+  dplyr::left_join(ctd_thermo_depth, by = c("month","year")) |>  
   dplyr::group_by(month, year) |> 
-  dplyr::filter(Depth_m <=0.1 | Depth_m > 7) |>   #drop data when only one random depth was analyzed
-  dplyr::filter(Depth_m %in%  c(0.1,max(Depth_m))) |> 
-  dplyr::summarise(TN_ugL_epi = mean(TN_ugL[Depth_m==0.1], na.rm=T),
-                   TN_ugL_hypo = mean(TN_ugL[Depth_m!=0.1], na.rm=T),
-                   TP_ugL_epi = mean(TP_ugL[Depth_m==0.1], na.rm=T),
-                   TP_ugL_hypo = mean(TP_ugL[Depth_m!=0.1], na.rm=T)) |> 
+  dplyr::summarise(TN_ugL_epi = mean(TN_ugL[Depth_m > plyr::round_any(therm_depth,1)], na.rm=T),
+                   TN_ugL_hypo = mean(TN_ugL[Depth_m <= plyr::round_any(therm_depth,1)], na.rm=T),
+                   TP_ugL_epi = mean(TP_ugL[Depth_m > plyr::round_any(therm_depth,1)], na.rm=T),
+                   TP_ugL_hypo = mean(TP_ugL[Depth_m <= plyr::round_any(therm_depth,1)], na.rm=T)) |> 
   dplyr::arrange(month, year)
-
-#average the 10m tp from earlier in aug with the 9m tp from a later aug date so no NA (aug 2021)
-chem$TP_ugL_hypo[is.nan(chem$TP_ugL_hypo)] <-  mean(c(26.4, 23.5))
 
 #read in secchi data
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/81f396b3e910d3359907b7264e689052" 
@@ -302,13 +294,13 @@ fp <- read.csv(infile1) |>
   dplyr::select(-Depth_m) |> 
   dplyr::rename(Depth_m = rdepth) |> 
   select(!c(CastID,Temp_C:Flag_RFU_470nm)) |> 
+  dplyr::left_join(ctd_thermo_depth, by = c("month","year")) |>
   dplyr::group_by(month, year) |> 
-  dplyr::filter(Depth_m %in% c(1)) |> #only doing epi bc hypo isn't so useful
-  dplyr::summarise(Green_ugL = mean(GreenAlgae_ugL, na.rm=T),
-                   Bluegreen_ugL = mean(Bluegreens_ugL, na.rm=T),
-                   Brown_ugL = mean(BrownAlgae_ugL, na.rm=T),
-                   Mixed_ugL = mean(MixedAlgae_ugL, na.rm=T),
-                   Total_ugL = mean(TotalConc_ugL, na.rm=T))
+  dplyr::summarise(Green_ugL = mean(GreenAlgae_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T), 
+                   Bluegreen_ugL = mean(Bluegreens_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T), 
+                   Brown_ugL = mean(BrownAlgae_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T),
+                   Mixed_ugL = mean(MixedAlgae_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T),
+                   Total_ugL = mean(TotalConc_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T))
 
 #add in NAs for missing months
 fp_missing <- data.frame("month" = c(9,5),
@@ -324,7 +316,7 @@ fp_df <-bind_rows(fp, fp_missing) |>
              arrange(month, year)
 
 #calculate residence time (volume / total inflow)
-#EDI bvr bathy = 1357140.6 m3
+#EDI bvr bathy = 1357140.6 m3 (vol at full pond)
 
 res_time <- read.csv("Output/BVR_flow_calcs_NLDAS_2014-2021.csv") |> 
   dplyr::filter(time %in% dates_list) |>  
