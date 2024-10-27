@@ -246,11 +246,12 @@ ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
 year1 <- ggordiplots::gg_ordiplot(ord, unique(all_zoops_nmds$year), kind = "ehull", 
                                  spiders = FALSE, ellipse = FALSE,
                                  label = FALSE, hull = FALSE, 
-                                 plot = FALSE, pt.size=0.9) 
-plot1 <- year1$plot + geom_point() + theme_bw() + 
-  geom_point(data=year1$df_mean.ord, aes(x, y), 
-             pch=21, size=3, 
-             fill=year_cols) +
+                                 plot = FALSE, pt.size=NA) 
+plot1 <- year1$plot + geom_point() + theme_bw() + xlim(c(-0.45,0.45)) +
+  geom_text(data = year2$df_mean.ord, 
+            aes(x, y, label = as.factor(Group),
+                color = as.factor(Group)), 
+            size = 4) + ylim(c(-0.5,0.5)) +
   theme(text = element_text(size=14), 
         axis.text = element_text(size=7, color="black"), 
         axis.text.x = element_text(vjust = 0.5), 
@@ -262,37 +263,34 @@ plot1 <- year1$plot + geom_point() + theme_bw() +
         panel.grid.minor = element_blank()) +
   guides(color = guide_legend(override.aes = list(
     color = year_cols))) +
-  scale_fill_manual("",values=year_cols,
-                    label=c('2014','2015',"2016","2019","2020","2021")) +
-  scale_color_manual("",values=rep("gray",6) )
+  scale_color_manual("",values=year_cols,
+                    label=c('2014','2015',"2016","2019","2020","2021")) 
 
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites','species'),
                        choices = c(1,3),type = "n")
 year2 <- ggordiplots::gg_ordiplot(ord, unique(all_zoops_nmds$year), kind = "ehull", 
                                   spiders = FALSE, ellipse = FALSE,
                                   label = FALSE, hull = FALSE, 
-                                  plot = FALSE, pt.size=0.9) 
-plot2 <- year2$plot + geom_point() + theme_bw() + 
-  geom_point(data=year2$df_mean.ord, aes(x, y), 
-             pch=21, size=3, 
-             fill=year_cols) +
+                                  plot = FALSE, pt.size=NA) 
+plot2 <- year2$plot + theme_bw() + xlim(c(-0.45,0.45)) +
+  geom_text(data = year2$df_mean.ord, 
+            aes(x, y, label = as.factor(Group),
+                     color = as.factor(Group)), 
+            size = 4) + ylim(c(-0.5,0.5)) +
   theme(text = element_text(size=14), 
         axis.text = element_text(size=7, color="black"), 
         axis.text.x = element_text(vjust = 0.5), 
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
-        legend.position = "right",
-        plot.margin = unit(c(0,0,0,0), 'lines'),
+        legend.position = "none",
+        plot.margin = unit(c(0,0,0,0.1), 'lines'),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
-  guides(color = guide_legend(override.aes = list(
-    color = year_cols))) +
-  scale_fill_manual("",values = year_cols,
-                    label=c('2014','2015',"2016","2019","2020","2021")) +
-  scale_color_manual("",values=rep("gray",6) )
+  scale_color_manual("",values = year_cols,
+                    label=c('2014','2015',"2016","2019","2020","2021")) 
 
 
-ggpubr::ggarrange(plot1,plot2,ncol=2, common.legend = T)
+ggpubr::ggarrange(plot1,plot2,ncol=2, common.legend = F)
 #ggsave("Figures/second_stage_NMDS_dens.jpg", width=6, height=3) 
 
 #create new df for export
