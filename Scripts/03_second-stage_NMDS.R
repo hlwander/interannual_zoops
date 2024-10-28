@@ -248,7 +248,7 @@ year1 <- ggordiplots::gg_ordiplot(ord, unique(all_zoops_nmds$year), kind = "ehul
                                  label = FALSE, hull = FALSE, 
                                  plot = FALSE, pt.size=NA) 
 plot1 <- year1$plot + geom_point() + theme_bw() + xlim(c(-0.45,0.45)) +
-  geom_text(data = year2$df_mean.ord, 
+  geom_text(data = year1$df_mean.ord, 
             aes(x, y, label = as.factor(Group),
                 color = as.factor(Group)), 
             size = 4) + ylim(c(-0.5,0.5)) +
@@ -514,8 +514,8 @@ YvsM <-ggboxplot(disp_df, x = "group", y = "value",
            size = 6) +
   guides(fill = "none") +
   scale_x_discrete(name ="", 
-                   labels=c("year_disp"="year",
-                            "month_disp"="month"))
+                   labels=c("year_disp"="Year",
+                            "month_disp"="Month"))
 
 #create table for kw test results
 kw_results <- data.frame("Scale" = c("Year", "Month"),
@@ -593,7 +593,7 @@ final_plot <- plot_grid(YvsM, second_row, labels = c("A", ""), ncol = 1)
 
 # Print the final plot
 print(final_plot)
-#ggsave("Figures/variability_boxplots_dens.jpg", var, width=5, height=4)
+#ggsave("Figures/variability_boxplots_dens.jpg", width=5, height=4)
 
 #create table for within scale kw test results (Supplemental Table S2)
 kw_results_disp <- data.frame("Group" = c("2014", "2015", "2016", "2019", 

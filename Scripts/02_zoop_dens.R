@@ -7,7 +7,7 @@ pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, lubridate, ggtext)
 year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
 
 #read in zoop data from EDI #CONFIRM THAT THIS WORKS WHEN v4 IS PUBLISHED ON EDI!
-inUrl1  <-  "https://pasta.lternet.edu/package/data/eml/edi/197/4/9eb6db370194bd3b2824726d89a008a6" 
+inUrl1  <-   "https://pasta.lternet.edu/package/data/eml/edi/197/4/9eb6db370194bd3b2824726d89a008a6" 
 infile1 <-  tempfile()
 try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
@@ -87,7 +87,7 @@ zoops_pre <- zoops_2016_2018 |>
 
 #list common taxa between pre and post
 taxa <- c("Bosmina", "Daphnia", "Ceriodaphnia",
-          "Cyclopoida", "Nauplius", 
+          "Cyclopoida", "Nauplii", 
           "Conochilus","Keratella", "Rotifera",
           "Kellicottia","Ascomorpha",
           "Polyarthra","Cladocera", "Copepoda") 
@@ -112,18 +112,12 @@ all_zoops <- bind_rows(zoops_pre, zoops_post) |>
 #write all_zoops
 #write.csv(all_zoops, paste0("Output/all_zoops_dens.csv"),row.names = FALSE)
 
-#add column for pre vs post
-all_zoops$data <- ifelse(all_zoops$DateTime<="2019-01-01","pre","post")
-
 #calculate proportion of total density for each taxa (dens/total dens)
 all_zoop_taxa <- all_zoops |> 
   filter(!Taxon %in% c("Cladocera","Copepoda","Rotifera")) |> 
   mutate(n = sum(dens)) |> 
            group_by(Taxon) |> 
     mutate(prop = sum(dens) / n)
-
-#order data levels
-all_zoop_taxa$data <- factor(all_zoop_taxa$data, levels=c("pre", "post"))
 
 #------------------------------------------------------------------------------#
 #figure out dominant taxa for NMDS/other ms figs
@@ -407,7 +401,7 @@ metric_names <- c("C_R" = "Crustacean:Rotifer",
 # NMDS1 vs. zoop metrics (Supplemental Figure S6)
 ggplot(zoop_ratios_long, aes(nmds1, value, color=as.factor(year))) +
   geom_point(size=4) + theme_bw() + xlab("NMDS axis 1 value") +
-  scale_color_manual(values = year_cols) +
+  scale_color_manual(values = year_cols) + ylab("Value") +
   facet_wrap(~metric, scales = "free_y", 
              labeller = as_labeller(metric_names)) +
   guides(color = guide_legend("",nrow=1)) +

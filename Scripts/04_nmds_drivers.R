@@ -82,7 +82,7 @@ zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |>
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
   facet_wrap(~variable, nrow=5, scales = "free_x",
              labeller = label_parsed) +
-  theme_bw() + 
+  theme_bw() + xlab("Median") +
   ylab("Percent Cyclopoid (%)") + 
   guides(alpha = "none", fill = "none",
          color = guide_legend(ncol=2)) +
@@ -126,6 +126,7 @@ zoop_drivers_long |> group_by(year, prop_cyclopoid, variable) |>
                                      bquote('epilimnetic TP ('*mu*g~L^-1~')')))) |> 
   ggplot(aes(x=median, y=prop_cyclopoid*100, group = year)) +
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
+  xlab("Median") +
   facet_wrap(~variable, nrow=3, scales = "free_x", 
              labeller = label_parsed) +
   theme_bw() + ylab("Percent Cyclopoid (%)") + 
@@ -212,7 +213,7 @@ zoop_drivers_long |> group_by(month, year, variable) |>
   geom_point(aes(color=year, alpha = 0.95), cex=3) + 
   geom_line(aes(color=year, alpha = 0.95)) +
   facet_wrap(~variable, ncol=5, scales = "free_y",
-             labeller = label_parsed) +
+             labeller = label_parsed) + ylab("Median") +
   theme_bw() + xlab("") + guides(alpha = "none", fill = "none",
                                  colour = guide_legend(nrow = 1)) +
   scale_color_manual("",values= year_cols)+
