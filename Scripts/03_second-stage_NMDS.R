@@ -376,10 +376,10 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
   xlim(-0.7,0.9) + ylim(-1,0.9) +
   geom_segment(data = scores,
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
-               arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
+               arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
   geom_segment(data = scores[scores$env %in% c("epi TP"),],
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
-               arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
+               arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS2, label = env), 
                   size = 1.5, box.padding = 0.2, max.overlaps=Inf)
 
@@ -423,11 +423,11 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
   xlim(-0.7,0.9) + ylim(-1,0.9) +
   geom_segment(data = scores,
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
-               arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
+               arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
   geom_segment(data = scores[scores$env %in% c("Schmidt stability", 
                                                 "hypo temp", "Secchi depth"),],
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
-               arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
+               arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS3, label = env), 
                   size = 1.5, box.padding = 0.2, max.overlaps=Inf)
 
