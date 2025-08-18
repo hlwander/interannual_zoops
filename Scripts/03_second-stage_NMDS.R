@@ -20,10 +20,11 @@ all_zoops_nmds <- all_zoops_dens |>
   filter(Taxon %in% taxa) |> 
   mutate(DateTime = as.Date(DateTime)) |> 
   pivot_wider(names_from = Taxon, values_from = dens) |> 
-  mutate(year = format(DateTime, "%Y"),
-         month = format(DateTime, "%m")) |> 
   mutate_all(~replace(., is.na(.), 0)) |>  #replace NA with 0
-  ungroup() |> group_by(year, month) |> 
+  ungroup() |>
+  mutate(year = format(DateTime, "%Y"),
+         month = format(DateTime, "%m")) |>
+  group_by(year, month) |> 
   summarise(Bosmina = mean(Bosmina),
             Ceriodaphnia = mean(Ceriodaphnia),
             Daphnia = mean(Daphnia),
@@ -34,7 +35,7 @@ all_zoops_nmds <- all_zoops_dens |>
             Keratella = mean(Keratella),
             Kellicottia = mean(Kellicottia),
             Polyarthra = mean(Polyarthra)) |> 
-  ungroup()
+  ungroup() 
 
 #only keep may-sep samples and drop 2022
 all_zoops_nmds <- all_zoops_nmds |> 

@@ -17,6 +17,8 @@ dates_list <- c(seq(as.Date("2014-05-01"), as.Date("2014-09-30"), by="days"),
                 seq(as.Date("2020-05-01"), as.Date("2020-09-30"), by="days"),
                 seq(as.Date("2021-05-01"), as.Date("2021-09-30"), by="days"))
 
+zoop_dates <- unique(all_zoop_taxa$DateTime)
+
 
 #read in ctd
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/200/13/27ceda6bc7fdec2e7d79a6e4fe16ffdf" 
@@ -26,10 +28,12 @@ try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 ctd <-read.csv(infile1,header=T) |> 
   mutate(DateTime = as.Date(DateTime)) |>
   filter(DateTime %in% dates_list & 
-           Depth_m > 0 & Site ==50 & Reservoir %in% c("BVR")) |> 
-  select(Reservoir, Site, DateTime, Depth_m, 
+           Depth_m > 0 & Site ==50 & Reservoir %in% c("BVR"),
+         !is.na(Temp_C)) |> 
+  select(Reservoir, Site, Depth_m, DateTime,
          Temp_C, DO_mgL) #removing chl a bc fp and ctd aren't so comparable so can't fill in missing days
 
+  
 #missing Aug 2015, May 2019, May 2020, Aug + Sep 2021
 missing_dates <- c(seq(as.Date("2015-08-01"), as.Date("2015-08-31"), by="days"),
                    seq(as.Date("2019-05-01"), as.Date("2019-05-31"), by="days"),
@@ -53,8 +57,8 @@ ysi <- read.csv(infile1,header=T) |>
 ctd_final_temp_do <- ctd |>
   dplyr::mutate(rdepth = plyr::round_any(Depth_m, 0.5)) |>
   dplyr::group_by(DateTime, rdepth, Reservoir, Site) |>
-  dplyr::summarise(temp = mean(Temp_C),
-                   DO = mean(DO_mgL)) |>
+  dplyr::summarise(temp = mean(Temp_C, na.rm=T),
+                   DO = mean(DO_mgL, na.rm=T)) |>
   dplyr::rename(depth = rdepth) 
 
 #rename columns
@@ -92,8 +96,10 @@ ctd_thermo_depth_all <- temp_final |>
 
 ctd_thermo_depth <- ctd_thermo_depth_all |> 
   ungroup() |>
-  group_by(month, year) |> 
-  summarise(therm_depth = mean(therm_depth))
+  #group_by(month, year) |> 
+  group_by(DateTime) |>
+  summarise(therm_depth = mean(therm_depth)) |>
+  dplyr::filter(DateTime %in% zoop_dates)
 
 #calculate oxycline depth
 ctd_oxy_depth <- do_final |> 
@@ -102,8 +108,10 @@ ctd_oxy_depth <- do_final |>
   mutate(month = month(DateTime),
          year = year(DateTime)) |> 
   ungroup() |>
-  group_by(month, year) |> 
-  summarise(oxy_depth = mean(oxy_depth, na.rm=T))
+  group_by(DateTime) |> 
+  #group_by(month, year) |> 
+  summarise(oxy_depth = mean(oxy_depth, na.rm=T)) |>
+  dplyr::filter(DateTime %in% zoop_dates)
 
 
 #round ctd to nearest m
@@ -113,8 +121,9 @@ ctd_final <- ctd |>
                 year = year(DateTime)) |>
   dplyr::select(-Depth_m) |> 
   dplyr::rename(Depth_m = rdepth) |> 
-  dplyr::left_join(ctd_thermo_depth, by = c("month","year")) |>
-  dplyr::group_by(month, year) |> 
+  dplyr::left_join(ctd_thermo_depth, by = "DateTime") |> #c("month","year")
+  group_by(DateTime) |> 
+  #dplyr::group_by(month, year) |> 
   dplyr::summarise(Temp_C_epi = mean(Temp_C[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T),
                    Temp_C_hypo = mean(Temp_C[Depth_m >= plyr::round_any(therm_depth,1)], na.rm=T),
                    DO_mgL_epi = mean(DO_mgL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T))
@@ -122,14 +131,17 @@ ctd_final <- ctd |>
 ysi_final <- ysi |> 
   mutate(month = month(DateTime),
                 year = year(DateTime)) |> 
-  dplyr::left_join(ctd_thermo_depth, by = c("month","year")) |>
-  group_by(month, year) |>          
+  dplyr::left_join(ctd_thermo_depth, by = "DateTime") |> #c("month","year")
+  #group_by(month, year) |>   
+  group_by(DateTime) |> 
   summarise(Temp_C_epi = mean(Temp_C[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T),
             Temp_C_hypo = mean(Temp_C[Depth_m >= plyr::round_any(therm_depth,1)], na.rm=T),
             DO_mgL_epi = mean(DO_mgL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T))
   
 #combine ctd and ysi to account for missing ctd days
-profiles <- bind_rows(ctd_final, ysi_final) |> arrange(month, year) 
+profiles <- bind_rows(ctd_final, ysi_final) |> arrange(DateTime) |>
+  dplyr::filter(DateTime %in% zoop_dates)
+  #arrange(month, year) 
 
 #download bathymetry
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/1254/1/f7fa2a06e1229ee75ea39eb586577184" 
@@ -147,14 +159,21 @@ water_level <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |>
   filter(Date >= "2014-01-01" & Date < "2022-01-01") |> 
   mutate(month = month(Date),
          year = year(Date)) |> 
-  group_by(month, year) |> 
+  group_by(Date) |> 
+  #group_by(month, year) |> 
   summarise(waterlevel = mean(WaterLevel_m,na.rm=T)) |> 
-  filter(month %in% c(5,6,7,8,9),
-         year %in% c(2014:2016,2019:2021)) |> 
-  arrange(month,year) |> ungroup() |> 
-  group_by(year) |> 
+  #filter(month %in% c(5,6,7,8,9),
+  #       year %in% c(2014:2016,2019:2021)) |> 
+  filter(month(Date) %in% c(5,6,7,8,9),
+         year(Date) %in% c(2014:2016,2019:2021)) |> 
+  #arrange(month,year) |> 
+  arrange(Date) |>
+  ungroup() |> 
+ # group_by(year) |> 
+  group_by(Date) |> 
   mutate(wl_cv = sd(waterlevel)/mean(waterlevel)) |> 
-  ungroup()
+  ungroup() |>
+  dplyr::filter(Date %in% zoop_dates)
 
 wl <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |> 
   select(Date, WaterLevel_m) |> 
@@ -216,8 +235,10 @@ for(i in 1:length(unique(flexible_bathy$Date))) {
 physics <- schmidts |> 
   dplyr::mutate(month = month(Date),
                 year = year(Date)) |> 
-  dplyr::group_by(month, year) |> 
-  dplyr::summarise(SS = mean(SS))
+ # dplyr::group_by(month, year) |> 
+  group_by(Date) |> 
+  dplyr::summarise(SS = mean(SS)) |>
+  dplyr::filter(Date %in% zoop_dates)
   
 #read in chem from edi
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/199/11/509f39850b6f95628d10889d66885b76" 
@@ -231,14 +252,17 @@ chem <-read.csv(infile1,header=T) |>
   dplyr::mutate(month = month(DateTime),
                 year = year(DateTime)) |> 
   dplyr::select(Reservoir, Depth_m, Rep,
-         TN_ugL, TP_ugL, month, year) |>
-  dplyr::left_join(ctd_thermo_depth, by = c("month","year")) |>  
-  dplyr::group_by(month, year) |> 
+         TN_ugL, TP_ugL, DateTime) |> #month, year
+  dplyr::left_join(ctd_thermo_depth, by = "DateTime") |>  #c("month","year")
+  #dplyr::group_by(month, year) |> 
+  dplyr::group_by(DateTime) |> 
   dplyr::summarise(TN_ugL_epi = mean(TN_ugL[Depth_m > plyr::round_any(therm_depth,1)], na.rm=T),
                    TN_ugL_hypo = mean(TN_ugL[Depth_m <= plyr::round_any(therm_depth,1)], na.rm=T),
                    TP_ugL_epi = mean(TP_ugL[Depth_m > plyr::round_any(therm_depth,1)], na.rm=T),
                    TP_ugL_hypo = mean(TP_ugL[Depth_m <= plyr::round_any(therm_depth,1)], na.rm=T)) |> 
-  dplyr::arrange(month, year)
+  dplyr::arrange(DateTime) |>
+  dplyr::filter(DateTime %in% zoop_dates)
+  #dplyr::arrange(month, year)
 
 #read in secchi data
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/81f396b3e910d3359907b7264e689052" 
@@ -252,7 +276,8 @@ secchi <-read.csv(infile1) |>
   distinct() |> 
   mutate(year = format(DateTime, "%Y"),
          month = format(DateTime, "%m")) |> 
-  group_by(year, month) |> 
+  #group_by(year, month) |> 
+  group_by(DateTime) |>
   summarise(secchi = mean(Secchi_m))
 
 #missing secchi obs
@@ -262,7 +287,9 @@ s_missing <- data.frame("year" = "2015",
 
 #combine dfs
 secchi_df <- bind_rows(secchi, s_missing) |> 
-              arrange(month, year)
+  arrange(DateTime) |>
+  dplyr::filter(DateTime %in% zoop_dates)
+              #arrange(month, year)
 
 #read in nldas met data
 nldas <- read.csv("./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |> 
@@ -270,13 +297,16 @@ nldas <- read.csv("./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |>
   dplyr::filter(time %in% dates_list) |> 
   dplyr::mutate(month = month(time),
                 year = year(time)) |> 
-  dplyr::group_by(month, year) |> 
+  #dplyr::group_by(month, year) |> 
+  dplyr::group_by(time) |>
   dplyr::summarise(AirTemp = mean(AirTemp),
                    Shortwave = mean(ShortWave),
                    Longwave = mean(LongWave),
                    RelHum = mean(RelHum),
                    WindSpeed = mean(WindSpeed),
-                   Rain = mean(Rain))
+                   Rain = mean(Rain)) |>
+  rename(DateTime = time) |>
+  dplyr::filter(DateTime %in% zoop_dates)
 
 #------------------------------------------------------------------------------#
 #read in fp data
@@ -294,8 +324,9 @@ fp <- read.csv(infile1) |>
   dplyr::select(-Depth_m) |> 
   dplyr::rename(Depth_m = rdepth) |> 
   select(!c(CastID,Temp_C:Flag_RFU_470nm)) |> 
-  dplyr::left_join(ctd_thermo_depth, by = c("month","year")) |>
-  dplyr::group_by(month, year) |> 
+  dplyr::left_join(ctd_thermo_depth, by = "DateTime") |> #c("month","year")
+  #dplyr::group_by(month, year) |> 
+  dplyr::group_by(DateTime) |> 
   dplyr::summarise(Green_ugL = mean(GreenAlgae_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T), 
                    Bluegreen_ugL = mean(Bluegreens_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T), 
                    Brown_ugL = mean(BrownAlgae_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T),
@@ -313,7 +344,9 @@ fp_missing <- data.frame("month" = c(9,5),
 
 #combine dfs
 fp_df <-bind_rows(fp, fp_missing) |> 
-             arrange(month, year)
+  arrange(DateTime) |>
+  dplyr::filter(DateTime %in% zoop_dates)
+             #arrange(month, year)
 
 #calculate residence time (volume / total inflow)
 #EDI bvr bathy = 1357140.6 m3 (vol at full pond)
@@ -323,28 +356,31 @@ res_time <- read.csv("Output/BVR_flow_calcs_NLDAS_2014-2021.csv") |>
   dplyr::mutate(res_time_d = 1357140.6 / Q_m3pd) |> 
   dplyr::mutate(month = month(time),
                 year = year(time)) |>
-  dplyr::group_by(month, year) |> 
-  dplyr::summarise(res_time = mean(res_time_d))
+  dplyr::group_by(time) |> 
+  #dplyr::group_by(month, year) |> 
+  dplyr::summarise(res_time = mean(res_time_d)) |>
+  dplyr::rename(DateTime = time) |>
+  dplyr::filter(DateTime %in% zoop_dates)
     
 #------------------------------------------------------------------------------#
 #now average across years
-all_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("month", "year")],
-            water_level[!colnames(water_level) %in% 
-                          c("month", "year")],
-            ctd_thermo_depth[!colnames(ctd_thermo_depth) %in%
-                           c("month","year")],
-            ctd_oxy_depth[!colnames(ctd_oxy_depth) %in%
-                           c("month","year")],
-            physics[!colnames(physics) %in% 
-                           c("month", "year")],
-            fp_df[!colnames(fp_df) %in% 
-                           c("month", "year")],
-            secchi_df[!colnames(secchi_df) %in% 
-                           c("month", "year")],
-            nldas[!colnames(nldas) %in% 
-                          c("month","year")],
-            res_time[!colnames(res_time) %in% 
-                          c("month","year")])
+all_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("DateTime")], #n=54
+            water_level[!colnames(water_level) %in%                              #n=61
+                          c("Date")],
+            ctd_thermo_depth[!colnames(ctd_thermo_depth) %in%                    #n=50
+                           c("DateTime")],
+            ctd_oxy_depth[!colnames(ctd_oxy_depth) %in%                          #n=50
+                           c("DateTime")],
+            physics[!colnames(physics) %in%                                      #n=50
+                           c("Date")],
+            fp_df[!colnames(fp_df) %in%                                          #n=38
+                           c("DateTime")],
+            secchi_df[!colnames(secchi_df) %in%                                  #n=48
+                           c("DateTime")],
+            nldas[!colnames(nldas) %in%                                          #n=61
+                          c("DateTime")],
+            res_time[!colnames(res_time) %in%                                    #n=61 
+                          c("DateTime")])
 
 #export csv
 write.csv(all_drivers, "./Output/all_drivers.csv", row.names=FALSE)

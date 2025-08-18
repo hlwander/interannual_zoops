@@ -6,7 +6,7 @@ pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, lubridate, ggtext)
 #cb friendly year palette
 year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
 
-#read in zoop data from EDI #CONFIRM THAT THIS WORKS WHEN v4 IS PUBLISHED ON EDI!
+#read in zoop data from EDI #update to v5 once published
 inUrl1  <-   "https://pasta.lternet.edu/package/data/eml/edi/197/4/9eb6db370194bd3b2824726d89a008a6" 
 infile1 <-  tempfile()
 try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
