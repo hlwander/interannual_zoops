@@ -7,21 +7,23 @@ pacman::p_load(tidyverse, NatParksPalettes, rLakeAnalyzer,
                EDIutils, xml2, gsheet)
 
 #------------------------------------------------------------------------------#
-#Pull in environmental data for 2014-2021
+#Pull in environmental data for 2014-2023
 
-#list of dates only between May-Sep 
-dates_list <- c(seq(as.Date("2014-05-01"), as.Date("2014-09-30"), by="days"),
-                seq(as.Date("2015-05-01"), as.Date("2015-09-30"), by="days"),
-                seq(as.Date("2016-05-01"), as.Date("2016-09-30"), by="days"),
-                seq(as.Date("2019-05-01"), as.Date("2019-09-30"), by="days"),
-                seq(as.Date("2020-05-01"), as.Date("2020-09-30"), by="days"),
-                seq(as.Date("2021-05-01"), as.Date("2021-09-30"), by="days"))
+#list of dates only between May-Oct 
+dates_list <- c(seq(as.Date("2014-05-01"), as.Date("2014-10-31"), by="days"),
+                seq(as.Date("2015-05-01"), as.Date("2015-10-31"), by="days"),
+                seq(as.Date("2016-05-01"), as.Date("2016-10-31"), by="days"),
+                seq(as.Date("2019-05-01"), as.Date("2019-10-31"), by="days"),
+                seq(as.Date("2020-05-01"), as.Date("2020-10-31"), by="days"),
+                seq(as.Date("2021-05-01"), as.Date("2021-10-31"), by="days"),
+                seq(as.Date("2023-05-01"), as.Date("2023-10-31"), by="days"))
 
-zoop_dates <- unique(all_zoop_taxa$DateTime)
+#read in zoop df to get dates
+zoop <- read.csv("Output/all_zoops_dens.csv")
+  zoop_dates <- unique(zoop$DateTime)
 
-
-#read in ctd
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/200/13/27ceda6bc7fdec2e7d79a6e4fe16ffdf" 
+#read in ctd (200.14)
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/200/14/0432a298a90b2b662f26c46071f66b8a" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
@@ -33,15 +35,16 @@ ctd <-read.csv(infile1,header=T) |>
   select(Reservoir, Site, Depth_m, DateTime,
          Temp_C, DO_mgL) #removing chl a bc fp and ctd aren't so comparable so can't fill in missing days
 
-  
-#missing Aug 2015, May 2019, May 2020, Aug + Sep 2021
+unique(ctd$DateTime)
+
+#missing Aug 2015, May 2019, May 2020, Aug + Sep + Oct 2021
 missing_dates <- c(seq(as.Date("2015-08-01"), as.Date("2015-08-31"), by="days"),
                    seq(as.Date("2019-05-01"), as.Date("2019-05-31"), by="days"),
                    seq(as.Date("2020-05-01"), as.Date("2020-05-31"), by="days"),
-                   seq(as.Date("2021-08-01"), as.Date("2021-09-30"), by="days"))
+                   seq(as.Date("2021-08-01"), as.Date("2021-10-31"), by="days"))
 
-#sub missing ctd data with ysi data
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/6e5a0344231de7fcebbe6dc2bed0a1c3" 
+#sub missing ctd data with ysi data (198.12)
+inUrl1  <-  "https://pasta.lternet.edu/package/data/eml/edi/198/12/e0181372c6d4cbc66eca4644f8385470" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1, timeout = max(500, getOption("timeout"))))
 
@@ -70,7 +73,8 @@ ctd_final_temp_do <- ctd_final_temp_do |>
 #clean up ysi
 ysi_clean <- ysi |> 
   select(Reservoir,DateTime, Depth_m,Temp_C, DO_mgL) |> 
-  filter(!is.na(Temp_C))
+  filter(!is.na(Temp_C)) |>
+  distinct(Reservoir, DateTime, Depth_m, .keep_all = TRUE)
 
 #combine ctd and ysi dfs 
 temp_final <-ctd_final_temp_do |> 
@@ -113,7 +117,6 @@ ctd_oxy_depth <- do_final |>
   summarise(oxy_depth = mean(oxy_depth, na.rm=T)) |>
   dplyr::filter(DateTime %in% zoop_dates)
 
-
 #round ctd to nearest m
 ctd_final <- ctd |>
   dplyr::mutate(rdepth = plyr::round_any(Depth_m, 1)) |>
@@ -152,11 +155,11 @@ bathymetry <- readr::read_csv(infile1, show_col_types = F)  |>
   dplyr::select(Reservoir, Depth_m, SA_m2) |>
   dplyr::filter(Reservoir == "BVR")
 
-#read in water level 
-water_level <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |> 
+#read in water level (from thermistors aka bvrplatform edi 725.4)
+water_level <- read.csv("./Output/BVR_WaterLevel_2014_2023_interp.csv") |> 
   select(Date, WaterLevel_m) |> 
   mutate(WaterLevel_m = as.numeric(WaterLevel_m)) |> 
-  filter(Date >= "2014-01-01" & Date < "2022-01-01") |> 
+  filter(Date >= "2014-01-01" & Date < "2024-01-01") |> 
   mutate(month = month(Date),
          year = year(Date)) |> 
   group_by(Date) |> 
@@ -175,12 +178,12 @@ water_level <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |>
   ungroup() |>
   dplyr::filter(Date %in% zoop_dates)
 
-wl <- read.csv("./Output/BVR_WaterLevel_2014_2022_interp.csv") |> 
+wl <- read.csv("./Output/BVR_WaterLevel_2014_2023_interp.csv") |> 
   select(Date, WaterLevel_m) |> 
   mutate(WaterLevel_m = as.numeric(WaterLevel_m)) |> 
   mutate(Date = as.Date(Date)) |> 
-  filter(Date >= "2014-01-01" & Date < "2022-01-01" &
-           month(Date) %in% c(5,6,7,8,9))
+  filter(Date >= "2014-01-01" & Date < "2024-01-01" &
+           month(Date) %in% c(5,6,7,8,9,10))
 
 #add res column to wl df
 wl$Reservoir <- "BVR"
@@ -240,8 +243,8 @@ physics <- schmidts |>
   dplyr::summarise(SS = mean(SS)) |>
   dplyr::filter(Date %in% zoop_dates)
   
-#read in chem from edi
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/199/11/509f39850b6f95628d10889d66885b76" 
+#read in chem from edi (199.12)
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/199/12/a33a5283120c56e90ea414e76d5b7ddb" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
@@ -264,8 +267,8 @@ chem <-read.csv(infile1,header=T) |>
   dplyr::filter(DateTime %in% zoop_dates)
   #dplyr::arrange(month, year)
 
-#read in secchi data
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/11/81f396b3e910d3359907b7264e689052" 
+#read in secchi data (198.12)
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/198/12/80bec97dc53d85b0298a72bb1a098442" 
 infile1 <- tempfile()
 try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
@@ -278,9 +281,12 @@ secchi <-read.csv(infile1) |>
          month = format(DateTime, "%m")) |> 
   #group_by(year, month) |> 
   group_by(DateTime) |>
-  summarise(secchi = mean(Secchi_m))
+  summarise(secchi = mean(Secchi_m)) |>
+  mutate(DateTime = as.Date(ifelse(DateTime == as.Date("2014-09-25"), 
+                                   as.Date("2014-10-01"), DateTime))) 
+#counting the second 2014 secchi in sep as an oct obs
 
-#missing secchi obs
+#missing secchi obs (miss forest to fill later)
 s_missing <- data.frame("year" = "2015",
                         "month" = "09",
                         "secchi" = NA)
@@ -289,7 +295,6 @@ s_missing <- data.frame("year" = "2015",
 secchi_df <- bind_rows(secchi, s_missing) |> 
   arrange(DateTime) |>
   dplyr::filter(DateTime %in% zoop_dates)
-              #arrange(month, year)
 
 #read in nldas met data
 nldas <- read.csv("./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |> 
@@ -297,7 +302,6 @@ nldas <- read.csv("./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv") |>
   dplyr::filter(time %in% dates_list) |> 
   dplyr::mutate(month = month(time),
                 year = year(time)) |> 
-  #dplyr::group_by(month, year) |> 
   dplyr::group_by(time) |>
   dplyr::summarise(AirTemp = mean(AirTemp),
                    Shortwave = mean(ShortWave),
@@ -324,8 +328,7 @@ fp <- read.csv(infile1) |>
   dplyr::select(-Depth_m) |> 
   dplyr::rename(Depth_m = rdepth) |> 
   select(!c(CastID,Temp_C:Flag_RFU_470nm)) |> 
-  dplyr::left_join(ctd_thermo_depth, by = "DateTime") |> #c("month","year")
-  #dplyr::group_by(month, year) |> 
+  dplyr::left_join(ctd_thermo_depth, by = "DateTime") |> 
   dplyr::group_by(DateTime) |> 
   dplyr::summarise(Green_ugL = mean(GreenAlgae_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T), 
                    Bluegreen_ugL = mean(Bluegreens_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T), 
@@ -334,34 +337,20 @@ fp <- read.csv(infile1) |>
                    Total_ugL = mean(TotalConc_ugL[Depth_m < plyr::round_any(therm_depth,1)], na.rm=T))
 
 #add in NAs for missing months
-fp_missing <- data.frame("month" = c(9,5),
-                         "year" = c(2015,2020),
-                         "Green_ugL" = c(NA,NA),
-                         "Bluegreen_ugL" = c(NA,NA),
-                         "Brown_ugL" = c(NA,NA),
-                         "Mixed_ugL" = c(NA,NA),
-                         "Total_ugL" = c(NA,NA))
+fp_missing <- data.frame("month" = c(9,10,5),
+                         "year" = c(2015,2015,2020),
+                         "Green_ugL" = c(NA,NA,NA),
+                         "Bluegreen_ugL" = c(NA,NA,NA),
+                         "Brown_ugL" = c(NA,NA,NA),
+                         "Mixed_ugL" = c(NA,NA,NA),
+                         "Total_ugL" = c(NA,NA,NA))
 
 #combine dfs
 fp_df <-bind_rows(fp, fp_missing) |> 
   arrange(DateTime) |>
   dplyr::filter(DateTime %in% zoop_dates)
-             #arrange(month, year)
 
-#calculate residence time (volume / total inflow)
-#EDI bvr bathy = 1357140.6 m3 (vol at full pond)
 
-res_time <- read.csv("Output/BVR_flow_calcs_NLDAS_2014-2021.csv") |> 
-  dplyr::filter(time %in% dates_list) |>  
-  dplyr::mutate(res_time_d = 1357140.6 / Q_m3pd) |> 
-  dplyr::mutate(month = month(time),
-                year = year(time)) |>
-  dplyr::group_by(time) |> 
-  #dplyr::group_by(month, year) |> 
-  dplyr::summarise(res_time = mean(res_time_d)) |>
-  dplyr::rename(DateTime = time) |>
-  dplyr::filter(DateTime %in% zoop_dates)
-    
 #------------------------------------------------------------------------------#
 #now average across years
 all_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("DateTime")], #n=54
@@ -381,6 +370,25 @@ all_drivers <- bind_cols(chem, profiles[!colnames(profiles) %in% c("DateTime")],
                           c("DateTime")],
             res_time[!colnames(res_time) %in%                                    #n=61 
                           c("DateTime")])
+
+#------------------------------------------------------------------------------#
+#miss forest to fill in missing env vars
+
+library(missForest)
+
+# remove non-numeric columns (e.g., Date) before imputation
+all_drivers_num <- all_drivers[, sapply(all_drivers, is.numeric)]
+
+# run MissForest
+set.seed(42)
+env_imputed <- missForest(all_drivers_num, maxiter = 10, ntree = 100)
+
+# replace imputed columns back
+env_sub_imputed <- all_drivers
+env_sub_imputed[, names(all_drivers_num)] <- env_imputed$ximp
+
+
+
 
 #export csv
 write.csv(all_drivers, "./Output/all_drivers.csv", row.names=FALSE)

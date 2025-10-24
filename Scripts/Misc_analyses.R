@@ -397,7 +397,7 @@ new_samples <- unique(new_samples$collect_date)
 new_samples_date <- as.Date(new_samples, format = "%d-%b-%y")
 
 #list all dates
-all_zoop_dates <- c(all_zoops_nmds$DateTime,new_samples_date)
+all_zoop_dates <- c(all_zoops_nmds$DateTime)
 
 #create df for plotting
 coverage_df <- data.frame(SampleDate = all_zoop_dates) |>
@@ -413,7 +413,7 @@ ggplot(coverage_df, aes(x = SampleMonth, fill = as.factor(month))) +
     y = "Number of Samples"
   ) +
   theme_minimal() 
-ggsave("Figures/zoop_data_coverage_barplot.jpg", width=7, height=4) 
+#ggsave("Figures/zoop_data_coverage_barplot.jpg", width=7, height=4) 
 
 ggplot(coverage_df, aes(x = SampleDate, y = 1)) +
   geom_point(size = 2, alpha = 0.8, color = "darkblue") +
@@ -424,89 +424,19 @@ ggplot(coverage_df, aes(x = SampleDate, y = 1)) +
     y = NULL
   ) +
   theme_minimal()
-ggsave("Figures/zoop_data_coverage_point.jpg", width=7, height=4) 
+#ggsave("Figures/zoop_data_coverage_point.jpg", width=7, height=4) 
 
 # heat map
 coverage_df <- data.frame(SampleDate = all_zoop_dates) %>%
   mutate(Year = year(SampleDate),
          Month = month(SampleDate, label = TRUE)) %>%
-  count(Year, Month)
+  count(Year, Month) |>
+  filter(!Year %in% "2025")
 
+#Fig SX
 ggplot(coverage_df, aes(x = Month, y = factor(Year))) +
   geom_tile(aes(fill = n), color = "white") +
   scale_fill_gradient(low = "orange", high = "darkblue") +
-  labs(
-    title = "Zooplankton Sampling Coverage Heatmap",
-    x = "Month",
-    y = "Year",
-    fill = "Sample Count"
-  ) +
+  labs(x = "Month", y = "Year", fill = "Sample Count") +
   theme_minimal()
-ggsave("Figures/zoop_data_coverage_heatmap.jpg", width=7, height=4) 
-
-#checking for fortnightly data 
-sample_dates <- sort(as.Date(coverage_df$SampleDate))
-
-# Calculate time difference between consecutive samples
-gaps <- diff(sample_dates)
-
-# Combine into a data frame for easy inspection
-biweekly_df <- data.frame(
-  SampleDate = sample_dates[-1],   # skip the first because diff returns n-1
-  DaysSinceLast = gaps
-)
-
-# Filter for roughly biweekly gaps (e.g., 10–18 days)
-biweekly_periods <- biweekly_df %>%
-  filter(DaysSinceLast >= 10 & DaysSinceLast <= 18)
-
-# Create a column flagging biweekly spacing
-biweekly_df <- data.frame(
-  SampleDate = sample_dates[-1],
-  DaysSinceLast = diff(sample_dates)
-) %>%
-  mutate(
-    Biweekly = DaysSinceLast >= 10 & DaysSinceLast <= 18,
-    Group = cumsum(!Biweekly)  # increment group when spacing breaks
-  )
-
-biweekly_df_new <- data.frame(
-  SampleDate = sample_dates[-1],
-  DaysSinceLast = as.numeric(diff(sample_dates)),  # convert difftime to numeric (in days)
-  stringsAsFactors = FALSE
-)
-
-biweekly_df_new$Biweekly <- biweekly_df$DaysSinceLast >= 10 & biweekly_df$DaysSinceLast <= 18
-
-# Filter out large gaps (e.g., >50 days)
-biweekly_df_new_filtered <- biweekly_df %>%
-  filter(DaysSinceLast <= 50)
-
-ggplot(biweekly_df_filtered, aes(x = SampleDate, y = DaysSinceLast, fill = Biweekly)) +
-  geom_col() +
-  geom_hline(yintercept = c(10, 14, 18), linetype = "dashed", color = "gray") +
-  scale_fill_manual(values = c("TRUE" = "steelblue", "FALSE" = "gray80")) +
-  labs(
-    title = "Days Between Zooplankton Samples",
-    x = "Date",
-    y = "Days Since Previous Sample",
-    fill = "Biweekly?"
-  ) +
-  theme_minimal()
-
-ggplot(biweekly_df, aes(x = SampleDate, y = 1, color = as.factor(Group))) +
-  geom_point(size = 3) +
-  labs(
-    title = "Biweekly Sampling Runs",
-    x = "Date",
-    y = NULL,
-    color = "Run Group"
-  ) + 
-  scale_y_continuous(breaks = NULL) +
-  theme_minimal() +
-  theme(legend.position = "none")
-
-
- # Variation partitioning (????)
-varpart(zoop_hellinger, env_data, time_data)
-
+#ggsave("Figures/zoop_data_coverage_heatmap.jpg", width=7, height=4) 

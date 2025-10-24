@@ -6,8 +6,8 @@ pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, lubridate, ggtext)
 #cb friendly year palette
 year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
 
-#read in zoop data from EDI #update to v5 once published
-inUrl1  <-   "https://pasta.lternet.edu/package/data/eml/edi/197/4/9eb6db370194bd3b2824726d89a008a6" 
+#read in zoop data from EDI (v5)
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/197/5/38fc9d1a4c8b6976c71e56bda5ff073b" 
 infile1 <-  tempfile()
 try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 
@@ -20,7 +20,7 @@ zoops <- read.csv(infile1, header=T) |>
 zoops_2016_2018 <- zoops[as.Date(zoops$DateTime)<"2019-01-01",]
 zoops_2019_2021 <- zoops[as.Date(zoops$DateTime)>="2019-01-01",]
 
-#add daphnia (D. catawba, D. ambigua), calanoida (diaptomus) for 2014-2018 data
+#add daphnia (D. catawba, D. ambigua), calanoida (diaptomus) groups for 2014-2018 data
 zoops_pre <- zoops_2016_2018 |> 
   group_by(Reservoir, DateTime, StartDepth_m) |> 
   summarise(Daphnia_dens = sum(Density_IndPerL[
@@ -82,8 +82,11 @@ zoops_pre <- zoops_2016_2018 |>
                names_sep="_" )  |> 
   filter(hour(DateTime) %in% c(9,10,11,12,13,14)) |> #drop nighttime samples
   mutate(DateTime = as.Date(DateTime)) |> 
-  mutate(dens = dens * (1/0.031))  #10m bvr neteff from 2016 (n=2) - note that 7m neteff was also 0.031
+  mutate(dens = dens * (1/0.031)) |>  #10m bvr neteff from 2016 (n=2) - note that 7m neteff was also 0.031
 #avg from 2020 and 2021 is 0.021 for reference
+  mutate(DateTime = as.Date(ifelse(DateTime %in% as.Date("2014-09-25"), 
+                           as.Date("2014-10-01"), DateTime))) 
+#adding 6 days to this 2014 sep point to add another month to the SS NMDS
 
 #list common taxa between pre and post
 taxa <- c("Bosmina", "Daphnia", "Ceriodaphnia",
@@ -96,7 +99,7 @@ taxa <- c("Bosmina", "Daphnia", "Ceriodaphnia",
 zoops_post <- zoops_2019_2021 |> 
   mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S", tz="UTC")) |> 
   filter(hour(DateTime) %in% c(9,10,11,12,13,14) &  #drop nighttime samples
-          !year(DateTime) %in% c(2022)) |> 
+          !year(DateTime) %in% c(2022, 2024, 2025)) |> #we lost the 17 june 2024 sample somewhere between the field and the lab so that means this whole year needs to be excluded :(
   filter(Taxon %in% c(taxa)) |> 
   mutate(DateTime = as.Date(DateTime)) |> 
   mutate(Taxon = ifelse(Taxon == "Nauplius", "Nauplii", Taxon)) |> 
@@ -107,9 +110,8 @@ zoops_post <- zoops_2019_2021 |>
 #combine all zoop data
 all_zoops <- bind_rows(zoops_pre, zoops_post) |> 
   mutate_all(~replace(., is.nan(.), NA)) |>  #replace NAN with NA
-  ungroup() |> select(-StartDepth_m) #dropping, but note that depths range from 7.5-11.5m....
+  ungroup() |> select(-StartDepth_m) #dropping, but note that depths range from 8-11.5m....
 
-#write all_zoops
 #write.csv(all_zoops, paste0("Output/all_zoops_dens.csv"),row.names = FALSE)
 
 #calculate proportion of total density for each taxa (dens/total dens)
@@ -192,29 +194,29 @@ zoops_10_groups$date <- as.Date(paste0(zoops_10_groups$year,"-",
 
 #shaded line plot - raw density (Manuscript Figure 2)
 ggplot(data = subset(zoops_10_groups, month %in% 
-                       c("05","06","07","08","09")),
+                       c("05","06","07","08","09","10")),
        aes(x=date, y = avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
-            position = "fill", 
-            stat = "identity", 
-            alpha=0.7) +
+            position = "stack", stat = "identity") +
   facet_wrap(~year, scales = "free")+
-  scale_color_manual(values = NatParksPalettes::natparks.pals("DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
-  scale_fill_manual(values = NatParksPalettes::natparks.pals("DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
+  scale_color_manual(values = NatParksPalettes::natparks.pals(
+    "DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
+  scale_fill_manual(values = NatParksPalettes::natparks.pals(
+    "DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
   scale_x_date(expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0))+
-  xlab("") + ylab("Relative density") +
-  guides(color= "none",
-         fill = guide_legend(ncol=1)) +
+  xlab("") + ylab("Density (ind/L)") +
+  guides(color= "none", fill = guide_legend(nrow=4)) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"),
         legend.key = element_blank(),
         legend.background = element_blank(),
-        legend.position = "right",
-        legend.direction = "vertical",
-        text = element_text(size=10), 
-        axis.text.y = element_text(size = 10),
+        legend.position = c(0.72,0.1),
+        legend.direction = "horizontal",
+        legend.title = element_blank(),
+        text = element_text(size=9), 
+        axis.text.y = element_text(size = 9),
         panel.border = element_rect(colour = "black", fill = NA),
         strip.text.x = element_text(face = "bold",hjust = 0),
         axis.text.x = element_text(angle=90),
@@ -225,7 +227,44 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_10groups_fill_alldens_relative.jpg", width=7, height=4) 
+#ggsave("Figures/BVR_10groups_fill_alldens.jpg", width=5, height=4) 
+
+#shaded line plot - relative density (Fig. S1)
+ggplot(data = subset(zoops_10_groups, month %in% 
+                       c("05","06","07","08","09","10")),
+       aes(x=date, y = avg, color=Taxon)) +
+  geom_area(aes(color = Taxon, fill = Taxon),
+            position = "fill", stat = "identity") +
+  facet_wrap(~year, scales = "free_x")+
+  scale_color_manual(values = NatParksPalettes::natparks.pals(
+    "DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
+  scale_fill_manual(values = NatParksPalettes::natparks.pals(
+    "DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
+  scale_x_date(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0))+
+  xlab("") + ylab("Relative density") +
+  guides(color= "none", fill = guide_legend(nrow=4)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.key = element_blank(),
+        legend.background = element_blank(),
+        legend.position = c(0.72,0.1),
+        legend.direction = "horizontal",
+        legend.title = element_blank(),
+        text = element_text(size=9), 
+        axis.text.y = element_text(size = 9),
+        panel.border = element_rect(colour = "black", fill = NA),
+        strip.text.x = element_text(face = "bold",hjust = 0),
+        axis.text.x = element_text(angle=90),
+        strip.background.x = element_blank(),
+        axis.title.y = element_text(size = 11),
+        plot.margin = unit(c(0, 1, 0, 0), "cm"),
+        panel.spacing.x = unit(0.2, "in"),
+        panel.background = element_rect(
+          fill = "white"),
+        panel.spacing = unit(0.5, "lines"))
+#ggsave("Figures/BVR_succession_10groups_fill_alldens_relative.jpg", width=5, height=4) 
 
 #numbers for ms results
 mean(c(sum(zoops_10_groups$p_dens[zoops_10_groups$year=="2019" & zoops_10_groups$month=="06" &

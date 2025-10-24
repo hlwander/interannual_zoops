@@ -8,9 +8,17 @@ if (!require("pacman"))install.packages("pacman")
 pacman::p_load(httr, EcoHydRology, GSODR, curl, elevatr, devtools, sf,
                raster, soilDB, rgdal, lattice, lubridate, tidyverse)
 
+#note that rgdal source code is no longer compatible with R version >4.2 so would need to run this script in a docker
+#install.packages("https://github.com/hlwander/interannual_zoops/raw/main/topmodel_0.7.5.tar.gz", repos = NULL, type = "source")
+#library(topmodel)
+
 #download archived EcoHydRology package from github
 #install.packages(c("operators", "topmodel", "DEoptim", "XML"))
 #install.packages("~/Downloads/EcoHydRology_0.4.12.1.tar.gz", repos = NULL, type = "source")
+#https://cran.r-project.org/src/contrib/Archive/EcoHydRology/
+#install.packages("~/Downloads/rgdal_1.6-7.tar.gz", repos = NULL, type = "source")
+#https://cran.r-project.org/src/contrib/Archive/rgdal/
+
 
 #soil data
 #url="https://websoilsurvey.sc.egov.usda.gov/DSD/Download/AOI/hdbxgq2us0dl32ysxprivmbf/wss_aoi_2023-03-01_08-53-36.zip"
