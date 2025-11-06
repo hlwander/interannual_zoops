@@ -14,11 +14,55 @@ try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 zoops <- read.csv(infile1, header=T) |>
   filter(CollectionMethod=="Tow" & Reservoir %in% c("BVR") &
            StartDepth_m > 7.1 & EndDepth_m == 0.1) |> 
-  select(-c(Site,EndDepth_m,CollectionMethod))
+  select(-c(Site,EndDepth_m,CollectionMethod)) |>
+  mutate(Taxon = ifelse(Taxon == "nauplius", "Nauplii", Taxon),
+         DateTime = as.POSIXct(DateTime)) |>
+  filter(!year(DateTime) %in% c("2022","2023","2024","2025")) #recreated summary file for these years and it is not yet published on EDI 
 
+zoops_2023 <- read.csv("inputs/EDI_zoop_summary_2022-2025.csv") |>
+  select(-c(Site,EndDepth_m,CollectionMethod)) |>
+  mutate(Taxon = ifelse(Taxon == "nauplius", "Nauplii", Taxon),
+         DateTime = as.POSIXct(DateTime))
+  
+#add in 2022-2025 zoop data
+zoops <- bind_rows(zoops, zoops_2023)
+
+#------------------------------------------------------------------------------#
+#figure out dominant taxa for NMDS/other ms figs
+zoop_taxa_props <- zoops |>
+  filter(!is.na(Taxon), !is.na(Density_IndPerL),
+         !Taxon %in% c("Cladocera","Copepoda","Rotifera","Crustacea")) |>
+  group_by(Taxon) |>
+  summarise(total_dens = sum(Density_IndPerL, na.rm = TRUE)) |>
+  ungroup() |>
+  mutate(prop = total_dens / sum(total_dens)) |>
+  arrange(desc(prop))
+
+# Note that this fig corresponds to Table S1 of the manuscript
+#plot proportion of density that each taxon makes up (sum of all individual days)
+ggplot(zoop_taxa_props, aes(x=reorder(Taxon,-prop), y=prop)) +
+  theme_bw() + geom_bar(stat="identity") + 
+  theme(text = element_text(size=5), 
+        axis.text = element_text(size=5, color="black"), 
+        axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, hjust=1), 
+        strip.background = element_rect(fill = "transparent"), 
+        legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+#new df to average proportion for each taxon (Supplemental Table S1)
+zoop_prop_table <- zoop_taxa_props |> group_by(Taxon) |> 
+  summarise(prop_avg = mean(prop)) |>
+  filter(prop_avg >= 0.01)
+#drop taxa that are <1% (0.01) of density 
+
+#just keeping n=11
+
+#---------------------------------
 #split data into pre 2019 and post
 zoops_2016_2018 <- zoops[as.Date(zoops$DateTime)<"2019-01-01",]
-zoops_2019_2021 <- zoops[as.Date(zoops$DateTime)>="2019-01-01",]
+zoops_2019_2023 <- zoops[as.Date(zoops$DateTime)>="2019-01-01",]
 
 #add daphnia (D. catawba, D. ambigua), calanoida (diaptomus) groups for 2014-2018 data
 zoops_pre <- zoops_2016_2018 |> 
@@ -39,14 +83,10 @@ zoops_pre <- zoops_2016_2018 |>
       Taxon %in% c("Bosmina")]),
     Bosmina_sd = sd(Density_IndPerL[
       Taxon %in% c("Bosmina")]),
-    Ceriodaphnia_dens = sum(Density_IndPerL[
-      Taxon %in% c("Ceriodaphnia")]),
-    Ceriodaphnia_sd = sd(Density_IndPerL[
-      Taxon %in% c("Ceriodaphnia")]),
-    Ascomorpha_dens = sum(Density_IndPerL[
-      Taxon %in% c("Ascomorpha")]),
-    Ascomorpha_sd = sd(Density_IndPerL[
-      Taxon %in% c("Ascomorpha")]),
+    Conochiloides_dens = sum(Density_IndPerL[
+      Taxon %in% c("Conochiloides")]),
+    Conochiloides_sd = sd(Density_IndPerL[
+      Taxon %in% c("Conochiloides")]),
     Conochilus_dens = sum(Density_IndPerL[
       Taxon %in% c("Conochilus")]),
     Conochilus_sd = sd(Density_IndPerL[
@@ -59,10 +99,18 @@ zoops_pre <- zoops_2016_2018 |>
       Taxon %in% c("Kellicottia")]),
     Kellicottia_sd = sd(Density_IndPerL[
       Taxon %in% c("Kellicottia")]),
+    Ploima_dens = sum(Density_IndPerL[
+      Taxon %in% c("Ploima")]),
+    Ploima_sd = sd(Density_IndPerL[
+      Taxon %in% c("Ploima")]),
     Polyarthra_dens = sum(Density_IndPerL[
       Taxon %in% c("Polyarthra")]),
     Polyarthra_sd = sd(Density_IndPerL[
      Taxon %in% c("Polyarthra")]),
+    Pompholyx_dens = sum(Density_IndPerL[
+      Taxon %in% c("Pompholyx")]),
+    Pompholyx_sd = sd(Density_IndPerL[
+      Taxon %in% c("Pompholyx")]),
     Rotifera_dens = sum(Density_IndPerL[
       Taxon %in% c("Total rotifers")]),
     Rotifera_sd = sd(Density_IndPerL[
@@ -85,24 +133,19 @@ zoops_pre <- zoops_2016_2018 |>
   mutate(dens = dens * (1/0.031)) |>  #10m bvr neteff from 2016 (n=2) - note that 7m neteff was also 0.031
 #avg from 2020 and 2021 is 0.021 for reference
   mutate(DateTime = as.Date(ifelse(DateTime %in% as.Date("2014-09-25"), 
-                           as.Date("2014-10-01"), DateTime))) 
+                           as.Date("2014-10-23"), DateTime))) #choosing 10-23 bc we have ctd profiles that day
 #adding 6 days to this 2014 sep point to add another month to the SS NMDS
 
-#list common taxa between pre and post
-taxa <- c("Bosmina", "Daphnia", "Ceriodaphnia",
-          "Cyclopoida", "Nauplii", 
-          "Conochilus","Keratella", "Rotifera",
-          "Kellicottia","Ascomorpha",
-          "Polyarthra","Cladocera", "Copepoda") 
+#list dominant taxa (+3 overall zoop groups)
+taxa <- c(zoop_prop_table$Taxon,"Cladocera", "Copepoda","Rotifera") 
 
 #average reps when appropriate
-zoops_post <- zoops_2019_2021 |> 
-  mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S", tz="UTC")) |> 
+zoops_post <- zoops_2019_2023 |> 
+  #mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S", tz="UTC")) |> 
   filter(hour(DateTime) %in% c(9,10,11,12,13,14) &  #drop nighttime samples
           !year(DateTime) %in% c(2022, 2024, 2025)) |> #we lost the 17 june 2024 sample somewhere between the field and the lab so that means this whole year needs to be excluded :(
   filter(Taxon %in% c(taxa)) |> 
   mutate(DateTime = as.Date(DateTime)) |> 
-  mutate(Taxon = ifelse(Taxon == "Nauplius", "Nauplii", Taxon)) |> 
   group_by(Reservoir, DateTime, StartDepth_m, Taxon) |> 
   summarise(dens = mean(Density_IndPerL),
             sd = sd(Density_IndPerL))
@@ -114,95 +157,66 @@ all_zoops <- bind_rows(zoops_pre, zoops_post) |>
 
 #write.csv(all_zoops, paste0("Output/all_zoops_dens.csv"),row.names = FALSE)
 
-#calculate proportion of total density for each taxa (dens/total dens)
-all_zoop_taxa <- all_zoops |> 
-  filter(!Taxon %in% c("Cladocera","Copepoda","Rotifera")) |> 
-  mutate(n = sum(dens)) |> 
-           group_by(Taxon) |> 
-    mutate(prop = sum(dens) / n)
-
 #------------------------------------------------------------------------------#
-#figure out dominant taxa for NMDS/other ms figs
-
-# Note that this fig corresponds to Table S1 of the manuscript
-#plot proportion of density that each taxon makes up (sum of all individual days)
-ggplot(all_zoop_taxa, aes(x=reorder(Taxon,-prop), y=prop)) +
-  theme_bw() + geom_bar(stat="identity") + 
-  theme(text = element_text(size=5), 
-        axis.text = element_text(size=5, color="black"), 
-        axis.text.x = element_text(angle = 90, 
-                                   vjust = 0.5, hjust=1), 
-        strip.background = element_rect(fill = "transparent"), 
-        legend.position = "none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-
-#new df to average proportion for each taxon (Supplemental Table S1)
-zoop_prop_taxa <- all_zoop_taxa |> group_by(Taxon) |> 
-  summarise(prop_avg = mean(prop)) 
-#drop taxa that are <1% (0.01) of density 
-#dropping diaphanosmoma, lecane, chydorus, asplanchna, trichocerca, calanoida
-
-#just keeping n=10
-
-#------------------------------------------------------------------------------#
-# 10 group zoop dens
-zoops_10_groups <- all_zoops |> 
+# 11 group zoop dens
+zoops_11_groups <- all_zoops |> 
   filter(!Taxon %in% c("Cladocera","Copepoda","Rotifera")) |> 
   group_by(Taxon, DateTime) |> 
   mutate(year = format(DateTime, "%Y"),
          month = format(DateTime, "%m")) |> 
   ungroup() |> 
   group_by(year, month) |> 
-  summarise(Daphnia_avg = mean(dens[Taxon=="Daphnia"]),
+  summarise(Daphnia_avg = mean(dens[Taxon=="Daphnia"], na.rm=T),
             Daphnia_sd = mean(sd[Taxon=="Daphnia"],na.rm=T),
-            Cyclopoida_avg = mean(dens[Taxon=="Cyclopoida"]),
+            Cyclopoida_avg = mean(dens[Taxon=="Cyclopoida"], na.rm=T),
             Cyclopoida_sd = mean(sd[Taxon=="Cyclopoida"],na.rm=T),
-            Nauplii_avg = mean(dens[Taxon=="Nauplii"]),
+            Nauplii_avg = mean(dens[Taxon=="Nauplii"], na.rm=T),
             Nauplii_sd = mean(sd[Taxon=="Nauplii"],na.rm=T),
-            Bosmina_avg = mean(dens[Taxon=="Bosmina"]),
+            Bosmina_avg = mean(dens[Taxon=="Bosmina"], na.rm=T),
             Bosmina_sd = mean(sd[Taxon=="Bosmina"],na.rm=T),
-            Ceriodaphnia_avg = mean(dens[Taxon=="Ceriodaphnia"]),
-            Ceriodaphnia_sd = mean(sd[Taxon=="Ceriodaphnia"],na.rm=T),
-            Ascomorpha_avg = mean(dens[Taxon=="Ascomorpha"]),
-            Ascomorpha_sd = mean(sd[Taxon=="Ascomorpha"],na.rm=T),
-            Conochilus_avg = mean(dens[Taxon=="Conochilus"]),
+            Conochilus_avg = mean(dens[Taxon=="Conochilus"], na.rm=T),
             Conochilus_sd = mean(sd[Taxon=="Conochilus"],na.rm=T),
-            Keratella_avg = mean(dens[Taxon=="Keratella"]),
+            Conochiloides_avg = mean(dens[Taxon=="Conochiloides"], na.rm=T),
+            Conochiloides_sd = mean(sd[Taxon=="Conochiloides"],na.rm=T),
+            Keratella_avg = mean(dens[Taxon=="Keratella"], na.rm=T),
             Keratella_sd = mean(sd[Taxon=="Keratella"],na.rm=T),
-            Kellicottia_avg = mean(dens[Taxon=="Kellicottia"]),
+            Kellicottia_avg = mean(dens[Taxon=="Kellicottia"], na.rm=T),
             Kellicottia_sd = mean(sd[Taxon=="Kellicottia"],na.rm=T),
-            Polyarthra_avg = mean(dens[Taxon=="Polyarthra"]),
-            Polyarthra_sd = mean(sd[Taxon=="Polyarthra"],na.rm=T)) |> 
+            Ploima_avg = mean(dens[Taxon=="Ploima"], na.rm=T),
+            Ploima_sd = mean(sd[Taxon=="Ploima"],na.rm=T),
+            Polyarthra_avg = mean(dens[Taxon=="Polyarthra"], na.rm=T),
+            Polyarthra_sd = mean(sd[Taxon=="Polyarthra"],na.rm=T),
+            Pompholyx_avg = mean(dens[Taxon=="Pompholyx"], na.rm=T),
+            Pompholyx_sd = mean(sd[Taxon=="Pompholyx"],na.rm=T)) |> 
   pivot_longer(-c(year,month),
                names_to = c("Taxon", ".value"),
                names_sep="_" )  |> 
   ungroup() |> group_by(year, month) |> 
-  mutate(total = sum(avg)) |> ungroup() |> 
+  mutate(total = sum(avg, na.rm=T)) |> ungroup() |> 
   mutate(p_dens = avg / total)
 
 #order zoops by group
-zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon, 
-                                levels=c("Bosmina", "Ceriodaphnia", "Daphnia",
-                                         "Cyclopoida","Nauplii","Ascomorpha",
+zoops_11_groups$Taxon <- factor(zoops_11_groups$Taxon, 
+                                levels=c("Bosmina", "Daphnia","Cyclopoida",
+                                         "Nauplii","Conochiloides",
                                          "Conochilus","Kellicottia","Keratella",
-                                         "Polyarthra"))
+                                         "Ploima","Polyarthra","Pompholyx"))
 
 #create new column w/ date bc leap years are really messing up my tick marks
-zoops_10_groups$date <- as.Date(paste0(zoops_10_groups$year,"-",
-                                       zoops_10_groups$month,"-01"))
+zoops_11_groups$date <- as.Date(paste0(zoops_11_groups$year,"-",
+                                       zoops_11_groups$month,"-01"))
 
 #shaded line plot - raw density (Manuscript Figure 2)
-ggplot(data = subset(zoops_10_groups, month %in% 
+ggplot(data = subset(zoops_11_groups, month %in% 
                        c("05","06","07","08","09","10")),
        aes(x=date, y = avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
             position = "stack", stat = "identity") +
   facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals(
-    "DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
+    "DeathValley", 11, direction=-1)) +
   scale_fill_manual(values = NatParksPalettes::natparks.pals(
-    "DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
+    "DeathValley", 11, direction=-1)) +
   scale_x_date(expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0))+
   xlab("") + ylab("Density (ind/L)") +
@@ -227,19 +241,19 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_10groups_fill_alldens.jpg", width=5, height=4) 
+#ggsave("Figures/BVR_11groups_fill_alldens.jpg", width=5, height=4) 
 
 #shaded line plot - relative density (Fig. S1)
-ggplot(data = subset(zoops_10_groups, month %in% 
+ggplot(data = subset(zoops_11_groups, month %in% 
                        c("05","06","07","08","09","10")),
        aes(x=date, y = avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
             position = "fill", stat = "identity") +
   facet_wrap(~year, scales = "free_x")+
   scale_color_manual(values = NatParksPalettes::natparks.pals(
-    "DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
+    "DeathValley", 11, direction=-1)) +
   scale_fill_manual(values = NatParksPalettes::natparks.pals(
-    "DeathValley", 12, direction=-1)[c(1:3,5,6,8:12)])+
+    "DeathValley", 11, direction=-1)) +
   scale_x_date(expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0))+
   xlab("") + ylab("Relative density") +
@@ -264,21 +278,21 @@ ggplot(data = subset(zoops_10_groups, month %in%
         panel.background = element_rect(
           fill = "white"),
         panel.spacing = unit(0.5, "lines"))
-#ggsave("Figures/BVR_succession_10groups_fill_alldens_relative.jpg", width=5, height=4) 
+#ggsave("Figures/BVR_succession_11groups_fill_alldens_relative.jpg", width=5, height=4) 
 
 #numbers for ms results
-mean(c(sum(zoops_10_groups$p_dens[zoops_10_groups$year=="2019" & zoops_10_groups$month=="06" &
-                                 zoops_10_groups$Taxon %in% c("Ascomorpha","Conochilus",
+mean(c(sum(zoops_11_groups$p_dens[zoops_11_groups$year=="2019" & zoops_11_groups$month=="06" &
+                                 zoops_11_groups$Taxon %in% c("Ploima","Conochilus", "Conochiloides",
                                                               "Keratella","Kellicottia",
-                                                              "Polyarthra")]),
-        sum(zoops_10_groups$p_dens[zoops_10_groups$year=="2019" & zoops_10_groups$month=="07" &
-                                 zoops_10_groups$Taxon %in% c("Ascomorpha","Conochilus",
+                                                              "Polyarthra", "Pompholyx")]),
+        sum(zoops_11_groups$p_dens[zoops_11_groups$year=="2019" & zoops_11_groups$month=="07" &
+                                 zoops_11_groups$Taxon %in% c("Ploima","Conochilus", "Conochiloides",
                                                               "Keratella","Kellicottia",
-                                                              "Polyarthra")]),
-        sum(zoops_10_groups$p_dens[zoops_10_groups$year=="2019" & zoops_10_groups$month=="08" &
-                                 zoops_10_groups$Taxon %in% c("Ascomorpha","Conochilus",
+                                                              "Polyarthra", "Pompholyx")]),
+        sum(zoops_11_groups$p_dens[zoops_11_groups$year=="2019" & zoops_11_groups$month=="08" &
+                                 zoops_11_groups$Taxon %in% c("Ploima","Conochilus", "Conochiloides",
                                                               "Keratella","Kellicottia",
-                                                              "Polyarthra")])))
+                                                              "Polyarthra", "Pompholyx")])))
 
 #kellicottia
 mean(c(zoops_10_groups$p_dens[zoops_10_groups$year=="2021" & zoops_10_groups$month=="05" &
@@ -376,7 +390,7 @@ zoop_ratios <- all_zoops |>
                       "Kellicottia","Conochilus","Rotifera","Copepoda")) |> 
   mutate(year = year(DateTime),
          month = format(DateTime, "%m")) |> 
-  filter(month %in% c("05","06","07","08","09")) |> 
+  filter(month %in% c("05","06","07","08","09","10")) |> 
   group_by(DateTime) |> 
   mutate(total_dens = sum(dens),
          crust_dens = sum(dens[Taxon=="Cladocera"], 

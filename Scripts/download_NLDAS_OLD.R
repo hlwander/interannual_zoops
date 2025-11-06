@@ -5,6 +5,8 @@
 ### Date last modified: 2024-04-01 (adapted for bvr + extended dates - HLW)
 ###########################################################
 
+#NOTE THAT THIS SCRIPT NO LONGER WORKS AS OF AUG 2024!!!
+
 #### step 1: download nc files for each day ####
 # v 04Mar2021: BGS updated to remove hardcoding: only first 43 lines need to be edited
 
@@ -29,7 +31,7 @@ dumpdir_nc = "./NLDAS"
 ###########################################################
 #https://urs.earthdata.nasa.gov/profile <-- GET A EARTHDATA LOGIN
 username = "hwander"
-password = "Zooplankton2024!"
+password = "Zooplankton2025!"
 #in addition, make sure you have authorized your account access to the GEODISC archives:
 # https://disc.gsfc.nasa.gov/earthdata-login
 
@@ -92,22 +94,21 @@ for (i in 1:length(out.ts)) {
   
   ## Patricia Tran note (2020-12-03 : I updated the link the webpage)
   
-  URL <- paste('https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/OTF/HTTP_services.cgi?FILENAME=%2Fdata%2FNLDAS%2FNLDAS_FORA0125_H.002%2F',
-               yearOut, '%2F',
-               str_pad(as.numeric(yday(as.Date(paste0(yearOut,"-", monthOut,'-' ,dayOut)))), 3, pad = "0"), ## The URL changes for every chunk of 24 hours
-               '%2FNLDAS_FORA0125_H.A',
-               yearOut, monthOut, dayOut, '.',
-               hourOut,  '.002.grb&FORMAT=bmM0Lw&BBOX=', 
-               round(extent[2], 2),'%2C', # In the new version of the URL, the coordinates are only up to 2 digits
-               round(extent[1], 2),'%2C',
-               round(extent[4], 2),'%2C',
-               round(extent[3], 2),
-               '&LABEL=NLDAS_FORA0125_H.A',
-               yearOut,monthOut,dayOut,'.',
-               hourOut,
-               '.002.grb.SUB.nc4&SHORTNAME=NLDAS_FORA0125_H&SERVICE=L34RS_LDAS&VERSION=1.02&DATASET_VERSION=002',
-               sep='')
-  
+  #URL <- paste('https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/OTF/HTTP_services.cgi?FILENAME=%2Fdata%2FNLDAS%2FNLDAS_FORA0125_H.002%2F',
+  #yearOut, '%2F',
+  #str_pad(as.numeric(yday(as.Date(paste0(yearOut,"-", monthOut,'-' ,dayOut)))), 3, pad = "0"), ## The URL changes for every chunk of 24 hours
+  #'%2FNLDAS_FORA0125_H.A',
+  #yearOut, monthOut, dayOut, '.',
+  #hourOut,  '.002.grb&FORMAT=bmM0Lw&BBOX=', 
+  #round(extent[2], 2),'%2C', # In the new version of the URL, the coordinates are only up to 2 digits
+  #round(extent[1], 2),'%2C',
+  #round(extent[4], 2),'%2C',
+  #round(extent[3], 2),
+  #'&LABEL=NLDAS_FORA0125_H.A',
+  #yearOut,monthOut,dayOut,'.',
+  #hourOut,
+  #'.002.grb.SUB.nc4&SHORTNAME=NLDAS_FORA0125_H&SERVICE=L34RS_LDAS&VERSION=1.02&DATASET_VERSION=002',
+  #sep='')
   
   # IMPORTANT MESSAGE Dec 05, 2016    The GES DISC will be migrating from http to https throughout December
   # As part of our ongoing migration to HTTPS, the GES DISC will begin redirecting all HTTP traffic to HTTPS.
@@ -138,7 +139,7 @@ for (i in 1:length(out.ts)) {
   
   # resp <- curl::curl_fetch_memory(lk, handle = h)
   resp <- curl::curl_fetch_disk(url = lk, 
-                                path = paste(dumpdir_nc, '/NLDAS_Data_2020_2021/', filename, '_', loc_tz, '.nc',sep=''), 
+                                path = paste(dumpdir_nc, '/NLDAS_Data_2020_2023/', filename, '_', loc_tz, '.nc',sep=''), 
                                 handle = h)
   
   #Sys.sleep(2)
@@ -154,7 +155,7 @@ proc.time() - ptm
 ### set dump directory for .csv files and lake name
 ###########################################################
 #where your .nc files are stored -- make sure all .nc files have a size >0, otherwise your loop will get hung up!
-dumpdir_nc = './NLDAS/NLDAS_Data_2020_2021'
+dumpdir_nc = './NLDAS/NLDAS_Data_2020_2023'
 
 
 lake_name = 'BVR'
@@ -221,7 +222,7 @@ for (f in 1:length(vars_nc)){
 #### step 3: merge NLDAS csv files together ####
 
 #where you stored your .csv's
-dumpdir_csv = './NLDAS/NLDAS_Data_2020_2021/'
+dumpdir_csv = './NLDAS/NLDAS_Data_2020_2023/'
 # define the dump directory for your final .csv files
 dumpdir_final = './NLDAS/'
 
@@ -233,7 +234,7 @@ box = 1 # Chosen cell of 'cellNum' from combineNLDAS.R, you'll have to look at t
 
 # define the time range
 startdatetime = '2020-01-01 00:00:00'
-enddatetime = '2021-12-31 23:00:00'
+enddatetime = '2024-01-01 23:00:00'
 loc_tz = 'UTC' #this should be the same as previous entries
 
 #enter the timezone you would like to have the final data in. see OlsonNames() for options
@@ -390,7 +391,7 @@ nldas_13_19 <- read.csv(paste0(getwd(),"/NLDAS/BVR_GLM_NLDAS_010113_123119_GMTad
 all_NLDAS <- bind_rows(drivers, nldas_13_19)
 
 #save combined nldas file
-write.csv(all_NLDAS, "./inputs/BVR_GLM_NLDAS_010113_123121_GMTadjusted.csv", rownames=F)
+write.csv(all_NLDAS, "./inputs/BVR_GLM_NLDAS_010113_123123_GMTadjusted.csv", rownames=F)
 
 #quick plots to make sure things look okay
 plot(all_NLDAS$time,all_NLDAS$Rain,type = 'l')
