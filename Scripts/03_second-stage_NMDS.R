@@ -22,9 +22,7 @@ all_zoops_nmds <- all_zoops_dens |>
   pivot_wider(names_from = Taxon, values_from = dens) |> 
   mutate_all(~replace(., is.na(.), 0)) |>  #replace NA with 0
   ungroup() |>
-  mutate(year = format(DateTime, "%Y"),
-         month = format(DateTime, "%m")) |>
-  group_by(year, month) |> 
+  group_by(DateTime) |> 
   summarise(Bosmina = mean(Bosmina),
             Daphnia = mean(Daphnia),
             Cyclopoida = mean(Cyclopoida),
@@ -34,17 +32,38 @@ all_zoops_nmds <- all_zoops_dens |>
             Keratella = mean(Keratella),
             Kellicottia = mean(Kellicottia),
             Ploima = mean(Ploima),
-            Polyarthra = mean(Polyarthra),
-            Pompholyx = mean(Pompholyx)) |> 
+            Polyarthra = mean(Polyarthra)) |> 
   ungroup() 
+#write.csv(all_zoops_nmds, "./Output/zoop_raw_dens.csv", row.names=FALSE)
+
+#select only data cols
+zoops_dens_all <- all_zoops_nmds |> select(Bosmina:Polyarthra)
+
+#hellinger transform data
+zoop_dens_trans_all <- labdsv::hellinger(zoops_dens_all)
+#write.csv(zoop_dens_trans_all, "./Output/zoop_dens_trans.csv", row.names=FALSE)
 
 #only keep may-sep samples and drop 2022
 all_zoops_nmds <- all_zoops_nmds |> 
+  mutate(year = format(DateTime, "%Y"),
+         month = format(DateTime, "%m")) |>
+  group_by(month, year) |>
+  summarise(Bosmina = mean(Bosmina),
+            Daphnia = mean(Daphnia),
+            Cyclopoida = mean(Cyclopoida),
+            Nauplii = mean(Nauplii),
+            Conochilus = mean(Conochilus),
+            Conochiloides = mean(Conochiloides),
+            Keratella = mean(Keratella),
+            Kellicottia = mean(Kellicottia),
+            Ploima = mean(Ploima),
+            Polyarthra = mean(Polyarthra)) |> 
+  ungroup() |>
   filter(month %in% c("05","06","07","08","09","10"), 
-         !year %in% c("2022"))
+         !year %in% c("2022")) 
 
 #select only data cols
-zoops_dens <- all_zoops_nmds |> select(Bosmina:Pompholyx)
+zoops_dens <- all_zoops_nmds |> select(Bosmina:Polyarthra)
 
 #hellinger transform data
 zoop_dens_trans <- labdsv::hellinger(zoops_dens)
@@ -228,8 +247,7 @@ for (i in 1:(n-1)) {
   for (j in (i+1):n) {
     correlation_matrix[i, j] <- pairwise_correlation(matrices[[i]], matrices[[j]])
     correlation_matrix[j, i] <- correlation_matrix[i, j] # Since correlation is symmetric
-  }
-}
+  }}
 
 # Set diagonal to 1 (correlation of a matrix with itself)
 diag(correlation_matrix) <- 1
@@ -251,8 +269,8 @@ year1_ss <- ggordiplots::gg_ordiplot(ord, unique(all_zoops_nmds$year), kind = "s
                                  spiders = FALSE, ellipse = FALSE,
                                  label = FALSE, hull = FALSE, 
                                  plot = FALSE, pt.size=NA) 
-plot1 <- year1$plot + geom_point() + theme_bw() + xlim(c(-0.55,0.55)) +
-  geom_text(data = year1$df_mean.ord, 
+plot1 <- year1_ss$plot + geom_point() + theme_bw() +
+  geom_text(data = year1_ss$df_mean.ord, 
             aes(x, y, label = as.factor(Group),
                 color = as.factor(Group)), 
             size = 4) + ylim(c(-0.5,0.5)) +
@@ -279,11 +297,11 @@ year2_ss <- ggordiplots::gg_ordiplot(ord, unique(all_zoops_nmds$year), kind = "s
                                   spiders = FALSE, ellipse = FALSE,
                                   label = FALSE, hull = FALSE, 
                                   plot = FALSE, pt.size=NA) 
-plot2 <- year2$plot + theme_bw() + xlim(c(-0.55,0.55)) +
-  geom_text(data = year2$df_mean.ord, 
+plot2 <- year2_ss$plot + theme_bw() + 
+  geom_text(data = year2_ss$df_mean.ord, 
             aes(x, y, label = as.factor(Group),
-                     color = as.factor(Group)), 
-            size = 4) + ylim(c(-0.5,0.5)) +
+                     color = as.factor(Group)), size = 4) +
+  ylim(c(-0.5,0.5)) +
   theme(text = element_text(size=14), 
         axis.text = element_text(size=7, color="black"), 
         axis.text.x = element_text(vjust = 0.5), 
@@ -461,7 +479,8 @@ scores <- data.frame(ef$vectors$arrows * sqrt(ef$vectors$r),
 #scale arrows by significance
 min_mult <- 0.3  # shorter arrows for non-significant variables
 scores$sig_mult <- ifelse(scores$pvals <= 0.05, 1, min_mult)
-scores[, c("NMDS1", "NMDS3")] <- scores[, c("NMDS1", "NMDS3")] * scores$sig_mult
+scores[, c("NMDS1", "NMDS3")] <- scores[, c("NMDS1", "NMDS3")] * scores$sig_mult * 0.5
+#halving the vectors to make them fit on the plot better
 
 #extract site scores
 sites_scores <- as.data.frame(vegan::scores(NMDS_bray_first, 
@@ -499,7 +518,7 @@ zoops_plus_drivers_yearly <- zoops_plus_drivers |>
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,2),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(13:30)])
+fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(12:29)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -522,7 +541,7 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
         legend.position = "none",
-        plot.margin = unit(c(0,-1,0,-2), 'lines'),
+        plot.margin = unit(c(0,1.3,0,0), 'lines'),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
   guides(color = guide_legend(nrow=1, override.aes = list(
@@ -535,18 +554,17 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
   geom_segment(data = scores,
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
-  geom_segment(data = scores[scores$env %in% c("epi TP"),],
+  geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS2, label = env), 
                   size = 1.5, box.padding = 0.2, max.overlaps=Inf)
 
-
 #axis 1 vs. 3
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,3),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(13:30)])
+fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(12:29)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -568,8 +586,10 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
         legend.position = "right",
-        plot.margin = unit(c(0,0,0,-2), 'lines'),
-        legend.margin = margin(-10,-10,-10,-10),
+        legend.key.width =unit(0.1,"line"),
+        plot.margin = unit(c(0,0.1,0,-1), 'lines'),
+        legend.margin = margin(0,0,0,0),
+        legend.spacing = unit(-0.5, 'cm'),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
   guides(color = guide_legend(override.aes = list(
@@ -582,12 +602,12 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
   geom_segment(data = scores,
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
-  geom_segment(data = scores[scores$env %in% c("Schmidt stability", 
-                                                "hypo temp", "Secchi depth"),],
+  geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
   geom_text_repel(data = scores, aes(x = NMDS1, y = NMDS3, label = env), 
                   size = 1.5, box.padding = 0.2, max.overlaps=Inf)
 
-ggpubr::ggarrange(env_plot1,env_plot2,ncol=2, common.legend = F)
+ggpubr::ggarrange(env_plot1, env_plot2, ncol=2, common.legend = F)
 #ggsave("Figures/second_stage_NMDS_envfit.jpg", width=6, height=3)
+
