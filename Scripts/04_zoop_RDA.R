@@ -12,7 +12,7 @@ all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE)
 #list of all taxa
 taxa <- unique(all_zoops_dens$Taxon)
 
-#taxa as cols, dates as rows 
+#taxa as cols, dates as rows (n = 85)
 all_zoops <- all_zoops_dens |> 
   select(DateTime, Taxon, dens) |> 
   filter(Taxon %in% taxa) |> 
@@ -31,21 +31,20 @@ all_zoops <- all_zoops_dens |>
             Ploima = mean(Ploima),
             Polyarthra = mean(Polyarthra)) |> 
   ungroup() |>
-  filter(!month(DateTime) %in% c(3,12), #removing edge months with low sample size bc could not be imputed
-         !DateTime %in% c(as.Date("2019-07-25"), as.Date("2016-08-04"))) #dropping second msn obs
-
+  filter(!month(DateTime) %in% c(3,12)) #removing edge months with low sample size bc could not be imputed
+        
 #select only data cols
 zoops_dens <- all_zoops |> select(Bosmina:Polyarthra)
 
 #hellinger transform data
 zoop_dens_trans <- labdsv::hellinger(zoops_dens)
 
-#list of dates to match up with env data (n=68)
+#list of dates to match up with env data (n=85)
 dates <- unique(all_zoops$DateTime)
 
 #read in env drivers
 env_drivers <- read.csv("Output/all_drivers.csv") |>
-  dplyr::select(-c(secchi, Total_ugL, AirTemp, Longwave, Temp_C_epi)) 
+  dplyr::select(-c(Total_ugL, AirTemp, Longwave, Temp_C_epi)) 
 #too many NAs that could not be imputed for secchi; total VIF too high
 
 # Make sure the rows match between predictors and responses
@@ -64,8 +63,8 @@ rda_model <- rda(zoop_dens_trans ~ ., data = all_drivers_num)
 #next see whether env vars are colinear (VIF>5)
 vif.cca(rda_model) #dropping epi temp, air temp, longwave, and total bc VIF > 7
 
-# ~40%% of total zooplankton variation is explained by env variables (0.1185/0.2964)
-# ~60% is unexplained (0.1779/0.2964)
+# 42% of total zooplankton variation is explained by env variables (0.1236/0.2945)
+# 58% is unexplained (0.1709/0.2945)
 summary(rda_model)
 
 # ANOVA to test significance
@@ -74,7 +73,7 @@ anova(rda_model, by = "axis", permutations = 999)
 
 #term
 rda_anova <- anova(rda_model, by = "term", permutations = 999)
-#hypo tn, epi and hypo tp, hypo temp, epi DO, wl, ss, and green are significant drivers of zoop community structure
+#hypo tn, epi tp, hypo temp, epi DO, wl, ss, secchi, and brown are significant drivers of zoop community structure
 
 # Site (sample) scores
 site_scores <- vegan::scores(rda_model, display = "sites", choices = c(1,2)) |>
@@ -100,27 +99,17 @@ env_scores <- vegan::scores(rda_model, display = "bp", choices = c(1,2)) |>
 
 ggplot() +
   geom_point(data = site_scores, aes(x = RDA1, y = RDA2, color=year), size = 2) +
-  scale_color_manual(values = year_cols) + 
+  scale_color_manual(values = year_cols, name = NULL) + 
   ggnewscale::new_scale_color() +
-  geom_segment(data = env_scores, 
-               aes(x = 0, y = 0, xend = RDA1_end, yend = RDA2_end, color = Significant),
+  geom_segment(data = env_scores |> filter(Significant == "yes"), 
+               aes(x = 0, y = 0, xend = RDA1_end, yend = RDA2_end), color = "black",
                arrow = arrow(length = unit(0.3,"cm")), show.legend = FALSE) +
-  #geom_text_repel(data = env_scores, 
-  #                aes(x = RDA1_end, y = RDA2_end, label = Env),
-  #               color = ifelse(env_scores$Significant == "yes", "red", "grey50"),
-  #                size = 3) +
-  geom_text(data = env_scores, 
+  geom_text_repel(data = env_scores |> filter(Significant == "yes"), 
             aes(x = RDA1_end, y = RDA2_end, label = variable),
-            color = ifelse(env_scores$Significant == "yes", "black", "grey85"),
-            size = 2, vjust = -0.5, show.legend = FALSE) +
-  geom_text(data = env_scores, 
-            aes(x = RDA1_end, y = RDA2_end, label = variable),
-            color = "black",
-            size = 2, vjust = -0.5, show.legend = FALSE) +
-  scale_color_manual(values = c("yes" = "black", "no" = "grey85")) +
+            color =  "black", size = 2, vjust = -0.5, show.legend = FALSE) +
   xlab(paste0("RDA1 (", round(summary(rda_model)$cont$importance[2,1]*100,1), "%)")) +
   ylab(paste0("RDA2 (", round(summary(rda_model)$cont$importance[2,2]*100,1), "%)")) +
-  theme_minimal() +
+  theme_minimal() + 
   theme(text = element_text(size=10, color = "black"), 
         legend.position = "right",
         axis.text = element_text(size=6, color="black"), 
@@ -133,10 +122,10 @@ ggplot() +
 #ggsave("Figures/zoop_RDA.jpg", width=5, height=4) 
 
 #now see how much variation the 4 sig env vars make up
-rda_model_sig <- rda(zoop_dens_trans ~ TN_ugL_hypo + TP_ugL_epi + TP_ugL_hypo + 
+rda_model_sig <- rda(zoop_dens_trans ~ TN_ugL_hypo + TP_ugL_epi +
                        Temp_C_hypo + DO_mgL_epi + waterlevel + SS +
-                       Green_ugL + Brown_ugL,
+                       secchi + Brown_ugL,
                  data = all_drivers_num)
 
 # Overall RDA results
-summary(rda_model_sig) #these vars explain 30.4% of the total variation (0.09/0.296)
+summary(rda_model_sig) #these vars explain 31% of the total variation (0.09/0.295)

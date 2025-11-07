@@ -14,8 +14,7 @@ zoop <- read.csv("Output/all_zoops_dens.csv")
   zoop_dates <- unique(zoop$DateTime)
 
 #dataframe with all zoop dates
-all_dates_df <- data.frame(DateTime = as.Date(zoop_dates)) |>
-  filter(!DateTime %in% c(as.Date("2019-07-25"), as.Date("2016-08-04"))) 
+all_dates_df <- data.frame(DateTime = as.Date(zoop_dates))
 #just gonna keep the first MSN obs
 
 #read in ctd (200.14)
@@ -29,11 +28,8 @@ ctd <-read.csv(infile1,header=T) |>
            Depth_m > 0 & Site ==50 & Reservoir %in% c("BVR"),
          !is.na(Temp_C)) |> 
   select(Reservoir, Site, Depth_m, DateTime,
-         Temp_C, DO_mgL) |> #removing chl a bc fp and ctd aren't so comparable so can't fill in missing days
-  mutate(DateTime = if_else(DateTime %in% as.Date("2019-07-24"), 
-                            as.Date("2019-07-25"),
-                            if_else(DateTime %in% as.Date("2020-08-12"),
-                                    as.Date("2020-08-13"), DateTime)))
+         Temp_C, DO_mgL)  #removing chl a bc fp and ctd aren't so comparable so can't fill in missing days
+
   
 #sub missing ctd data with ysi data (198.12)
 inUrl1  <-  "https://pasta.lternet.edu/package/data/eml/edi/198/12/e0181372c6d4cbc66eca4644f8385470" 
@@ -46,9 +42,7 @@ ysi <- read.csv(infile1,header=T) |>
            Depth_m > 0 &
            Site ==50 & Reservoir %in% c("BVR")) |> 
   select(Reservoir, Site, DateTime, Depth_m, 
-         Temp_C, DO_mgL) |>
-  mutate(DateTime = if_else(DateTime %in% as.Date("2016-08-04"), 
-                            as.Date("2016-08-03"), DateTime)) #replace datetime to match zoop date (ctd profile for the day after)
+         Temp_C, DO_mgL) 
 
 #select every 0.5m from casts for thermocline calc below
 ctd_final_temp_do <- ctd |>
@@ -277,22 +271,23 @@ nearest_df <- data.frame(
   nearest_available = nearest_dates) |>
   mutate(diff = abs(as.numeric(nearest_available - missing_date)),
          replacement_date = ifelse(diff <= 7, nearest_available, as.Date(NA)),
-         replacement_date = as.Date(replacement_date))
+         replacement_date = as.Date(replacement_date)) 
 
-replacement_secchi <- nearest_df |>
-  filter(!is.na(replacement_date)) |>
-  left_join(secchi, by = c("replacement_date" = "DateTime")) |>
-  mutate(DateTime = missing_date) |> #overwrite datetime to match the zoop date
-  select(-replacement_date, -diff, -missing_date, -nearest_available)
+#can't replace with closest date bc these dates already correspond with zoop samples
+#replacement_secchi <- nearest_df |>
+#  filter(!is.na(replacement_date)) |>
+#  left_join(secchi, by = c("replacement_date" = "DateTime")) |>
+#  mutate(DateTime = missing_date) |> #overwrite datetime to match the zoop date
+#  select(-replacement_date, -diff, -missing_date, -nearest_available)
 
 #combine dfs
-secchi_filled <- bind_rows(secchi, replacement_secchi) |>
-  arrange(DateTime)
+#secchi_filled <- bind_rows(secchi, replacement_secchi) |>
+#  arrange(DateTime)
 
 # Left join the combined data to include all dates
-secchi_filled <- all_dates_df |>
-  left_join(secchi_filled, by = c("DateTime")) |>
-  arrange(DateTime)
+#secchi_filled <- all_dates_df |>
+#  left_join(secchi_filled, by = c("DateTime")) |>
+#  arrange(DateTime)
 
 #------------------------------------------------------------------------------#
 #read in nldas met data
@@ -349,20 +344,21 @@ nearest_df <- data.frame(
          replacement_date = ifelse(diff <= 7, nearest_available, as.Date(NA)),
          replacement_date = as.Date(replacement_date))
 
-replacement_fp <- nearest_df |>
-  filter(!is.na(replacement_date)) |>
-  left_join(fp, by = c("replacement_date" = "DateTime")) |>
-  mutate(DateTime = missing_date) |> #overwrite datetime to match the zoop date
-  select(-replacement_date, -diff, -missing_date, -nearest_available)
+#can't replace with closest date bc these dates already correspond with zoop samples
+#replacement_fp <- nearest_df |>
+#  filter(!is.na(replacement_date)) |>
+#  left_join(fp, by = c("replacement_date" = "DateTime")) |>
+#  mutate(DateTime = missing_date) |> #overwrite datetime to match the zoop date
+#  select(-replacement_date, -diff, -missing_date, -nearest_available)
 
 #combine dfs
-fp_filled <- bind_rows(fp, replacement_fp) |>
-  arrange(DateTime)
+#fp_filled <- bind_rows(fp, replacement_fp) |>
+#  arrange(DateTime)
 
 # Left join the combined data to include all dates
-fp_filled <- all_dates_df |>
-  left_join(fp_filled, by = c("DateTime")) |>
-  arrange(DateTime)
+#fp_filled <- all_dates_df |>
+#  left_join(fp_filled, by = c("DateTime")) |>
+#  arrange(DateTime)
 
 #------------------------------------------------------------------------------#
 #now merge all vars
@@ -373,8 +369,8 @@ all_drivers <- all_dates_df |>
   left_join(ctd_thermo_depth, by = "DateTime") |>
   left_join(ctd_oxy_depth, by = "DateTime") |>
   left_join(physics, by = "DateTime") |>
-  left_join(fp_filled, by = "DateTime") |>
-  left_join(secchi_df, by = "DateTime") |>
+  left_join(fp, by = "DateTime") |>
+  left_join(secchi, by = "DateTime") |>
   left_join(nldas, by = "DateTime") |>
   mutate(across(where(is.numeric), ~ifelse(is.nan(.x), NA, .x))) 
   
