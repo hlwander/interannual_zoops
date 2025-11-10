@@ -146,7 +146,7 @@ zoops_post <- zoops_2019_2023 |>
   mutate(DateTime = as.Date(DateTime)) |> 
   group_by(Reservoir, DateTime, StartDepth_m, Taxon) |> 
   summarise(dens = mean(Density_IndPerL),
-            sd = sd(Density_IndPerL))
+            sd = sd(Density_IndPerL), .groups = "drop")
 
 #combine all zoop data
 all_zoops <- bind_rows(zoops_pre, zoops_post) |> 
@@ -184,26 +184,33 @@ zoops_10_groups <- all_zoops |>
                names_to = c("Taxon", ".value"),
                names_sep="_" )  |> 
   mutate(total = sum(avg, na.rm=T)) |> ungroup() |> 
-  mutate(p_dens = avg / total)
+  mutate(p_dens = avg / total,
+  year = year(DateTime),
+         month = month(DateTime),
+         day   = day(DateTime),
+         pseudoDate = as.Date(sprintf("2000-%02d-%02d", month, day))) |>
+  select(-day)
 
 #order zoops by group
 zoops_10_groups$Taxon <- factor(zoops_10_groups$Taxon, 
                                 levels=c("Bosmina", "Daphnia","Cyclopoida",
                                          "Nauplii","Conochiloides",
                                          "Conochilus","Kellicottia","Keratella",
-                                         "Ploima","Polyarthra"))
+                                         "Ploima","Polyarthra")) 
 
 #shaded line plot - raw density (Manuscript Figure 2)
-ggplot(data = subset(zoops_10_groups, month(DateTime) %in% c(5:10)),
-       aes(x=DateTime, y = avg, color=Taxon)) +
+ggplot(data = zoops_10_groups|> filter(month %in% c(4:11)),
+       aes(x=pseudoDate, y = avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
             position = "stack", stat = "identity") +
-  facet_wrap(~year(DateTime), scales = "free")+
+  facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals(
     "DeathValley", 14, direction=-1)[c(1,3,5,7,9:14)]) +
   scale_fill_manual(values = NatParksPalettes::natparks.pals(
     "DeathValley", 14, direction=-1)[c(1,3,5,7,9:14)]) +
-  scale_x_date(expand = c(0,0)) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b",
+              # limits = as.Date(c("2000-04-01", "2000-11-30")),
+               expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0))+
   xlab("") + ylab("Density (ind/L)") +
   guides(color= "none", fill = guide_legend(nrow=4)) +

@@ -428,7 +428,7 @@ zoops_plus_drivers <- bind_cols(all_zoops_nmds, env_drivers[
 env_drivers_only <- env_drivers |> dplyr::select(-c(month,year,DateTime))
 
 # run envfit (use permutations if you want p-values)
-set.seed(42)
+set.seed(3)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
                        choices = c(1,2),type = "n")
 ef <- envfit(ord, env_drivers_only, permutations = 999, na.rm = TRUE)
@@ -475,7 +475,7 @@ ggpubr::ggarrange(year_with_env_12, month_with_env_12, ncol=2, common.legend = F
 # same for axis 3 vs 1
 
 # run envfit (use permutations if you want p-values)
-set.seed(42)
+set.seed(3)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
                        choices = c(1,3),type = "n")
 ef <- envfit(ord, env_drivers_only, permutations = 999, na.rm = TRUE)
@@ -617,9 +617,6 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
                      label=c("2014","2015","2016",
                              "2019","2020","2021","2023")) +
   xlim(-0.7,0.9) + ylim(-1,0.9) +
-  #geom_segment(data = scores,
-  #             aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
-  #             arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
   geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
@@ -630,5 +627,46 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
 ggpubr::ggarrange(env_plot1, env_plot2, ncol=2, common.legend = F)
 #ggsave("Figures/second_stage_NMDS_envfit.jpg", width=6, height=3)
 
-# PERMANOVA?? permutation test???
+#---------------------------------------------------------------------------
+# SIGNIFICANCE TESTS --> Is zoop community structure different among years?
+
+#check assumptions
+dist_bray <- vegdist(zoop_dens_trans_all, method = "bray")
+bd_year <- betadisper(dist_bray, group = all_zoops_nmds$year)
+plot(bd_year)           
+permutest(bd_year, permutations = 999) #dispersion is similar
+
+set.seed(3)
+adonis2(zoop_bray_first ~ year, data = all_zoops_nmds, 
+        permutations = 999, by = "margin") #not sig
+
+#same for SS NMDS
+year_df <- data.frame(year = as.integer(rownames(zoop_bray_second)))
+
+#look at SS pairwise year correlations
+mean(correlation_matrix[lower.tri(correlation_matrix)])
+
+# Assign names to the list of matrices
+names(matrices) <- c("2014","2015","2016","2019","2020","2021","2023")
+
+year_pairs <- combn(names(matrices), 2, simplify = FALSE)
+cor_summary <- sapply(year_pairs, function(p) {
+  i <- which(names(matrices) == p[1])
+  j <- which(names(matrices) == p[2])
+  correlation_matrix[i,j]
+})
+names(cor_summary) <- sapply(year_pairs, paste, collapse = "_vs_")
+cor_summary # 2019 and 2020 have most similar summer mean dispersion
+
+#test within-year variability
+# Make a factor of year per row in your community matrix
+year_factor <- monthly_zoops_nmds$year
+
+# Bray–Curtis distances on Hellinger-transformed data
+dist_matrix <- vegdist(zoop_dens_trans, method = "bray")
+
+# test homogeneity of dispersion
+disp <- betadisper(dist_matrix, year_factor)
+anova(disp) #not significant so dispersion is homogenous
+boxplot(disp)
 

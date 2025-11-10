@@ -1,7 +1,7 @@
 # Redundancy analysis for all BVR zoop data 2014-2021
 
-pacman::p_load(vegan, tidyr, data.table, lubridate,
-               rLakeAnalyzer, car, ggnewscale, dplyr)
+pacman::p_load(vegan, tidyr, data.table, lubridate, tibble, ggrepel,
+               rLakeAnalyzer, car, ggnewscale, dplyr, ggplot2, patchwork)
 
 year_cols <- c("#011f51","#06889b","#2E8B57","#fdfa66","#facd60","#f44034","#a13637")
 # 2014, 2015, 2016, 2019, 2020, 2021, 2023
@@ -58,74 +58,171 @@ dca <- decorana(zoop_dens_trans)
 all_drivers_num <- env_drivers[ , !names(env_drivers) %in% c("DateTime")]
 
 # Run the RDA
-rda_model <- rda(zoop_dens_trans ~ ., data = all_drivers_num)
+rda_mod <- rda(zoop_dens_trans ~ ., data = all_drivers_num)
 
 #next see whether env vars are colinear (VIF>5)
-vif.cca(rda_model) #dropping epi temp, air temp, longwave, and total bc VIF > 7
+vif.cca(rda_mod) #dropping epi temp, air temp, longwave, and total bc VIF > 7
 
 # 42% of total zooplankton variation is explained by env variables (0.1236/0.2945)
 # 58% is unexplained (0.1709/0.2945)
-summary(rda_model)
+summary(rda_mod)
 
 # ANOVA to test significance
-anova(rda_model, by = "axis", permutations = 999) 
+anova_rda_axis <- anova(rda_mod, by = "axis", permutations = 999) 
 #RDA1 and RDA2 explain a significant fraction of the variance!
 
 #term
-rda_anova <- anova(rda_model, by = "term", permutations = 999)
+anova_rda_term <- anova(rda_mod, by = "term", permutations = 999)
 #hypo tn, epi tp, hypo temp, epi DO, wl, ss, secchi, and brown are significant drivers of zoop community structure
 
-# Site (sample) scores
-site_scores <- vegan::scores(rda_model, display = "sites", choices = c(1,2)) |>
-  as.data.frame() |>
-  mutate(year = format(all_zoops$DateTime, "%Y"))
+# envfit to get arrow directions and p-values (uses same predictor table)
+envfit_rda <- envfit(rda_mod, all_drivers_num, permutations = 999)
 
-# Species scores
-species_scores <- vegan::scores(rda_model, display = "species", choices = c(1,2)) |>
-  as.data.frame() |>
-  rownames_to_column(var = "Species")
+#------------------------------------------------------------------------------#
+#now db rda
+cap_mod <- capscale(zoop_dens_trans ~ ., data = all_drivers_num, 
+                    distance = "bray")
 
-# List of significant drivers from anova(rda_model, by="term")
-sig_drivers <- rownames(rda_anova)[!is.na(rda_anova$`Pr(>F)`) & 
-                                     rda_anova$`Pr(>F)` < 0.05]
+#permutation anovas to test sig
+anova(cap_mod, by = "axis", permutations = 999)
+anova(cap_mod, by = "term", permutations = 999)
+#only axis 1 is sig
+#sig drivers: TN epi and hypo, TP epi, hypo temp, epi DO, wl, ss, bluegreen, brown, secchi
 
-# Environmental (biplot) scores
-env_scores <- vegan::scores(rda_model, display = "bp", choices = c(1,2)) |>
-  as.data.frame() |>
-  rownames_to_column(var = "variable") |>
-  mutate(Significant = ifelse(variable %in% sig_drivers, "yes", "no"),
-         RDA1_end = RDA1 * 2, #multiply arrows by a constant for visibility
-         RDA2_end = RDA2 * 2)
+cap_R2 <- RsquareAdj(cap_mod)$r.squared
+cap_R2adj <- RsquareAdj(cap_mod)$adj.r.squared
 
-ggplot() +
-  geom_point(data = site_scores, aes(x = RDA1, y = RDA2, color=year), size = 2) +
-  scale_color_manual(values = year_cols, name = NULL) + 
-  ggnewscale::new_scale_color() +
-  geom_segment(data = env_scores |> filter(Significant == "yes"), 
-               aes(x = 0, y = 0, xend = RDA1_end, yend = RDA2_end), color = "black",
-               arrow = arrow(length = unit(0.3,"cm")), show.legend = FALSE) +
-  geom_text_repel(data = env_scores |> filter(Significant == "yes"), 
-            aes(x = RDA1_end, y = RDA2_end, label = variable),
-            color =  "black", size = 2, vjust = -0.5, show.legend = FALSE) +
-  xlab(paste0("RDA1 (", round(summary(rda_model)$cont$importance[2,1]*100,1), "%)")) +
-  ylab(paste0("RDA2 (", round(summary(rda_model)$cont$importance[2,2]*100,1), "%)")) +
-  theme_minimal() + 
-  theme(text = element_text(size=10, color = "black"), 
-        legend.position = "right",
-        axis.text = element_text(size=6, color="black"), 
-        axis.text.x = element_text(vjust = 0.5), 
-        axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
-        strip.background = element_rect(fill = "transparent"), 
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(color = "black", fill = NA, size = 0.5)) 
-#ggsave("Figures/zoop_RDA.jpg", width=5, height=4) 
+envfit_cap <- envfit(cap_mod, all_drivers_num, permutations = 999)
 
-#now see how much variation the 4 sig env vars make up
-rda_model_sig <- rda(zoop_dens_trans ~ TN_ugL_hypo + TP_ugL_epi +
-                       Temp_C_hypo + DO_mgL_epi + waterlevel + SS +
-                       secchi + Brown_ugL,
-                 data = all_drivers_num)
+# extract site scores
+rda_sites <- vegan::scores(rda_mod, display = "sites", 
+                           choices = 1:2, scaling = 2) |> as.data.frame()
+cap_sites <- vegan::scores(cap_mod, display = "sites", 
+                           choices = 1:2, scaling = 2) |> as.data.frame()
 
-# Overall RDA results
-summary(rda_model_sig) #these vars explain 31% of the total variation (0.09/0.295)
+#extract species
+rda_species <- vegan::scores(rda_mod, display = "species", 
+                             choices = 1:2, scaling = 2) |> 
+  as.data.frame() |> rownames_to_column("Taxon")
+cap_species <- vegan::scores(cap_mod, display = "species", 
+                             choices = 1:2, scaling = 2) |> 
+  as.data.frame() |> rownames_to_column("Taxon") |>
+  rename(RDA1 = CAP1, RDA2 = CAP2)
+
+# rename columns consistently for plotting
+colnames(rda_sites)[1:2] <- c("RDA1","RDA2")
+colnames(cap_sites)[1:2] <- c("RDA1","RDA2")
+
+# add year for plotting
+rda_sites <- rda_sites |> rownames_to_column("Sample") |> 
+  mutate(Year = format(all_zoops$DateTime, "%Y"))
+cap_sites <- cap_sites |> rownames_to_column("Sample") |> 
+  mutate(Year = format(all_zoops$DateTime, "%Y"))
+
+# ensure same row order
+stopifnot(nrow(rda_sites) == nrow(cap_sites))
+
+#are db and normal rda ordinations similar? yes
+pro <- procrustes(rda_sites[,c("RDA1","RDA2")], cap_sites[,c("RDA1","RDA2")])
+# RMSE of 0.104 is small relative to the ordination x-y ranges, so similar ordinations
+
+protest_res <- protest(rda_sites[,c("RDA1","RDA2")], cap_sites[,c("RDA1","RDA2")], 
+                       permutations = 999)
+#signifiucant procrustus correlation (0.9734) so ordinations are similar
+
+# envfit
+env_vec_rda <- as.data.frame(vegan::scores(envfit_rda, display = "vectors")) |> 
+  rownames_to_column("variable") |> 
+  mutate(Significant = ifelse(variable %in% rownames(anova_rda_term)[
+    which(anova_rda_term$`Pr(>F)` < 0.05)], "yes", "no"),
+         RDA1_end = RDA1 * 2, RDA2_end = RDA2 * 2)
+
+env_vec_cap <- as.data.frame(vegan::scores(envfit_cap, display = "vectors")) |> 
+  rownames_to_column("variable") |> 
+  rename(RDA1 = CAP1, RDA2 = CAP2) |>
+  mutate(Significant = ifelse(variable %in% rownames(anova_cap_term)[
+    which(anova_cap_term$`Pr(>F)` < 0.05)], "yes", "no"),
+    RDA1_end = RDA1 * 2, RDA2_end = RDA2 * 2)
+
+# round percentages and define axis labels
+rda_pct1 <- round(summary(rda_mod)$cont$importance[2,1] * 100, 1)
+rda_pct2 <- round(summary(rda_mod)$cont$importance[2,2] * 100, 1)
+cap_pct1 <- round(summary(cap_mod)$cont$importance[2,1] * 100, 1)
+cap_pct2 <- round(summary(cap_mod)$cont$importance[2,2] * 100, 1)
+
+all_x <- c(rda_sites$RDA1, cap_sites$RDA1)
+all_y <- c(rda_sites$RDA2, cap_sites$RDA2)
+xlim <- range(all_x, na.rm = TRUE) * 1.1
+ylim <- range(all_y, na.rm = TRUE) * 1.1
+
+# plotting function
+make_plot <- function(sites_df, species_df, env_df, xlab_text, ylab_text) {
+  ggplot() +
+    geom_point(data = sites_df, aes(x = RDA1, y = RDA2, color = Year), size = 2) +
+    scale_color_manual(values = year_cols, name = NULL,
+                       guide = guide_legend(nrow = 1, byrow = TRUE, 
+                                            override.aes = list(size = 3))) +
+    geom_segment(data = env_df |> filter(Significant == "yes"),
+                 aes(x = 0, y = 0, xend = RDA1_end, yend = RDA2_end),
+                 arrow = arrow(length = unit(0.25, "cm")), color = "black") +
+    geom_text_repel(data = env_df |> filter(Significant == "yes"),
+                    aes(x = RDA1_end, y = RDA2_end, label = variable),
+                    size = 2, color = "black", box.padding = 0.25, 
+                    point.padding = 0.25, max.overlaps = 30, force = 1) +
+    geom_segment(data = species_df,
+                 aes(x = 0, y = 0, xend = RDA1 * 2, yend = RDA2 * 2),
+                 arrow = arrow(length = unit(0.2, "cm")),
+                 color = "darkred", alpha = 0.8) +
+    geom_text_repel(data = species_df,
+                    aes(x = RDA1 * 2, y = RDA2 * 2, label = Taxon),
+                    size = 2, color = "darkred",
+                    box.padding = 0.25, point.padding = 0.2, 
+                    max.overlaps = 30, force = 1) +
+    xlab(xlab_text) + ylab(ylab_text) + theme_minimal() +
+    theme(text = element_text(size = 10),
+          axis.text = element_text(size = 6),
+          legend.position = "top", panel.grid = element_blank(),
+          panel.border = element_rect(color = "black", fill = NA, size = 0.5))}
+
+p_rda <- make_plot(rda_sites, rda_species, env_vec_rda,
+                   xlab_text = paste0("RDA1 (", rda_pct1, "%)"),
+                   ylab_text = paste0("RDA2 (", rda_pct2, "%)"))
+
+p_cap <- make_plot(cap_sites, cap_species, env_vec_cap,
+                   xlab_text = paste0("dbRDA1 (", cap_pct1, "%)"),
+                   ylab_text = paste0("dbRDA2 (", cap_pct2, "%)"))
+
+# combine side-by-side
+(p_rda + p_cap) + plot_layout(guides = "collect") & 
+  theme(legend.position = "top") 
+#ggsave("Figures/zoop_RDA_vs_dbRDA.jpg", width=5, height=4) 
+
+#variation partitioning over significant drivers
+sig_drivers_rda <- env_vec_rda$variable[env_vec_rda$Significant=="yes"]
+sig_drivers_dbrda <- env_vec_cap$variable[env_vec_cap$Significant=="yes"]
+
+# Function to calculate % variance explained by each variable
+partial_rda_var <- function(drivers, comm, env_data) {
+  results <- data.frame(variable = drivers, R2adj = NA, p = NA)
+  
+  for (var in drivers) {
+    cond_vars <- setdiff(drivers, var)
+    X <- env_data[, var, drop = FALSE]
+    Z <- if(length(cond_vars) > 0) env_data[, cond_vars, drop = FALSE] else NULL
+    
+    partial <- rda(comm, X, Z)
+    an <- anova(partial)
+    
+    # adjusted R^2
+    results[results$variable == var, "R2adj"] <- RsquareAdj(partial)$adj.r.squared
+    results[results$variable == var, "p"] <- an$`Pr(>F)`[1]
+  }
+  return(results)
+}
+
+# RDA
+rda_varpart <- partial_rda_var(sig_drivers_rda, zoop_dens_trans, all_drivers_num)
+
+# dbRDA
+dbrda_varpart <- partial_rda_var(sig_drivers_dbrda, zoop_dens_trans, all_drivers_num)
+
