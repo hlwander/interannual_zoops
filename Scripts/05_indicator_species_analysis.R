@@ -17,16 +17,12 @@ zoop_dens_trans <- read.csv("Output/zoop_dens_trans.csv", header=TRUE)
 
 indval <- multipatt(zoop_dens_trans, year, control = how(nperm=999))
 summary(indval)
-# 3 taxa were significantly associated with certain combinations of years
-# Ploima is a strong indicator of 2023                           p = 0.001
-# Conochiloides characterizes later years (2020, 2021, 2023)     p = 0.001
-# Bosmina is more typical of 2014, 2019, 2020, 2021, 2023.       p = 0.007
+# only bosmina is significantly associated with certain combinations of years
+# 2014+2020+2021+2023
 
 #create a table summarizing this
 indicators <- list(
-  "Ploima" = c(2023),
-  "Conochiloides" = c(2020, 2021, 2023),
-  "Bosmina" = c(2014, 2019, 2020, 2021, 2023))
+  "Bosmina" = c(2014, 2020, 2021, 2023))
 
 zoop_dens_trans <- zoop_dens_trans |> mutate(rowid = row_number()) |> 
                    left_join(zoop_dens |> select(DateTime, year, month) |>

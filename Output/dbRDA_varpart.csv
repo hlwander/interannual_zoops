@@ -1,0 +1,9 @@
+"variable","R2adj","p"
+"TN_ugL_hypo",-0.001,0.419
+"TP_ugL_epi",0.025,0.01
+"Temp_C_hypo",0.004,0.213
+"DO_mgL_epi",0.013,0.043
+"therm_depth",-0.001,0.471
+"SS",0.033,0.003
+"Brown_ugL",0.017,0.029
+"secchi",0.027,0.007

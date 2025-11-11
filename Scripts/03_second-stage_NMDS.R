@@ -16,7 +16,7 @@ taxa <- unique(all_zoops_dens$Taxon)
 
 #taxa as cols, dates as rows, average by month
 all_zoops_nmds <- all_zoops_dens |> 
-  select(DateTime, Taxon, dens) |> 
+  dplyr::select(DateTime, Taxon, dens) |> 
   filter(Taxon %in% taxa) |> 
   mutate(DateTime = as.Date(DateTime)) |> 
   pivot_wider(names_from = Taxon, values_from = dens) |> 
@@ -28,10 +28,8 @@ all_zoops_nmds <- all_zoops_dens |>
             Cyclopoida = mean(Cyclopoida),
             Nauplii = mean(Nauplii),
             Conochilus = mean(Conochilus),
-            Conochiloides = mean(Conochiloides),
             Keratella = mean(Keratella),
             Kellicottia = mean(Kellicottia),
-            Ploima = mean(Ploima),
             Polyarthra = mean(Polyarthra)) |> 
   ungroup() |>
   mutate(year = year(DateTime),
@@ -62,7 +60,7 @@ set.seed(11)
 NMDS_bray_first <- vegan::metaMDS(zoop_bray_first, distance='bray', k=3, trymax=20, 
                                   autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_first$stress
-# 0.14
+# 0.13
 
 #plot axis 2 vs. 1 (Supplemental Figure S3)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
@@ -82,16 +80,16 @@ year12 <- year12$plot + geom_point() + theme_bw() +
         legend.key.height=unit(0.3,"line"),
         legend.box.margin=margin(-10,-10,-10,-10),
         legend.margin=margin(-0,-0,-0,-0),
-        legend.direction = "vertical",
+        legend.direction = "horizontal",
         axis.text.x = element_text(vjust = 0.5), 
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
-        legend.position = c(0.22,0.15), 
+        legend.position = "top", 
         legend.spacing = unit(-0.5, 'cm'),
         plot.margin = unit(c(0,0.1,0,0), 'lines'),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
         legend.key.width =unit(0.1,"line")) +
-  guides(fill = guide_legend(ncol = 2)) +
+  guides(fill = guide_legend(nrow = 2)) +
   scale_fill_manual("",values=year_cols)+
   scale_color_manual("",values=year_cols,
                      label=c('2014','2015',"2016","2019","2020","2021","2023")) 
@@ -111,16 +109,16 @@ month12 <- month12$plot + geom_point() + theme_bw() +
         legend.key.height=unit(0.3,"line"),
         legend.box.margin=margin(-10,-10,-10,-10),
         legend.margin=margin(-0,-0,-0,-0),
-        legend.direction = "vertical",
+        legend.direction = "horizontal",
         axis.text.x = element_text(vjust = 0.5), 
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
-        legend.position = c(0.26,0.15),
+        legend.position = "top",
         legend.spacing = unit(-0.5, 'cm'),
         plot.margin = unit(c(0,0.1,0,0), 'lines'),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
         legend.key.width =unit(0.1,"line")) + guides(fill='none') +
-  guides(color = guide_legend(ncol = 2)) +
+  guides(color = guide_legend(nrow = 2)) +
   scale_fill_manual("",values=viridis::viridis(8, option="F"))+
   scale_color_manual("",values=viridis::viridis(8, option="F"),
                      label=c("April",'May',"June","July","August",
@@ -147,11 +145,11 @@ year13 <- year13$plot + geom_point() + theme_bw() +
         legend.key.height=unit(0.3,"line"),
         legend.box.margin=margin(-10,-10,-10,-10),
         legend.margin=margin(-0,-0,-0,-0),
-        legend.direction = "vertical",
+        legend.direction = "horizontal",
         axis.text.x = element_text(vjust = 0.5), 
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
-        legend.position = c(0.88,0.9), 
+        legend.position = "top", 
         legend.spacing = unit(-0.5, 'cm'),
         plot.margin = unit(c(0,0.1,0,0), 'lines'),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
@@ -176,11 +174,11 @@ month13 <- month13$plot + geom_point() + theme_bw() +
         legend.key.height=unit(0.3,"line"),
         legend.box.margin=margin(-10,-10,-10,-10),
         legend.margin=margin(-0,-0,-0,-0),
-        legend.direction = "vertical",
+        legend.direction = "horizontal",
         axis.text.x = element_text(vjust = 0.5), 
         axis.ticks.x = element_line(colour = c(rep("black",4), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
-        legend.position = c(0.16,0.89),
+        legend.position = "top",
         legend.spacing = unit(-0.5, 'cm'),
         plot.margin = unit(c(0,0.1,0,0), 'lines'),
         panel.grid.major = element_blank(),panel.grid.minor = element_blank(), 
@@ -206,10 +204,8 @@ monthly_zoops_nmds <- all_zoops_nmds |>
             Cyclopoida = mean(Cyclopoida),
             Nauplii = mean(Nauplii),
             Conochilus = mean(Conochilus),
-            Conochiloides = mean(Conochiloides),
             Keratella = mean(Keratella),
             Kellicottia = mean(Kellicottia),
-            Ploima = mean(Ploima),
             Polyarthra = mean(Polyarthra)) |> 
   ungroup() |>
   filter(month %in% c("05","06","07","08","09","10"), 
@@ -261,7 +257,8 @@ for (i in 1:(n-1)) {
   for (j in (i+1):n) {
     correlation_matrix[i, j] <- pairwise_correlation(matrices[[i]], matrices[[j]])
     correlation_matrix[j, i] <- correlation_matrix[i, j] # Since correlation is symmetric
-  }}
+  }
+  }
 
 # Set diagonal to 1 (correlation of a matrix with itself)
 diag(correlation_matrix) <- 1
@@ -272,7 +269,7 @@ set.seed(11)
 NMDS_bray_second <- vegan::metaMDS(correlation_matrix, distance='bray', k=3, trymax=20, 
                                    autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_second$stress
-# 0.09
+# 0.08
 
 #--------------------------------------------------------------------------#
 #NMDS plot - second-stage (Manuscript Figure 3)
@@ -335,8 +332,8 @@ ggpubr::ggarrange(plot1,plot2,ncol=2, common.legend = F)
 #ggsave("Figures/second_stage_NMDS_dens.jpg", width=6, height=3) 
 
 #create new df for export
-nmds1 <- data.frame("year" = c(2014,2015,2016,2019,2020,2021,2023),
-                    "nmds1" = ord$sites[,1])
+#nmds1 <- data.frame("year" = c(2014,2015,2016,2019,2020,2021,2023),
+#                    "nmds1" = ord$sites[,1])
 
 #export ss nmds1 for driver analysis
 #write.csv(nmds1,"Output/ss_nmds1.csv", row.names = F)
@@ -474,7 +471,7 @@ ggpubr::ggarrange(year_with_env_12, month_with_env_12, ncol=2, common.legend = F
 #----------------------------------------------------------------------------#
 # same for axis 3 vs 1
 
-# run envfit (use permutations if you want p-values)
+# run envfit 
 set.seed(3)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
                        choices = c(1,3),type = "n")
@@ -516,7 +513,7 @@ month_with_env_13 <- month13 +
                   size = 2) 
 
 ggpubr::ggarrange(year_with_env_13, month_with_env_13, ncol=2, common.legend = F)
-#ggsave("Figures/NMDS_3v1_all_dens_env.jpg", width=6, height=3) 
+#ggsave("Figures/NMDS_3v1_all_dens_env.jpg", width=6, height=4) 
 
 #---------------------------------------------------------------#
 # summarize by year
@@ -535,7 +532,7 @@ zoops_plus_drivers_yearly <- bind_cols(monthly_zoops_nmds, ss_env[
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,2),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(12:32)])
+fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(10:30)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -582,7 +579,7 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,3),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(12:32)])
+fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(10:30)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -638,7 +635,7 @@ permutest(bd_year, permutations = 999) #dispersion is similar
 
 set.seed(3)
 adonis2(zoop_bray_first ~ year, data = all_zoops_nmds, 
-        permutations = 999, by = "margin") #not sig
+        permutations = 999, by = "margin") #not sig, no year differences
 
 #same for SS NMDS
 year_df <- data.frame(year = as.integer(rownames(zoop_bray_second)))
@@ -656,7 +653,7 @@ cor_summary <- sapply(year_pairs, function(p) {
   correlation_matrix[i,j]
 })
 names(cor_summary) <- sapply(year_pairs, paste, collapse = "_vs_")
-cor_summary # 2019 and 2020 have most similar summer mean dispersion
+cor_summary # 2014 and 2021 have most similar summer mean dispersion
 
 #test within-year variability
 # Make a factor of year per row in your community matrix

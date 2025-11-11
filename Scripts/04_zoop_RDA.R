@@ -25,10 +25,8 @@ all_zoops <- all_zoops_dens |>
             Cyclopoida = mean(Cyclopoida),
             Nauplii = mean(Nauplii),
             Conochilus = mean(Conochilus),
-            Conochiloides = mean(Conochiloides),
             Keratella = mean(Keratella),
             Kellicottia = mean(Kellicottia),
-            Ploima = mean(Ploima),
             Polyarthra = mean(Polyarthra)) |> 
   ungroup() |>
   filter(!month(DateTime) %in% c(3,12)) #removing edge months with low sample size bc could not be imputed
@@ -63,17 +61,46 @@ rda_mod <- rda(zoop_dens_trans ~ ., data = all_drivers_num)
 #next see whether env vars are colinear (VIF>5)
 vif.cca(rda_mod) #dropping epi temp, air temp, longwave, and total bc VIF > 7
 
-# 42% of total zooplankton variation is explained by env variables (0.1236/0.2945)
-# 58% is unexplained (0.1709/0.2945)
+# 40.9% of total zooplankton variation is explained by env variables (0.1115/0.2730)
+# 59.1% is unexplained (0.1616/0.2730)
 summary(rda_mod)
 
 # ANOVA to test significance
 anova_rda_axis <- anova(rda_mod, by = "axis", permutations = 999) 
 #RDA1 and RDA2 explain a significant fraction of the variance!
+#this is raw canonical variance though not total variance
+
+axis_rda_df <- as.data.frame(anova_rda_axis) |>
+  rownames_to_column("axis") |>
+  rename(F_value = F, P_value = `Pr(>F)`) |>
+  mutate(axis = str_replace(axis, "^Axis ", "Axis_")) |>
+  filter(!axis %in% "Residual")  |>
+  dplyr::select(-c(Df,Variance)) |>
+  mutate(F_value = round(F_value, 2))
+
+#add %var explained by each axis
+eig <- eigenvals(rda_mod)
+axis_rda_df <- axis_rda_df |>
+  mutate(Variance_explained = round(100 * eig[1:nrow(axis_rda_df)] / sum(eig), 1))
+#write.csv(axis_rda_df, "Output/RDA_axis_ANOVA.csv", row.names=FALSE)
 
 #term
 anova_rda_term <- anova(rda_mod, by = "term", permutations = 999)
-#hypo tn, epi tp, hypo temp, epi DO, wl, ss, secchi, and brown are significant drivers of zoop community structure
+#hypo tn, epi tp, hypo temp, epi DO, ss, secchi, and brown are significant drivers of zoop community structure
+
+term_rda_df <- as.data.frame(anova_rda_term) |>
+  rownames_to_column("term") |>
+  rename(F_value = F, P_value = `Pr(>F)`) |>
+  filter(!term %in% "Residual")  |>
+  dplyr::select(-c(Df)) |>
+  mutate(F_value = round(F_value, 2))
+
+#add %var explained by each term
+total_SS_rda <- sum(term_rda_df$Variance)  # sum of all constrained variance
+term_rda_df <- term_rda_df |>
+  mutate(Variance_pct = round(100 * Variance / total_SS_rda, 1)) |>
+  select(-Variance)
+#write.csv(term_rda_df, "Output/RDA_term_ANOVA.csv", row.names=FALSE)
 
 # envfit to get arrow directions and p-values (uses same predictor table)
 envfit_rda <- envfit(rda_mod, all_drivers_num, permutations = 999)
@@ -83,11 +110,41 @@ envfit_rda <- envfit(rda_mod, all_drivers_num, permutations = 999)
 cap_mod <- capscale(zoop_dens_trans ~ ., data = all_drivers_num, 
                     distance = "bray")
 
+summary(cap_mod)
+# 37.8% of variability explained by env variables (3.150/8.329)
+# 62.2% is unexplained (5.179/8.329) 
+
 #permutation anovas to test sig
-anova(cap_mod, by = "axis", permutations = 999)
-anova(cap_mod, by = "term", permutations = 999)
-#only axis 1 is sig
+anova_dbrda_axis <- anova(cap_mod, by = "axis", permutations = 999)
+#axes 1 and 2 are sig
+
+axis_dbrda_df <- as.data.frame(anova_dbrda_axis) |>
+  rownames_to_column("axis") |>
+  rename(F_value = F, P_value = `Pr(>F)`) |>
+  mutate(axis = str_replace(axis, "^(CAP|CAP\\s*|Axis)\\s*-?", "Axis_")) |>
+  filter(!str_detect(axis, regex("^Residual$", ignore_case = TRUE))) |>
+  mutate(Variance_pct = round(100 * SumOfSqs / sum(SumOfSqs, na.rm = TRUE), 1))|>
+  dplyr::select(axis, F_value, P_value, Variance_pct)|>
+  mutate(F_value = round(F_value, 2))
+#write.csv(axis_dbrda_df, "Output/dbRDA_axis_ANOVA.csv", row.names=FALSE)
+
+#term
+anova_dbrda_term <- anova(cap_mod, by = "term", permutations = 999)
 #sig drivers: TN epi and hypo, TP epi, hypo temp, epi DO, wl, ss, bluegreen, brown, secchi
+
+term_dbrda_df <- as.data.frame(anova_dbrda_term) |>
+  rownames_to_column("term") |>
+  rename(F_value = F, P_value = `Pr(>F)`) |>
+  filter(!term %in% "Residual")  |>
+  dplyr::select(-c(Df)) |>
+  mutate(F_value = round(F_value, 2))
+
+#add %var explained by each term
+total_SS_dbrda <- sum(term_dbrda_df$SumOfSqs)  # sum of all constrained variance
+term_dbrda_df <- term_dbrda_df |>
+  mutate(Variance_pct = round(100 * SumOfSqs / total_SS_dbrda, 1)) |>
+  select(-SumOfSqs)
+#write.csv(term_dbrda_df, "Output/dbRDA_term_ANOVA.csv", row.names=FALSE)
 
 cap_R2 <- RsquareAdj(cap_mod)$r.squared
 cap_R2adj <- RsquareAdj(cap_mod)$adj.r.squared
@@ -124,11 +181,12 @@ stopifnot(nrow(rda_sites) == nrow(cap_sites))
 
 #are db and normal rda ordinations similar? yes
 pro <- procrustes(rda_sites[,c("RDA1","RDA2")], cap_sites[,c("RDA1","RDA2")])
-# RMSE of 0.104 is small relative to the ordination x-y ranges, so similar ordinations
+summary(pro)
+# RMSE of 0.093 is small relative to the ordination x-y ranges, so similar ordinations
 
 protest_res <- protest(rda_sites[,c("RDA1","RDA2")], cap_sites[,c("RDA1","RDA2")], 
                        permutations = 999)
-#signifiucant procrustus correlation (0.9734) so ordinations are similar
+#significant procrustus correlation (0.9797) so ordinations are similar
 
 # envfit
 env_vec_rda <- as.data.frame(vegan::scores(envfit_rda, display = "vectors")) |> 
@@ -140,15 +198,14 @@ env_vec_rda <- as.data.frame(vegan::scores(envfit_rda, display = "vectors")) |>
 env_vec_cap <- as.data.frame(vegan::scores(envfit_cap, display = "vectors")) |> 
   rownames_to_column("variable") |> 
   rename(RDA1 = CAP1, RDA2 = CAP2) |>
-  mutate(Significant = ifelse(variable %in% rownames(anova_cap_term)[
-    which(anova_cap_term$`Pr(>F)` < 0.05)], "yes", "no"),
+  mutate(Significant = ifelse(variable %in% rownames(anova_dbrda_term)[
+    which(anova_dbrda_term$`Pr(>F)` < 0.05)], "yes", "no"),
     RDA1_end = RDA1 * 2, RDA2_end = RDA2 * 2)
 
-# round percentages and define axis labels
-rda_pct1 <- round(summary(rda_mod)$cont$importance[2,1] * 100, 1)
-rda_pct2 <- round(summary(rda_mod)$cont$importance[2,2] * 100, 1)
-cap_pct1 <- round(summary(cap_mod)$cont$importance[2,1] * 100, 1)
-cap_pct2 <- round(summary(cap_mod)$cont$importance[2,2] * 100, 1)
+rda_pct1 <- axis_rda_df$Variance_explained[1] 
+rda_pct2 <- axis_rda_df$Variance_explained[2]  
+cap_pct1 <- axis_dbrda_df$Variance_pct[1] 
+cap_pct2 <- axis_dbrda_df$Variance_pct[2]  
 
 all_x <- c(rda_sites$RDA1, cap_sites$RDA1)
 all_y <- c(rda_sites$RDA2, cap_sites$RDA2)
@@ -197,7 +254,7 @@ p_cap <- make_plot(cap_sites, cap_species, env_vec_cap,
   theme(legend.position = "top") 
 #ggsave("Figures/zoop_RDA_vs_dbRDA.jpg", width=5, height=4) 
 
-#variation partitioning over significant drivers
+#variance partitioning over significant drivers
 sig_drivers_rda <- env_vec_rda$variable[env_vec_rda$Significant=="yes"]
 sig_drivers_dbrda <- env_vec_cap$variable[env_vec_cap$Significant=="yes"]
 
@@ -221,8 +278,11 @@ partial_rda_var <- function(drivers, comm, env_data) {
 }
 
 # RDA
-rda_varpart <- partial_rda_var(sig_drivers_rda, zoop_dens_trans, all_drivers_num)
+rda_varpart <- partial_rda_var(sig_drivers_rda, zoop_dens_trans, all_drivers_num) |>
+  mutate(R2adj = round(R2adj,3))
+#write.csv(rda_varpart, "Output/RDA_varpart.csv", row.names=FALSE)
 
 # dbRDA
-dbrda_varpart <- partial_rda_var(sig_drivers_dbrda, zoop_dens_trans, all_drivers_num)
-
+dbrda_varpart <- partial_rda_var(sig_drivers_dbrda, zoop_dens_trans, all_drivers_num) |>
+  mutate(R2adj = round(R2adj,3))
+#write.csv(dbrda_varpart, "Output/dbRDA_varpart.csv", row.names=FALSE)
