@@ -7,11 +7,11 @@ pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,
 #read in all_zoops df
 all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE)
 
-year_cols <- c("#011f51","#06889b","#2E8B57","#fdfa66","#facd60","#f44034","#a13637")
+year_cols <- c("#011f51","#1f78b4","#33a02c","#fdfa66","#ff7f00","#e31a1c","#6a3d9a")
 # 2014, 2015, 2016, 2019, 2020, 2021, 2023
 
 #---------------------------------------------------------------------------------#
-#NMDS: 89 total samples; 16 removed that fall outside of may-oct range for SS NMDS
+#NMDS: 85 total samples; 16 removed that fall outside of may-oct range for SS NMDS
 taxa <- unique(all_zoops_dens$Taxon)
 
 #taxa as cols, dates as rows, average by month
@@ -62,7 +62,7 @@ NMDS_bray_first <- vegan::metaMDS(zoop_bray_first, distance='bray', k=3, trymax=
 NMDS_bray_first$stress
 # 0.13
 
-#plot axis 2 vs. 1 (Supplemental Figure S3)
+#plot axis 2 vs. 1 (Figure 2)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
                        choices = c(1,2),type = "n")
 year12 <- ggordiplots::gg_ordiplot(ord, all_zoops_nmds$year,
@@ -256,12 +256,15 @@ correlation_matrix <- matrix(NA, n, n)
 for (i in 1:(n-1)) {
   for (j in (i+1):n) {
     correlation_matrix[i, j] <- pairwise_correlation(matrices[[i]], matrices[[j]])
-    correlation_matrix[j, i] <- correlation_matrix[i, j] # Since correlation is symmetric
-  }
-  }
+    correlation_matrix[j, i] <- correlation_matrix[i, j] }}
 
 # Set diagonal to 1 (correlation of a matrix with itself)
 diag(correlation_matrix) <- 1
+
+#name rows and cols
+rownames(correlation_matrix) <- c("2014","2015","2016","2019","2020","2021","2023")
+colnames(correlation_matrix) <- c("2014","2015","2016","2019","2020","2021","2023")
+#write.csv(correlation_matrix, "Output/corr_mat.csv")
 
 #run NMDS again - clustering will indicate years where changes through time are similar
 set.seed(11)
@@ -370,14 +373,14 @@ dist_long <- as.data.frame(dist_mat) |>
   arrange(distance) |>
   filter(year1 < year2)
 
-ggplot(dist_long, aes(x = factor(year1), y = factor(year2), fill = distance)) +
-  geom_tile() +
-  geom_text(aes(label = round(distance, 2)), size = 3) +
-  scale_fill_gradient(low = "steelblue", high = "white") +
-  labs(x = "", y = "", fill = "Euclidean\ndistance",
-       title = "Pairwise distances between years (k = 3)") +
-  theme_minimal() +
-  coord_fixed()
+#ggplot(dist_long, aes(x = factor(year1), y = factor(year2), fill = distance)) +
+#  geom_tile() +
+#  geom_text(aes(label = round(distance, 2)), size = 3) +
+#  scale_fill_gradient(low = "steelblue", high = "white") +
+#  labs(x = "", y = "", fill = "Euclidean\ndistance",
+#       title = "Pairwise distances between years (k = 3)") +
+#  theme_minimal() +
+#  coord_fixed()
 #ggsave("Figures/second_stage_NMDS_distance_heatmap.jpg", width=6, height=3) 
 
 # Use the distance matrix (as.dist)
@@ -539,7 +542,7 @@ scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r),
                      pvals=(fit_env$vectors)$pvals)
 scores <- cbind(scores, env = rownames(scores))
 
-#plot drivers w/ second stage NMDS (Manuscript Figure 4)
+#plot drivers w/ second stage NMDS (Manuscript Figure S6)
 ss_year <- ggordiplots::gg_ordiplot(ord, unique(monthly_zoops_nmds$year),
                                   kind = "sd", ellipse=FALSE, hull = TRUE, 
                                   plot = FALSE, pt.size=0.9) 
@@ -564,7 +567,7 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
   scale_color_manual("",values=year_cols,
                      label=c("2014","2015","2016",
                              "2019","2020","2021","2023")) +
-  xlim(-0.7,0.9) + ylim(-1,0.9) +
+  xlim(-0.7,0.9) + ylim(-0.5,0.9) +
   #geom_segment(data = scores,
   #             aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
   #             arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
@@ -586,7 +589,7 @@ scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r),
                      pvals=(fit_env$vectors)$pvals)
 scores <- cbind(scores, env = rownames(scores))
 
-ss_year <- ggordiplots::gg_ordiplot(ord, unique(all_zoops_nmds$year),
+ss_year <- ggordiplots::gg_ordiplot(ord, unique(monthly_zoops_nmds$year),
                                     kind = "sd", ellipse=FALSE, hull = TRUE, 
                                     plot = FALSE, pt.size=0.9) 
 env_plot2 <- ss_year$plot + geom_point() + theme_bw() + 
@@ -613,7 +616,7 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
   scale_color_manual("",values=year_cols,
                      label=c("2014","2015","2016",
                              "2019","2020","2021","2023")) +
-  xlim(-0.7,0.9) + ylim(-1,0.9) +
+  xlim(-0.7,0.9) + ylim(-0.5,0.9) +
   geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +

@@ -4,7 +4,7 @@
 pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, lubridate, ggtext)
 
 #cb friendly year palette
-year_cols <- c("#a13637","#06889b", "#facd60", "#f44034", "#011f51", "#fdfa66")
+year_cols <- c("#011f51","#1f78b4","#33a02c","#fdfa66","#ff7f00","#e31a1c","#6a3d9a")
 
 #read in zoop data from EDI (v5)
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/197/5/38fc9d1a4c8b6976c71e56bda5ff073b" 
@@ -206,21 +206,29 @@ zoops_8_groups$Taxon <- factor(zoops_8_groups$Taxon,
                                          "Conochilus","Kellicottia",
                                          "Keratella","Polyarthra")) 
 
-#shaded line plot - raw density (Manuscript Figure 2)
+taxon_labels <- c(expression(italic("Bosmina")),
+  expression(italic("Daphnia")),"Cyclopoida","Nauplii",
+  expression(italic("Conochilus")),
+  expression(italic("Kellicottia")),
+  expression(italic("Keratella")),
+  expression(italic("Polyarthra")))
+
+#shaded line plot - raw density (Manuscript Figure 1)
 ggplot(data = zoops_8_groups|> filter(month %in% c(4:11)),
        aes(x=pseudoDate, y = avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),
             position = "stack", stat = "identity") +
   facet_wrap(~year, scales = "free")+
   scale_color_manual(values = NatParksPalettes::natparks.pals(
-    "DeathValley", 14, direction=-1)[c(1,3,5,7,10,11,13,14)]) +
+    "DeathValley", 14, direction=-1)[c(1,3,5,7,10,11,13,14)],
+    labels = taxon_labels) +
   scale_fill_manual(values = NatParksPalettes::natparks.pals(
-    "DeathValley", 14, direction=-1)[c(1,3,5,7,10,11,13,14)]) +
+    "DeathValley", 14, direction=-1)[c(1,3,5,7,10,11,13,14)],
+    labels = taxon_labels) +
   scale_x_date(date_breaks = "1 month", date_labels = "%b",
-              # limits = as.Date(c("2000-04-01", "2000-11-30")),
                expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0))+
-  xlab("") + ylab("Density (ind/L)") +
+  xlab("") + ylab(expression("Density (individuals L"^{-1}*")")) +
   guides(color= "none", fill = guide_legend(nrow=4)) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
@@ -251,9 +259,11 @@ ggplot(data = subset(zoops_8_groups, month %in% c(4:11)),
             position = "fill", stat = "identity") +
   facet_wrap(~year(DateTime), scales = "free_x")+
   scale_color_manual(values = NatParksPalettes::natparks.pals(
-    "DeathValley", 14, direction=-1)[c(1,3,5,7,10,11,13,14)]) +
+    "DeathValley", 14, direction=-1)[c(1,3,5,7,10,11,13,14)],
+    labels = taxon_labels) +
   scale_fill_manual(values = NatParksPalettes::natparks.pals(
-    "DeathValley", 14, direction=-1)[c(1,3,5,7,10,11,13,14)]) +
+    "DeathValley", 14, direction=-1)[c(1,3,5,7,10,11,13,14)],
+    labels = taxon_labels) +
   scale_x_date(date_breaks = "1 month", date_labels = "%b",
                expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0))+

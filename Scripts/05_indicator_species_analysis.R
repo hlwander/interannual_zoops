@@ -4,7 +4,7 @@
 pacman::p_load(indicspecies, pheatmap, ggplot2, dplyr, tidyr, 
                igraph, ggraph, viridis)
 
-year_cols <- c("#011f51","#06889b","#2E8B57","#fdfa66","#facd60","#f44034","#a13637")
+year_cols <- c("#011f51","#1f78b4","#33a02c","#fdfa66","#ff7f00","#e31a1c","#6a3d9a")
 # 2014, 2015, 2016, 2019, 2020, 2021, 2023
 
 #read in zoop data
@@ -67,7 +67,9 @@ ggplot(zoop_dens_trans_long, aes(x = pseudoDate, y = TransDensity,
              labeller = labeller(Taxon = facet_labels)) +
   labs(x = "", y = "Hellinger transformed density", color = "") +
   theme_minimal(base_size = 13) +
-  theme(legend.position = "top") +
+  theme(legend.position = "top",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
   guides(color = guide_legend(nrow = 1))
 #ggsave("Figures/ind_sp_dens.jpg", width = 6, height = 5)
 

@@ -3,8 +3,10 @@
 pacman::p_load(vegan, tidyr, data.table, lubridate, tibble, ggrepel,
                rLakeAnalyzer, car, ggnewscale, dplyr, ggplot2, patchwork)
 
-year_cols <- c("#011f51","#06889b","#2E8B57","#fdfa66","#facd60","#f44034","#a13637")
+#year_cols <- c("#011f51","#06889b","#2E8B57","#fdfa66","#facd60","#f44034","#a13637")
+year_cols <- c("#011f51","#1f78b4","#33a02c","#fdfa66","#ff7f00","#e31a1c","#6a3d9a")
 # 2014, 2015, 2016, 2019, 2020, 2021, 2023
+
 
 #read in zoop data
 all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE)
@@ -212,7 +214,7 @@ all_y <- c(rda_sites$RDA2, cap_sites$RDA2)
 xlim <- range(all_x, na.rm = TRUE) * 1.1
 ylim <- range(all_y, na.rm = TRUE) * 1.1
 
-# plotting function
+# plotting function for manuscript Figure 4
 make_plot <- function(sites_df, species_df, env_df, xlab_text, ylab_text) {
   ggplot() +
     geom_point(data = sites_df, aes(x = RDA1, y = RDA2, color = Year), size = 2) +
