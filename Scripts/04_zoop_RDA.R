@@ -24,6 +24,7 @@ all_zoops <- all_zoops_dens |>
   ungroup() |> group_by(DateTime) |>
   summarise(Bosmina = mean(Bosmina),
             Daphnia = mean(Daphnia),
+            Ceriodaphnia = mean(Ceriodaphnia),
             Cyclopoida = mean(Cyclopoida),
             Nauplii = mean(Nauplii),
             Conochilus = mean(Conochilus),
@@ -63,13 +64,13 @@ rda_mod <- rda(zoop_dens_trans ~ ., data = all_drivers_num)
 #next see whether env vars are colinear (VIF>5)
 vif.cca(rda_mod) #dropping epi temp, air temp, longwave, and total bc VIF > 7
 
-# 40.9% of total zooplankton variation is explained by env variables (0.1115/0.2730)
-# 59.1% is unexplained (0.1616/0.2730)
+# 41% of total zooplankton variation is explained by env variables (0.1154/0.2818)
+# 59% is unexplained (0.1664/0.2818)
 summary(rda_mod)
 
 # ANOVA to test significance
 anova_rda_axis <- anova(rda_mod, by = "axis", permutations = 999) 
-#RDA1 and RDA2 explain a significant fraction of the variance!
+#RDA1 explains a significant fraction of the variance
 #this is raw canonical variance though not total variance
 
 axis_rda_df <- as.data.frame(anova_rda_axis) |>
@@ -80,13 +81,13 @@ axis_rda_df <- as.data.frame(anova_rda_axis) |>
   dplyr::select(-c(Df,Variance)) |>
   mutate(F_value = round(F_value, 2))
 
-#add %var explained by each axis
+#add %var explained by each axis (Table 1)
 eig <- eigenvals(rda_mod)
 axis_rda_df <- axis_rda_df |>
   mutate(Variance_explained = round(100 * eig[1:nrow(axis_rda_df)] / sum(eig), 1))
 #write.csv(axis_rda_df, "Output/RDA_axis_ANOVA.csv", row.names=FALSE)
 
-#term
+#term (Table 2)
 anova_rda_term <- anova(rda_mod, by = "term", permutations = 999)
 #hypo tn, epi tp, hypo temp, epi DO, ss, secchi, and brown are significant drivers of zoop community structure
 
@@ -101,7 +102,8 @@ term_rda_df <- as.data.frame(anova_rda_term) |>
 total_SS_rda <- sum(term_rda_df$Variance)  # sum of all constrained variance
 term_rda_df <- term_rda_df |>
   mutate(Variance_pct = round(100 * Variance / total_SS_rda, 1)) |>
-  select(-Variance)
+  select(-Variance) |>
+  arrange(-Variance_pct)
 #write.csv(term_rda_df, "Output/RDA_term_ANOVA.csv", row.names=FALSE)
 
 # envfit to get arrow directions and p-values (uses same predictor table)
@@ -113,13 +115,14 @@ cap_mod <- capscale(zoop_dens_trans ~ ., data = all_drivers_num,
                     distance = "bray")
 
 summary(cap_mod)
-# 37.8% of variability explained by env variables (3.150/8.329)
-# 62.2% is unexplained (5.179/8.329) 
+# 38.2% of variability explained by env variables (3.316/8.689)
+# 61.8% is unexplained (5.372/8.689) 
 
 #permutation anovas to test sig
 anova_dbrda_axis <- anova(cap_mod, by = "axis", permutations = 999)
 #axes 1 and 2 are sig
 
+#Table 3
 axis_dbrda_df <- as.data.frame(anova_dbrda_axis) |>
   rownames_to_column("axis") |>
   rename(F_value = F, P_value = `Pr(>F)`) |>
@@ -130,7 +133,7 @@ axis_dbrda_df <- as.data.frame(anova_dbrda_axis) |>
   mutate(F_value = round(F_value, 2))
 #write.csv(axis_dbrda_df, "Output/dbRDA_axis_ANOVA.csv", row.names=FALSE)
 
-#term
+#term (Table 4)
 anova_dbrda_term <- anova(cap_mod, by = "term", permutations = 999)
 #sig drivers: TN epi and hypo, TP epi, hypo temp, epi DO, wl, ss, bluegreen, brown, secchi
 
@@ -145,7 +148,8 @@ term_dbrda_df <- as.data.frame(anova_dbrda_term) |>
 total_SS_dbrda <- sum(term_dbrda_df$SumOfSqs)  # sum of all constrained variance
 term_dbrda_df <- term_dbrda_df |>
   mutate(Variance_pct = round(100 * SumOfSqs / total_SS_dbrda, 1)) |>
-  select(-SumOfSqs)
+  select(-SumOfSqs) |>
+  arrange(-Variance_pct)
 #write.csv(term_dbrda_df, "Output/dbRDA_term_ANOVA.csv", row.names=FALSE)
 
 cap_R2 <- RsquareAdj(cap_mod)$r.squared
@@ -279,12 +283,12 @@ partial_rda_var <- function(drivers, comm, env_data) {
   return(results)
 }
 
-# RDA
+# RDA (Table S2)
 rda_varpart <- partial_rda_var(sig_drivers_rda, zoop_dens_trans, all_drivers_num) |>
   mutate(R2adj = round(R2adj,3))
 #write.csv(rda_varpart, "Output/RDA_varpart.csv", row.names=FALSE)
 
-# dbRDA
+# dbRDA (Table S3)
 dbrda_varpart <- partial_rda_var(sig_drivers_dbrda, zoop_dens_trans, all_drivers_num) |>
   mutate(R2adj = round(R2adj,3))
 #write.csv(dbrda_varpart, "Output/dbRDA_varpart.csv", row.names=FALSE)

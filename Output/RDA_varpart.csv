@@ -1,8 +1,9 @@
 "variable","R2adj","p"
-"TN_ugL_hypo",0,0.44
-"TP_ugL_epi",0.023,0.01
-"Temp_C_hypo",0.005,0.162
-"DO_mgL_epi",0.026,0.006
-"SS",0.034,0.001
-"Brown_ugL",0.017,0.027
-"secchi",0.026,0.005
+"TN_ugL_epi",0.013,0.059
+"TN_ugL_hypo",0,0.432
+"TP_ugL_epi",0.014,0.035
+"Temp_C_hypo",0.007,0.145
+"DO_mgL_epi",0.031,0.004
+"SS",0.028,0.009
+"Brown_ugL",0.016,0.033
+"secchi",0.025,0.003

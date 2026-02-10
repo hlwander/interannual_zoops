@@ -17,12 +17,13 @@ zoop_dens_trans <- read.csv("Output/zoop_dens_trans.csv", header=TRUE)
 
 indval <- multipatt(zoop_dens_trans, year, control = how(nperm=999))
 summary(indval)
-# only bosmina is significantly associated with certain combinations of years
-# 2014+2020+2021+2023
+# bosmina is significantly associated with 2014+2020+2021+2023
+# ceriodaphnia is significantly associated with 2019+2020+2021+2023
 
 #create a table summarizing this
 indicators <- list(
-  "Bosmina" = c(2014, 2020, 2021, 2023))
+  "Bosmina" = c(2014, 2020, 2021, 2023),
+  "Ceriodaphnia" = c(2019, 2020, 2021, 2023))
 
 zoop_dens_trans <- zoop_dens_trans |> mutate(rowid = row_number()) |> 
                    left_join(zoop_dens |> select(DateTime, year, month) |>
@@ -53,7 +54,7 @@ facet_labels <- sapply(names(indicators), function(taxon) {
   paste0(taxon, " (", sig_years, ")")})
 names(facet_labels) <- names(indicators)
 
-#plot!
+#plot
 ggplot(zoop_dens_trans_long, aes(x = pseudoDate, y = TransDensity, 
                                  color = factor(year), group = factor(year))) +
   geom_line(aes(alpha = isa_alpha), size = 1) +
@@ -66,10 +67,9 @@ ggplot(zoop_dens_trans_long, aes(x = pseudoDate, y = TransDensity,
   facet_wrap(~Taxon, scales = "free_y", ncol = 1,
              labeller = labeller(Taxon = facet_labels)) +
   labs(x = "", y = "Hellinger transformed density", color = "") +
-  theme_minimal(base_size = 13) +
+  theme_minimal(base_size = 10) +
   theme(legend.position = "top",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
   guides(color = guide_legend(nrow = 1))
 #ggsave("Figures/ind_sp_dens.jpg", width = 6, height = 5)
-

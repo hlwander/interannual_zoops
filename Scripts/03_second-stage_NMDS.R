@@ -11,7 +11,7 @@ year_cols <- c("#011f51","#1f78b4","#33a02c","#fdfa66","#ff7f00","#e31a1c","#6a3
 # 2014, 2015, 2016, 2019, 2020, 2021, 2023
 
 #---------------------------------------------------------------------------------#
-#NMDS: 85 total samples; 16 removed that fall outside of may-oct range for SS NMDS
+#NMDS: 85 total samples; 12 removed that fall outside of may-oct range for SS NMDS
 taxa <- unique(all_zoops_dens$Taxon)
 
 #taxa as cols, dates as rows, average by month
@@ -25,6 +25,7 @@ all_zoops_nmds <- all_zoops_dens |>
   group_by(DateTime) |> 
   summarise(Bosmina = mean(Bosmina),
             Daphnia = mean(Daphnia),
+            Ceriodaphnia = mean(Ceriodaphnia),
             Cyclopoida = mean(Cyclopoida),
             Nauplii = mean(Nauplii),
             Conochilus = mean(Conochilus),
@@ -189,7 +190,7 @@ month13 <- month13$plot + geom_point() + theme_bw() +
                              "September","October","November")) 
 
 ggpubr::ggarrange(year13,month13,ncol=2, common.legend = F)
-#ggsave("Figures/first_stage_NMDS_3v1_dens_all.jpg", width=5, height=3)
+#ggsave("Figures/first_stage_NMDS_3v1_dens_all.jpg", width=5, height=3.5)
 
 #------------------------------------------------------------------------------#
 # prepare dataset for SS NMDS
@@ -201,6 +202,7 @@ monthly_zoops_nmds <- all_zoops_nmds |>
   group_by(month, year) |>
   summarise(Bosmina = mean(Bosmina),
             Daphnia = mean(Daphnia),
+            Ceriodaphnia = mean(Ceriodaphnia),
             Cyclopoida = mean(Cyclopoida),
             Nauplii = mean(Nauplii),
             Conochilus = mean(Conochilus),
@@ -272,7 +274,7 @@ set.seed(11)
 NMDS_bray_second <- vegan::metaMDS(correlation_matrix, distance='bray', k=3, trymax=20, 
                                    autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_second$stress
-# 0.08
+# 0.07
 
 #--------------------------------------------------------------------------#
 #NMDS plot - second-stage (Manuscript Figure 3)
@@ -334,20 +336,13 @@ plot2 <- year2_ss$plot + theme_bw() +
 ggpubr::ggarrange(plot1,plot2,ncol=2, common.legend = F)
 #ggsave("Figures/second_stage_NMDS_dens.jpg", width=6, height=3) 
 
-#create new df for export
-#nmds1 <- data.frame("year" = c(2014,2015,2016,2019,2020,2021,2023),
-#                    "nmds1" = ord$sites[,1])
-
-#export ss nmds1 for driver analysis
-#write.csv(nmds1,"Output/ss_nmds1.csv", row.names = F)
-
 # extract 3D site scores
 site_scores <- as.data.frame(vegan::scores(NMDS_bray_second, display = "sites"))
 
 #assign years
 site_scores$year <- c(unique(monthly_zoops_nmds$year))
 
-# compute Euclidean distance matrix across the first 3 NMDS dims
+# compute Euclidean distance matrix across the first 3 NMDS dims (Table S1)
 dist_mat <- as.matrix(dist(site_scores[, c(1,2,3)], method = "euclidean"))
 
 # find the most similar pair (smallest non-zero distance)
@@ -359,38 +354,11 @@ most_similar_pair <- data.frame(
   year1 = site_scores$year[which_min[1, "row"]],
   year2 = site_scores$year[which_min[1, "col"]],
   distance = min_val)
+# 2015 and 2016 have the most similar communities (smallest distance value)
 
 # after computing dist_mat
 rownames(dist_mat) <- site_scores$year
 colnames(dist_mat) <- site_scores$year
-
-#wide to long
-dist_long <- as.data.frame(dist_mat) |>
-  mutate(year1 = site_scores$year) |>
-  pivot_longer(-year1, names_to = "year2", values_to = "distance") |>
-  mutate(year2 = as.integer(year2)) |>
-  filter(!is.na(distance)) |>
-  arrange(distance) |>
-  filter(year1 < year2)
-
-#ggplot(dist_long, aes(x = factor(year1), y = factor(year2), fill = distance)) +
-#  geom_tile() +
-#  geom_text(aes(label = round(distance, 2)), size = 3) +
-#  scale_fill_gradient(low = "steelblue", high = "white") +
-#  labs(x = "", y = "", fill = "Euclidean\ndistance",
-#       title = "Pairwise distances between years (k = 3)") +
-#  theme_minimal() +
-#  coord_fixed()
-#ggsave("Figures/second_stage_NMDS_distance_heatmap.jpg", width=6, height=3) 
-
-# Use the distance matrix (as.dist)
-hc <- hclust(as.dist(dist(site_scores[,1:3])), method = "average")
-
-#jpeg("Figures/hierarchical_yar_clusters_ss.jpg", width = 6, height = 4, units = "in", res = 300)
-plot(hc, labels = site_scores$year, xlab = NA, ylab = "Mean euclidean distance", 
-     main = "Hierarchical clustering of years (k=3 NMDS distances)")
-#dev.off()
-
 #-----------------------------------------------------------#
 #read in env csv
 env_drivers <- read.csv("./Output/all_drivers.csv") |> 
@@ -469,7 +437,7 @@ month_with_env_12 <- month12 +
                   size = 2) 
 
 ggpubr::ggarrange(year_with_env_12, month_with_env_12, ncol=2, common.legend = F)
-#ggsave("Figures/NMDS_2v1_all_dens_env.jpg", width=6, height=3) 
+#ggsave("Figures/NMDS_2v1_all_dens_env.jpg", width=6, height=3.5) 
 
 #----------------------------------------------------------------------------#
 # same for axis 3 vs 1
@@ -535,7 +503,7 @@ zoops_plus_drivers_yearly <- bind_cols(monthly_zoops_nmds, ss_env[
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,2),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(10:30)])
+fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(11:31)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -567,10 +535,7 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
   scale_color_manual("",values=year_cols,
                      label=c("2014","2015","2016",
                              "2019","2020","2021","2023")) +
-  xlim(-0.7,0.9) + ylim(-0.5,0.9) +
-  #geom_segment(data = scores,
-  #             aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
-  #             arrow = arrow(length = unit(0.1, "cm")), colour = "lightgray") +
+  xlim(-0.7,1) + ylim(-1,0.9) +
   geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
@@ -582,7 +547,7 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,3),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(10:30)])
+fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(11:31)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -616,7 +581,7 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
   scale_color_manual("",values=year_cols,
                      label=c("2014","2015","2016",
                              "2019","2020","2021","2023")) +
-  xlim(-0.7,0.9) + ylim(-0.5,0.9) +
+  xlim(-0.7,1) + ylim(-1,0.9) +
   geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
@@ -639,34 +604,3 @@ permutest(bd_year, permutations = 999) #dispersion is similar
 set.seed(3)
 adonis2(zoop_bray_first ~ year, data = all_zoops_nmds, 
         permutations = 999, by = "margin") #not sig, no year differences
-
-#same for SS NMDS
-year_df <- data.frame(year = as.integer(rownames(zoop_bray_second)))
-
-#look at SS pairwise year correlations
-mean(correlation_matrix[lower.tri(correlation_matrix)])
-
-# Assign names to the list of matrices
-names(matrices) <- c("2014","2015","2016","2019","2020","2021","2023")
-
-year_pairs <- combn(names(matrices), 2, simplify = FALSE)
-cor_summary <- sapply(year_pairs, function(p) {
-  i <- which(names(matrices) == p[1])
-  j <- which(names(matrices) == p[2])
-  correlation_matrix[i,j]
-})
-names(cor_summary) <- sapply(year_pairs, paste, collapse = "_vs_")
-cor_summary # 2014 and 2021 have most similar summer mean dispersion
-
-#test within-year variability
-# Make a factor of year per row in your community matrix
-year_factor <- monthly_zoops_nmds$year
-
-# Bray–Curtis distances on Hellinger-transformed data
-dist_matrix <- vegdist(zoop_dens_trans, method = "bray")
-
-# test homogeneity of dispersion
-disp <- betadisper(dist_matrix, year_factor)
-anova(disp) #not significant so dispersion is homogenous
-boxplot(disp)
-
