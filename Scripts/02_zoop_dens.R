@@ -6,8 +6,8 @@ pacman::p_load(zoo, dplR, dplyr, tidyverse, ggplot2, ggpubr, lubridate, ggtext)
 #cb friendly year palette
 year_cols <- c("#011f51","#1f78b4","#33a02c","#fdfa66","#ff7f00","#e31a1c","#6a3d9a")
 
-#read in zoop data from EDI (v6) UPDATE LINK
-inUrl1  <- "https://pasta-s.lternet.edu/package/data/eml/edi/1090/47/38fc9d1a4c8b6976c71e56bda5ff073b" 
+#read in zoop data from EDI (v6)
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/197/6/38fc9d1a4c8b6976c71e56bda5ff073b" 
 infile1 <-  tempfile()
 try(download.file(inUrl1,infile1, timeout = max(300, getOption("timeout"))))
 

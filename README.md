@@ -1,6 +1,6 @@
 # interannual_zoops
 
-Code for the analysis of monthly summer zooplankton in Beaverdam Reservoir over six years
+Code for the analysis of zooplankton community data in Beaverdam Reservoir over seven years using an integrative multivariate framework.
 
 # Repo structure
 
