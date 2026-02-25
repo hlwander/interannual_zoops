@@ -296,7 +296,7 @@ plot1 <- year1_ss$plot + geom_point() + theme_bw() +
         axis.ticks.x = element_line(colour = c(rep("black",5), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
         legend.position = "none", legend.spacing = unit(-0.5, 'cm'),
-        plot.margin = unit(c(0,0,0,0), 'lines'),
+        plot.margin = unit(c(0,0.3,0,0), 'lines'),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
   guides(color = guide_legend(override.aes = list(
@@ -324,7 +324,7 @@ plot2 <- year2_ss$plot + theme_bw() +
         axis.ticks.x = element_line(colour = c(rep("black",5), "transparent")), 
         strip.background = element_rect(fill = "transparent"), 
         legend.position = "none",
-        plot.margin = unit(c(0,0,0,0.1), 'lines'),
+        plot.margin = unit(c(0,0,0,0.3), 'lines'),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
   scale_x_continuous(limits = c(-0.55, 0.55),
