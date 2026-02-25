@@ -21,6 +21,36 @@ zoops <- read.csv(infile1, header=T) |>
   filter(month(DateTime) %in% 4:11) # filter months used in this analysis
 
 #------------------------------------------------------------------------------#
+# data coverage plot (Figure S1)
+
+#list all dates
+all_zoop_dates <- c(as.Date(zoops$DateTime))
+
+#create df for plotting
+coverage_df <- data.frame(SampleDate = all_zoop_dates) |>
+  mutate(SampleMonth = floor_date(SampleDate, "month"),
+         month = month(SampleDate))
+
+# heat map
+coverage_df <- data.frame(SampleDate = all_zoop_dates) |>
+  mutate(Year = year(SampleDate),
+         Month = month(SampleDate)) |>
+  count(Year, Month) |>
+  filter(!Year %in% c("2022","2024","2025"))
+
+# convert numeric month to factor with labels
+coverage_df$Month <- factor(coverage_df$Month, levels = 3:11, 
+  labels = c("Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
+
+#plot
+ggplot(coverage_df, aes(x = Month, y = factor(Year))) +
+  geom_tile(aes(fill = n), color = "white") +
+  scale_fill_gradient(low = "orange", high = "darkblue") +
+  labs(x = "Month", y = "Year", fill = "Sample Count") +
+  theme_minimal()
+#ggsave("Figures/zoop_data_coverage_heatmap.jpg", width=7, height=4) 
+
+#------------------------------------------------------------------------------#
 #figure out dominant taxa for NMDS/other ms figs
 zoop_taxa_props <- zoops |>
   filter(!is.na(Taxon), !is.na(Density_IndPerL),
@@ -234,7 +264,7 @@ ggplot(data = zoops_9_groups|> filter(month %in% c(4:11)),
         panel.spacing = unit(0.5, "lines"))
 #ggsave("Figures/BVR_9groups_fill_alldens.jpg", width=5, height=4) 
 
-#shaded line plot - relative density (Fig. S1)
+#shaded line plot - relative density (Fig. S2)
 ggplot(data = subset(zoops_9_groups, month %in% c(4:11)),
        aes(x=pseudoDate, y = avg, color=Taxon)) +
   geom_area(aes(color = Taxon, fill = Taxon),

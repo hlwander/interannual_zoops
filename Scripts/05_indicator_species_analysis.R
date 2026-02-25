@@ -54,7 +54,7 @@ facet_labels <- sapply(names(indicators), function(taxon) {
   paste0(taxon, " (", sig_years, ")")})
 names(facet_labels) <- names(indicators)
 
-#plot
+#plot (Figure 5)
 ggplot(zoop_dens_trans_long, aes(x = pseudoDate, y = TransDensity, 
                                  color = factor(year), group = factor(year))) +
   geom_line(aes(alpha = isa_alpha), size = 1) +

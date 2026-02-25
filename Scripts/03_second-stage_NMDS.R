@@ -51,7 +51,7 @@ zoop_bray_first <- as.matrix(vegan::vegdist(zoop_dens_trans_all, method='bray'))
 #------------------------------------------------------------------------------#
 #first-stage NMDS
 #scree plot to choose dimension 
-#jpeg("figures/scree.jpg") (Supplemental Figure S1)
+#jpeg("figures/scree.jpg")
 goeveg::dimcheckMDS(zoop_bray_first, distance = "bray", 
                     k = 6, trymax = 20, autotransform = TRUE)
 #dev.off()
@@ -128,7 +128,7 @@ month12 <- month12$plot + geom_point() + theme_bw() +
 ggpubr::ggarrange(year12,month12,ncol=2, common.legend = F)
 #ggsave("Figures/first_stage_NMDS_2v1_dens_all.jpg", width=5, height=3)
 
-#plot axis 3 vs. 1 (Supplemental Figure S4)
+#plot axis 3 vs. 1 (Supplemental Figure S3)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
                        choices = c(1,3),type = "n")
 year13 <- ggordiplots::gg_ordiplot(ord, all_zoops_nmds$year,
@@ -417,7 +417,7 @@ sites_scores <- as.data.frame(vegan::scores(NMDS_bray_first,
                                             display = "sites"))[, c(1,2)]
 colnames(sites_scores) <- c("NMDS1", "NMDS2")
 
-#plot
+#plot (Figure S4)
 year_with_env_12 <- year12 +
   geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, y = 0, xend = NMDS1, yend = NMDS2),
@@ -464,7 +464,7 @@ sites_scores <- as.data.frame(vegan::scores(NMDS_bray_first,
                                             display = "sites"))[, c(1,3)]
 colnames(sites_scores) <- c("NMDS1", "NMDS3")
 
-#plot
+#plot (Figure S5)
 year_with_env_13 <- year13 +
   geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, y = 0, xend = NMDS1, yend = NMDS3),
@@ -510,7 +510,7 @@ scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r),
                      pvals=(fit_env$vectors)$pvals)
 scores <- cbind(scores, env = rownames(scores))
 
-#plot drivers w/ second stage NMDS (Manuscript Figure S6)
+#plot drivers w/ second stage NMDS (Figure S6)
 ss_year <- ggordiplots::gg_ordiplot(ord, unique(monthly_zoops_nmds$year),
                                   kind = "sd", ellipse=FALSE, hull = TRUE, 
                                   plot = FALSE, pt.size=0.9) 
