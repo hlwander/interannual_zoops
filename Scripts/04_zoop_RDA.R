@@ -1,44 +1,34 @@
 # Redundancy analysis for all BVR zoop data 2014-2021
 
-pacman::p_load(vegan, tidyr, data.table, lubridate, tibble, ggrepel,
+pacman::p_load(vegan, tidyr, data.table, lubridate, tibble, ggrepel, cols4all,
                rLakeAnalyzer, car, ggnewscale, dplyr, ggplot2, patchwork)
 
-#year_cols <- c("#011f51","#06889b","#2E8B57","#fdfa66","#facd60","#f44034","#a13637")
-year_cols <- c("#011f51","#1f78b4","#33a02c","#fdfa66","#ff7f00","#e31a1c","#6a3d9a")
-# 2014, 2015, 2016, 2019, 2020, 2021, 2023
-
+#cb friendly year palette (2014, 2015, 2016, 2019, 2020, 2021, 2023)
+year_cols <- c4a("cols4all.friendly7", n = 7)
 
 #read in zoop data
-all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE)
+all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE) |>
+  select(-c(Reservoir, sd)) |>
+  filter(!Taxon %in% c("Cladocera","Copepoda","Rotifera","Crustacea"))
 
 #list of all taxa
 taxa <- unique(all_zoops_dens$Taxon)
 
 #taxa as cols, dates as rows (n = 85)
 all_zoops <- all_zoops_dens |> 
-  select(DateTime, Taxon, dens) |> 
-  filter(Taxon %in% taxa) |> 
   mutate(DateTime = as.Date(DateTime)) |> 
   pivot_wider(names_from = Taxon, values_from = dens) |> 
   mutate_all(~replace(., is.na(.), 0)) |> 
-  ungroup() |> group_by(DateTime) |>
-  summarise(Bosmina = mean(Bosmina),
-            Daphnia = mean(Daphnia),
-            Ceriodaphnia = mean(Ceriodaphnia),
-            Cyclopoida = mean(Cyclopoida),
-            Nauplii = mean(Nauplii),
-            Conochilus = mean(Conochilus),
-            Keratella = mean(Keratella),
-            Kellicottia = mean(Kellicottia),
-            Polyarthra = mean(Polyarthra)) |> 
-  ungroup() |>
+  ungroup() |> 
   filter(!month(DateTime) %in% c(3,12)) #removing edge months with low sample size bc could not be imputed
-        
+#write.csv(all_zoops, "./Output/zoop_raw_dens.csv", row.names=FALSE)
+
 #select only data cols
-zoops_dens <- all_zoops |> select(Bosmina:Polyarthra)
+zoops_dens <- all_zoops |> select(Daphnia:Synchaeta)
 
 #hellinger transform data
 zoop_dens_trans <- labdsv::hellinger(zoops_dens)
+#write.csv(zoop_dens_trans, "./Output/zoop_dens_trans.csv", row.names=FALSE)
 
 #list of dates to match up with env data (n=85)
 dates <- unique(all_zoops$DateTime)
@@ -64,13 +54,13 @@ rda_mod <- rda(zoop_dens_trans ~ ., data = all_drivers_num)
 #next see whether env vars are colinear (VIF>5)
 vif.cca(rda_mod) #dropping epi temp, air temp, longwave, and total bc VIF > 7
 
-# 41% of total zooplankton variation is explained by env variables (0.1154/0.2818)
-# 59% is unexplained (0.1664/0.2818)
+# 41% of total zooplankton variation is explained by env variables (0.1380/0.3405)
+# 59% is unexplained (0.2025/0.3405)
 summary(rda_mod)
 
 # ANOVA to test significance
 anova_rda_axis <- anova(rda_mod, by = "axis", permutations = 999) 
-#RDA1 explains a significant fraction of the variance
+#RDA1 and RDA2 explain a significant fraction of the variance
 #this is raw canonical variance though not total variance
 
 axis_rda_df <- as.data.frame(anova_rda_axis) |>
@@ -81,13 +71,13 @@ axis_rda_df <- as.data.frame(anova_rda_axis) |>
   dplyr::select(-c(Df,Variance)) |>
   mutate(F_value = round(F_value, 2))
 
-#add %var explained by each axis (Table 1)
+#add %var explained by each axis (Table S6)
 eig <- eigenvals(rda_mod)
 axis_rda_df <- axis_rda_df |>
   mutate(Variance_explained = round(100 * eig[1:nrow(axis_rda_df)] / sum(eig), 1))
 #write.csv(axis_rda_df, "Output/RDA_axis_ANOVA.csv", row.names=FALSE)
 
-#term (Table 2)
+#term (Table 1)
 anova_rda_term <- anova(rda_mod, by = "term", permutations = 999)
 #hypo tn, epi tp, hypo temp, epi DO, ss, secchi, and brown are significant drivers of zoop community structure
 
@@ -115,14 +105,14 @@ cap_mod <- capscale(zoop_dens_trans ~ ., data = all_drivers_num,
                     distance = "bray")
 
 summary(cap_mod)
-# 38.2% of variability explained by env variables (3.316/8.689)
-# 61.8% is unexplained (5.372/8.689) 
+# 38.7% of variability explained by env variables (4.382/11.312)
+# 61.3% is unexplained (6.930/11.312) 
 
 #permutation anovas to test sig
 anova_dbrda_axis <- anova(cap_mod, by = "axis", permutations = 999)
-#axes 1 and 2 are sig
+#axes 1-3 are sig
 
-#Table 3
+#Table S7
 axis_dbrda_df <- as.data.frame(anova_dbrda_axis) |>
   rownames_to_column("axis") |>
   rename(F_value = F, P_value = `Pr(>F)`) |>
@@ -133,9 +123,9 @@ axis_dbrda_df <- as.data.frame(anova_dbrda_axis) |>
   mutate(F_value = round(F_value, 2))
 #write.csv(axis_dbrda_df, "Output/dbRDA_axis_ANOVA.csv", row.names=FALSE)
 
-#term (Table 4)
-anova_dbrda_term <- anova(cap_mod, by = "term", permutations = 999)
-#sig drivers: TN epi and hypo, TP epi, hypo temp, epi DO, wl, ss, bluegreen, brown, secchi
+#term (Table 2)
+anova_dbrda_term <- anova(cap_mod, by = "margin", permutations = 999) 
+#sig drivers: TN epi and hypo, TP epi, hypo temp, epi DO, wl, thermo_depth, ss, bluegreen, brown, secchi
 
 term_dbrda_df <- as.data.frame(anova_dbrda_term) |>
   rownames_to_column("term") |>
@@ -188,7 +178,7 @@ stopifnot(nrow(rda_sites) == nrow(cap_sites))
 #are db and normal rda ordinations similar? yes
 pro <- procrustes(rda_sites[,c("RDA1","RDA2")], cap_sites[,c("RDA1","RDA2")])
 summary(pro)
-# RMSE of 0.093 is small relative to the ordination x-y ranges, so similar ordinations
+# RMSE of 0.11 is small relative to the ordination x-y ranges, so similar ordinations
 
 protest_res <- protest(rda_sites[,c("RDA1","RDA2")], cap_sites[,c("RDA1","RDA2")], 
                        permutations = 999)
@@ -258,37 +248,54 @@ p_cap <- make_plot(cap_sites, cap_species, env_vec_cap,
 # combine side-by-side
 (p_rda + p_cap) + plot_layout(guides = "collect") & 
   theme(legend.position = "top") 
-#ggsave("Figures/zoop_RDA_vs_dbRDA.jpg", width=5, height=4) 
+#ggsave("Figures/zoop_RDA_vs_dbRDA.jpg", width=6, height=4) 
 
-#variance partitioning over significant drivers
-sig_drivers_rda <- env_vec_rda$variable[env_vec_rda$Significant=="yes"]
-sig_drivers_dbrda <- env_vec_cap$variable[env_vec_cap$Significant=="yes"]
+#-----------------------------------------------------------------------------
+#variance partitioning to see whether physical or chemcial drivers explain more variance
+# Table S8
+# Define variable groups
+physical_vars <- c("Temp_C_hypo", "waterlevel", "therm_depth", "oxy_depth", 
+                   "SS", "secchi")  
 
-# Function to calculate % variance explained by each variable
-partial_rda_var <- function(drivers, comm, env_data) {
-  results <- data.frame(variable = drivers, R2adj = NA, p = NA)
+chemical_vars <- c("TN_ugL_epi", "TN_ugL_hypo", "TP_ugL_epi", "TP_ugL_hypo", 
+                   "DO_mgL_epi", "Green_ugL", "Bluegreen_ugL", "Brown_ugL",
+                   "Mixed_ugL")  
+
+met_vars <- c("Shortwave", "RelHum", "WindSpeed", "Rain")
+
+# Function to calculate % variance explained by group (varpart-style)
+group_varpart <- function(comm, env_data, group1_vars, group2_vars) {
+  # Filter to only vars present in data
+  g1 <- intersect(group1_vars, colnames(env_data))
+  g2 <- intersect(group2_vars, colnames(env_data))
   
-  for (var in drivers) {
-    cond_vars <- setdiff(drivers, var)
-    X <- env_data[, var, drop = FALSE]
-    Z <- if(length(cond_vars) > 0) env_data[, cond_vars, drop = FALSE] else NULL
-    
-    partial <- rda(comm, X, Z)
-    an <- anova(partial)
-    
-    # adjusted R^2
-    results[results$variable == var, "R2adj"] <- RsquareAdj(partial)$adj.r.squared
-    results[results$variable == var, "p"] <- an$`Pr(>F)`[1]
-  }
-  return(results)
-}
+  X1 <- env_data[, g1, drop = FALSE]
+  X2 <- env_data[, g2, drop = FALSE]
+  
+  vp <- varpart(comm, X1, X2)
+  return(vp)}
 
-# RDA (Table S2)
-rda_varpart <- partial_rda_var(sig_drivers_rda, zoop_dens_trans, all_drivers_num) |>
-  mutate(R2adj = round(R2adj,3))
-#write.csv(rda_varpart, "Output/RDA_varpart.csv", row.names=FALSE)
+# Subset each group to only significant drivers first
+phys_rda <- all_drivers_num[, intersect(physical_vars, colnames(all_drivers_num)), drop = FALSE]
+chem_rda <- all_drivers_num[, intersect(chemical_vars, colnames(all_drivers_num)), drop = FALSE]
+met_rda  <- all_drivers_num[, intersect(met_vars,      colnames(all_drivers_num)), drop = FALSE]
 
-# dbRDA (Table S3)
-dbrda_varpart <- partial_rda_var(sig_drivers_dbrda, zoop_dens_trans, all_drivers_num) |>
-  mutate(R2adj = round(R2adj,3))
-#write.csv(dbrda_varpart, "Output/dbRDA_varpart.csv", row.names=FALSE)
+# Check what's in each group before running
+cat("Physical vars in RDA:", names(phys_rda), "\n")
+cat("Chemical vars in RDA:", names(chem_rda), "\n")
+cat("Met vars in RDA:",      names(met_rda),  "\n")
+
+# Run varpart with pre-subsetted objects
+rda_vp <- varpart(zoop_dens_trans, phys_rda, chem_rda, met_rda)
+plot(rda_vp, digits = 2, Xnames = c("Physical", "Chemical", "Meteorological"))
+summary(rda_vp)
+
+varpart_table <- data.frame(
+  Component = c("Physical (unique)", "Chemical (unique)", "Shared (physical + chemical)", "Residual"),
+  Adj_R2 = c(
+    round(rda_vp$part$indfract$Adj.R.square[1], 3),  # [a] unique physical
+    round(rda_vp$part$indfract$Adj.R.square[2], 3),  # [b] unique chemical
+    round(rda_vp$part$indfract$Adj.R.square[4], 3),  # [d] shared
+    round(rda_vp$part$indfract$Adj.R.square[8], 3)   # [h] residual
+  ))
+#write.csv(varpart_table, "Output/RDA_varpart_grouped.csv", row.names = FALSE)

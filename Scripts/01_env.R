@@ -11,7 +11,8 @@ pacman::p_load(tidyverse, NatParksPalettes, rLakeAnalyzer,
 
 #read in zoop df to get dates
 zoop <- read.csv("Output/all_zoops_dens.csv")
-  zoop_dates <- unique(zoop$DateTime)
+
+zoop_dates <- unique(zoop$DateTime)
 
 #dataframe with all zoop dates
 all_dates_df <- data.frame(DateTime = as.Date(zoop_dates))
@@ -409,4 +410,14 @@ all_drivers_fill <- all_drivers_fill |>
   dplyr::select(-c(Year,Month,DOY)) 
 
 #export csv; n = 83 days; secchi has a lot of NAs...
-write.csv(all_drivers_fill, "./Output/all_drivers.csv", row.names=FALSE)
+#write.csv(all_drivers_fill, "./Output/all_drivers.csv", row.names=FALSE)
+
+#Environmental variable summary Table S1
+summary_table <- data.frame(
+  variable = names(all_drivers_num),
+  min = sapply(all_drivers_num, function(x) min(x, na.rm = TRUE)),
+  max = sapply(all_drivers_num, function(x) max(x, na.rm = TRUE)),
+  pct_missing = sapply(all_drivers_num, function(x) mean(is.na(x)) * 100)) |>
+  filter(!variable %in% c("DOY", "Month", "Year")) |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+write.csv(summary_table, "Output/env_var_summary.csv", row.names = F)

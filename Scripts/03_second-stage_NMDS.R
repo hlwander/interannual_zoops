@@ -2,20 +2,21 @@
 
 pacman::p_load(zoo,dplR,dplyr,tidyverse,ggplot2,ggpubr,
                vegan,FSA,rcompanion,NatParksPalettes,ggrepel,labdsv,
-               goeveg, ggordiplots, cowplot)
+               goeveg, ggordiplots, cowplot, cols4all)
 
 #read in all_zoops df
-all_zoops_dens <- read.csv("Output/all_zoops_dens.csv",header = TRUE)
+nmds_zoops <- read.csv("Output/zoop_dens_10groups_nmds.csv",header = TRUE)
 
-year_cols <- c("#011f51","#1f78b4","#33a02c","#fdfa66","#ff7f00","#e31a1c","#6a3d9a")
-# 2014, 2015, 2016, 2019, 2020, 2021, 2023
+#cb friendly year palette (2014, 2015, 2016, 2019, 2020, 2021, 2023)
+year_cols <- c4a("cols4all.friendly7", n = 7)
+#c4a_plot_cvd("cols4all.friendly7")
 
 #---------------------------------------------------------------------------------#
 #NMDS: 85 total samples; 12 removed that fall outside of may-oct range for SS NMDS
-taxa <- unique(all_zoops_dens$Taxon)
+taxa <- unique(nmds_zoops$Taxon)
 
 #taxa as cols, dates as rows, average by month
-all_zoops_nmds <- all_zoops_dens |> 
+all_zoops_nmds <- nmds_zoops |> 
   dplyr::select(DateTime, Taxon, dens) |> 
   filter(Taxon %in% taxa) |> 
   mutate(DateTime = as.Date(DateTime)) |> 
@@ -31,19 +32,18 @@ all_zoops_nmds <- all_zoops_dens |>
             Conochilus = mean(Conochilus),
             Keratella = mean(Keratella),
             Kellicottia = mean(Kellicottia),
-            Polyarthra = mean(Polyarthra)) |> 
+            Polyarthra = mean(Polyarthra),
+            Trichocerca = mean(Trichocerca)) |> 
   ungroup() |>
   mutate(year = year(DateTime),
          month = month(DateTime)) |>
   filter(!month %in% c(3,12)) #drop the months that could not be imputed
-#write.csv(all_zoops_nmds, "./Output/zoop_raw_dens.csv", row.names=FALSE)
 
 #select only data cols
-zoops_dens_all <- all_zoops_nmds |> select(Bosmina:Polyarthra)
+zoops_dens_all <- all_zoops_nmds |> select(Bosmina:Trichocerca)
 
 #hellinger transform data
 zoop_dens_trans_all <- labdsv::hellinger(zoops_dens_all)
-#write.csv(zoop_dens_trans_all, "./Output/zoop_dens_trans.csv", row.names=FALSE)
 
 #turn transformed community data into b-c distance matrix 
 zoop_bray_first <- as.matrix(vegan::vegdist(zoop_dens_trans_all, method='bray'))
@@ -61,7 +61,7 @@ set.seed(11)
 NMDS_bray_first <- vegan::metaMDS(zoop_bray_first, distance='bray', k=3, trymax=20, 
                                   autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_first$stress
-# 0.13
+# 0.14
 
 #plot axis 2 vs. 1 (Figure 2)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
@@ -126,7 +126,7 @@ month12 <- month12$plot + geom_point() + theme_bw() +
                              "September","October","November")) 
 
 ggpubr::ggarrange(year12,month12,ncol=2, common.legend = F)
-#ggsave("Figures/first_stage_NMDS_2v1_dens_all.jpg", width=5, height=3)
+#ggsave("Figures/first_stage_NMDS_2v1_dens_all.jpg", width=5, height=4)
 
 #plot axis 3 vs. 1 (Supplemental Figure S3)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
@@ -190,7 +190,46 @@ month13 <- month13$plot + geom_point() + theme_bw() +
                              "September","October","November")) 
 
 ggpubr::ggarrange(year13,month13,ncol=2, common.legend = F)
-#ggsave("Figures/first_stage_NMDS_3v1_dens_all.jpg", width=5, height=3.5)
+#ggsave("Figures/first_stage_NMDS_3v1_dens_all.jpg", width=5, height=4.5)
+
+#------------------------------------------------------------------------------#
+#significance tests
+
+# drop april and nov for even sample design
+all_zoops_nmds_even <- all_zoops_nmds |>
+  filter(!month %in% c(4,11))
+
+#select only data cols
+zoops_dens_all_even <- all_zoops_nmds_even |> select(Bosmina:Trichocerca)
+
+#hellinger transform data
+zoop_dens_trans_all_even <- labdsv::hellinger(zoops_dens_all_even)
+
+#turn transformed community data into b-c distance matrix 
+zoop_bray_even <- as.matrix(vegan::vegdist(zoop_dens_trans_all_even, method='bray'))
+
+# pull metadata in same row order as distance matrix
+meta <- all_zoops_nmds_even |> 
+  mutate(month = as.factor(month),
+         year = as.factor(year))
+
+# PERMANOVA - tests whether centroids differ by month and year
+set.seed(11)
+perm_month <- vegan::adonis2(zoop_bray_even ~ month, data = meta, permutations = 999)
+#explains 18.6% of variance (p = 0.001)
+perm_year  <- vegan::adonis2(zoop_bray_even ~ year,  data = meta, permutations = 999)
+#explains 20% of variance (p = 0.001)
+
+# both in one model to partition variance
+perm_both  <- vegan::adonis2(zoop_bray_even ~ year + month, data = meta, permutations = 999)
+#overall explains 38% of variance (p = 0.001)
+
+# betadisper - tests whether dispersion differs - spoiler: it does NOT
+disp_month <- vegan::betadisper(as.dist(zoop_bray_even), meta$month)
+disp_year  <- vegan::betadisper(as.dist(zoop_bray_even), meta$year)
+
+anova(disp_month)
+anova(disp_year)
 
 #------------------------------------------------------------------------------#
 # prepare dataset for SS NMDS
@@ -208,13 +247,14 @@ monthly_zoops_nmds <- all_zoops_nmds |>
             Conochilus = mean(Conochilus),
             Keratella = mean(Keratella),
             Kellicottia = mean(Kellicottia),
-            Polyarthra = mean(Polyarthra)) |> 
+            Polyarthra = mean(Polyarthra),
+            Trichocerca = mean(Trichocerca)) |> 
   ungroup() |>
   filter(month %in% c("05","06","07","08","09","10"), 
          !year %in% c("2022"))
 
 #select only data cols
-zoops_dens <- monthly_zoops_nmds |> select(Bosmina:Polyarthra)
+zoops_dens <- monthly_zoops_nmds |> select(Bosmina:Trichocerca)
 
 #hellinger transform data
 zoop_dens_trans <- labdsv::hellinger(zoops_dens)
@@ -266,7 +306,6 @@ diag(correlation_matrix) <- 1
 #name rows and cols
 rownames(correlation_matrix) <- c("2014","2015","2016","2019","2020","2021","2023")
 colnames(correlation_matrix) <- c("2014","2015","2016","2019","2020","2021","2023")
-#write.csv(correlation_matrix, "Output/corr_mat.csv")
 
 #run NMDS again - clustering will indicate years where changes through time are similar
 set.seed(11)
@@ -274,7 +313,7 @@ set.seed(11)
 NMDS_bray_second <- vegan::metaMDS(correlation_matrix, distance='bray', k=3, trymax=20, 
                                    autotransform=FALSE, pc=FALSE, plot=FALSE)
 NMDS_bray_second$stress
-# 0.07
+# 0.10
 
 #--------------------------------------------------------------------------#
 #NMDS plot - second-stage (Manuscript Figure 3)
@@ -342,7 +381,7 @@ site_scores <- as.data.frame(vegan::scores(NMDS_bray_second, display = "sites"))
 #assign years
 site_scores$year <- c(unique(monthly_zoops_nmds$year))
 
-# compute Euclidean distance matrix across the first 3 NMDS dims (Table S1)
+# compute Euclidean distance matrix across the first 3 NMDS dims (Table S5)
 dist_mat <- as.matrix(dist(site_scores[, c(1,2,3)], method = "euclidean"))
 
 # find the most similar pair (smallest non-zero distance)
@@ -354,11 +393,14 @@ most_similar_pair <- data.frame(
   year1 = site_scores$year[which_min[1, "row"]],
   year2 = site_scores$year[which_min[1, "col"]],
   distance = min_val)
-# 2015 and 2016 have the most similar communities (smallest distance value)
+# 2021 and 2023 have the most similar communities (smallest distance value)
 
 # after computing dist_mat
 rownames(dist_mat) <- site_scores$year
 colnames(dist_mat) <- site_scores$year
+
+dist_mat <- round(dist_mat,2)
+#write.csv(dist_mat, "Output/ss_year_distances.csv")
 #-----------------------------------------------------------#
 #read in env csv
 env_drivers <- read.csv("./Output/all_drivers.csv") |> 
@@ -395,7 +437,7 @@ zoops_plus_drivers <- bind_cols(all_zoops_nmds, env_drivers[
 # plot env vectors on first stage nmds
 env_drivers_only <- env_drivers |> dplyr::select(-c(month,year,DateTime))
 
-# run envfit (use permutations if you want p-values)
+# run envfit (use permutations to get p-values)
 set.seed(3)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
                        choices = c(1,2),type = "n")
@@ -403,8 +445,13 @@ ef <- envfit(ord, env_drivers_only, permutations = 999, na.rm = TRUE)
 
 #pull out vectors; multiply by sqrt(r2) to get correct magnitudes
 scores <- data.frame(ef$vectors$arrows * sqrt(ef$vectors$r),
-                     pvals = ef$vectors$pvals,
+                     pvals = round(ef$vectors$pvals,3),
                      env = rownames(ef$vectors$arrows))
+
+#round scores and order by increasing p-val (Table S3)
+scores[, 1:2] <- round(scores[, 1:2], 4)
+scores <- scores[order(scores$pvals), ]
+#write.csv(scores, "Output/envfit_NMDS_2vs1.csv", row.names = FALSE)
 
 #scale arrows by significance
 min_mult <- 0.3  # shorter arrows for non-significant variables
@@ -437,7 +484,7 @@ month_with_env_12 <- month12 +
                   size = 2) 
 
 ggpubr::ggarrange(year_with_env_12, month_with_env_12, ncol=2, common.legend = F)
-#ggsave("Figures/NMDS_2v1_all_dens_env.jpg", width=6, height=3.5) 
+#ggsave("Figures/NMDS_2v1_all_dens_env.jpg", width=6, height=4) 
 
 #----------------------------------------------------------------------------#
 # same for axis 3 vs 1
@@ -450,8 +497,13 @@ ef <- envfit(ord, env_drivers_only, permutations = 999, na.rm = TRUE)
 
 #pull out vectors; multiply by sqrt(r2) to get correct magnitudes
 scores <- data.frame(ef$vectors$arrows * sqrt(ef$vectors$r),
-                     pvals = ef$vectors$pvals,
+                     pvals = round(ef$vectors$pvals,3),
                      env = rownames(ef$vectors$arrows))
+
+#round scores and order by increasing p-value (Table S4)
+scores[, 1:2] <- round(scores[, 1:2], 4)
+scores <- scores[order(scores$pvals), ]
+#write.csv(scores, "Output/envfit_NMDS_3vs1.csv", row.names = FALSE)
 
 #scale arrows by significance
 min_mult <- 0.3  # shorter arrows for non-significant variables
@@ -484,7 +536,7 @@ month_with_env_13 <- month13 +
                   size = 2) 
 
 ggpubr::ggarrange(year_with_env_13, month_with_env_13, ncol=2, common.legend = F)
-#ggsave("Figures/NMDS_3v1_all_dens_env.jpg", width=6, height=4) 
+#ggsave("Figures/NMDS_3v1_all_dens_env.jpg", width=6, height=5) 
 
 #---------------------------------------------------------------#
 # summarize by year
@@ -503,7 +555,7 @@ zoops_plus_drivers_yearly <- bind_cols(monthly_zoops_nmds, ss_env[
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,2),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(11:31)])
+fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(12:32)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -535,7 +587,7 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
   scale_color_manual("",values=year_cols,
                      label=c("2014","2015","2016",
                              "2019","2020","2021","2023")) +
-  xlim(-0.7,1) + ylim(-1,0.9) +
+  xlim(-1,1) + ylim(-1,0.9) +
   geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
@@ -547,7 +599,7 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
                        choices = c(1,3),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(11:31)])
+fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(12:32)])
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
@@ -581,7 +633,7 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
   scale_color_manual("",values=year_cols,
                      label=c("2014","2015","2016",
                              "2019","2020","2021","2023")) +
-  xlim(-0.7,1) + ylim(-1,0.9) +
+  xlim(-1,1) + ylim(-1,0.9) +
   geom_segment(data = filter(scores, pvals <= 0.05),
                aes(x = 0, xend = NMDS1, y = 0, yend = NMDS3), linewidth= 0.3,
                arrow = arrow(length = unit(0.1, "cm")), colour = "black") +
@@ -591,16 +643,3 @@ env_plot2 <- ss_year$plot + geom_point() + theme_bw() +
 
 ggpubr::ggarrange(env_plot1, env_plot2, ncol=2, common.legend = F)
 #ggsave("Figures/second_stage_NMDS_envfit.jpg", width=6, height=3)
-
-#---------------------------------------------------------------------------
-# SIGNIFICANCE TESTS --> Is zoop community structure different among years?
-
-#check assumptions
-dist_bray <- vegdist(zoop_dens_trans_all, method = "bray")
-bd_year <- betadisper(dist_bray, group = all_zoops_nmds$year)
-plot(bd_year)           
-permutest(bd_year, permutations = 999) #dispersion is similar
-
-set.seed(3)
-adonis2(zoop_bray_first ~ year, data = all_zoops_nmds, 
-        permutations = 999, by = "margin") #not sig, no year differences
