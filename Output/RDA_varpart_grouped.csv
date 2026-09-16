@@ -1,5 +1,9 @@
 "Component","Adj_R2"
-"Physical (unique)",0.087
-"Chemical (unique)",0.06
-"Shared (physical + chemical)",0.055
-"Residual",0.769
+"Physical (unique)",0.084
+"Chemical (unique)",0.062
+"Meteorological (unique)",0
+"Physical + Chemical",0.056
+"Physical + Meteorological",-0.001
+"Chemical + Meteorological",-0.008
+"Physical + Chemical + Meteorological",0.04
+"Residual",0.768

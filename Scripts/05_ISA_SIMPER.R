@@ -181,7 +181,7 @@ joint_fig <- pA + pB +
 #ggsave("Figures/isa_simper_joint.jpg", joint_fig, width = 8, height = 4.5, dpi = 300)
 
 #------------------------------------------------------------------------------
-#ISA Table S9
+#ISA Table S8
 isa_table <- indval$sign |>
   as.data.frame() |>
   rownames_to_column("Taxon") |>

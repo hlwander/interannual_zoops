@@ -1,7 +1,7 @@
 # Redundancy analysis for all BVR zoop data 2014-2021
 
 pacman::p_load(vegan, tidyr, data.table, lubridate, tibble, ggrepel, cols4all,
-               rLakeAnalyzer, car, ggnewscale, dplyr, ggplot2, patchwork)
+               rLakeAnalyzer, car, ggnewscale, dplyr, ggplot2, patchwork, stringr)
 
 #cb friendly year palette (2014, 2015, 2016, 2019, 2020, 2021, 2023)
 year_cols <- c4a("cols4all.friendly7", n = 7)
@@ -49,16 +49,21 @@ dca <- decorana(zoop_dens_trans)
 all_drivers_num <- env_drivers[ , !names(env_drivers) %in% c("DateTime")]
 
 # Run the RDA
+set.seed(123)
 rda_mod <- rda(zoop_dens_trans ~ ., data = all_drivers_num)
 
 #next see whether env vars are colinear (VIF>5)
 vif.cca(rda_mod) #dropping epi temp, air temp, longwave, and total bc VIF > 7
 
-# 41% of total zooplankton variation is explained by env variables (0.1380/0.3405)
-# 59% is unexplained (0.2025/0.3405)
+# 41% of total zooplankton variation is explained by env variables (0.1375/0.3390)
+# 59% is unexplained (0.2015/0.3390)
 summary(rda_mod)
 
+#adjusted R2 = 23.2%
+RsquareAdj(rda_mod)$adj.r.squared
+
 # ANOVA to test significance
+set.seed(123)
 anova_rda_axis <- anova(rda_mod, by = "axis", permutations = 999) 
 #RDA1 and RDA2 explain a significant fraction of the variance
 #this is raw canonical variance though not total variance
@@ -66,53 +71,58 @@ anova_rda_axis <- anova(rda_mod, by = "axis", permutations = 999)
 axis_rda_df <- as.data.frame(anova_rda_axis) |>
   rownames_to_column("axis") |>
   rename(F_value = F, P_value = `Pr(>F)`) |>
-  mutate(axis = str_replace(axis, "^Axis ", "Axis_")) |>
+  mutate(axis = str_replace(axis, "^RDA ", "RDA_")) |>
   filter(!axis %in% "Residual")  |>
   dplyr::select(-c(Df,Variance)) |>
   mutate(F_value = round(F_value, 2))
 
-#add %var explained by each axis (Table S6)
+#add %var explained by each axis (Table S5)
 eig <- eigenvals(rda_mod)
 axis_rda_df <- axis_rda_df |>
   mutate(Variance_explained = round(100 * eig[1:nrow(axis_rda_df)] / sum(eig), 1))
 #write.csv(axis_rda_df, "Output/RDA_axis_ANOVA.csv", row.names=FALSE)
 
-#term (Table 1)
-anova_rda_term <- anova(rda_mod, by = "term", permutations = 999)
+#term (Table 2)
+set.seed(123) #using margin so order does not matter
+anova_rda_margin <- anova(rda_mod, by = "margin", permutations = 999)
 #hypo tn, epi tp, hypo temp, epi DO, ss, secchi, and brown are significant drivers of zoop community structure
 
-term_rda_df <- as.data.frame(anova_rda_term) |>
+margin_rda_df <- as.data.frame(anova_rda_margin) |>
   rownames_to_column("term") |>
   rename(F_value = F, P_value = `Pr(>F)`) |>
   filter(!term %in% "Residual")  |>
   dplyr::select(-c(Df)) |>
   mutate(F_value = round(F_value, 2))
 
+#add total model variance because summing the marginal variance only includes unique not shared variance
+total_SS_rda <- rda_mod$CCA$tot.chi 
+
 #add %var explained by each term
-total_SS_rda <- sum(term_rda_df$Variance)  # sum of all constrained variance
-term_rda_df <- term_rda_df |>
+margin_rda_df <- margin_rda_df |>
   mutate(Variance_pct = round(100 * Variance / total_SS_rda, 1)) |>
   select(-Variance) |>
   arrange(-Variance_pct)
-#write.csv(term_rda_df, "Output/RDA_term_ANOVA.csv", row.names=FALSE)
-
-# envfit to get arrow directions and p-values (uses same predictor table)
-envfit_rda <- envfit(rda_mod, all_drivers_num, permutations = 999)
+#write.csv(margin_rda_df, "Output/RDA_margin_ANOVA.csv", row.names=FALSE)
 
 #------------------------------------------------------------------------------#
 #now db rda
+set.seed(123)
 cap_mod <- capscale(zoop_dens_trans ~ ., data = all_drivers_num, 
                     distance = "bray")
 
 summary(cap_mod)
-# 38.7% of variability explained by env variables (4.382/11.312)
-# 61.3% is unexplained (6.930/11.312) 
+# 38.6% of variability explained by env variables (4.320/11.188)
+# 61.4% is unexplained (6.868/11.188) 
+
+#adjusted R2 = 20.7%
+RsquareAdj(cap_mod)$adj.r.squared
 
 #permutation anovas to test sig
+set.seed(123)
 anova_dbrda_axis <- anova(cap_mod, by = "axis", permutations = 999)
 #axes 1-3 are sig
 
-#Table S7
+#Table S6
 axis_dbrda_df <- as.data.frame(anova_dbrda_axis) |>
   rownames_to_column("axis") |>
   rename(F_value = F, P_value = `Pr(>F)`) |>
@@ -123,29 +133,30 @@ axis_dbrda_df <- as.data.frame(anova_dbrda_axis) |>
   mutate(F_value = round(F_value, 2))
 #write.csv(axis_dbrda_df, "Output/dbRDA_axis_ANOVA.csv", row.names=FALSE)
 
-#term (Table 2)
-anova_dbrda_term <- anova(cap_mod, by = "margin", permutations = 999) 
+#term (Table 3)
+set.seed(123)
+anova_dbrda_margin <- anova(cap_mod, by = "margin", permutations = 999) 
 #sig drivers: TN epi and hypo, TP epi, hypo temp, epi DO, wl, thermo_depth, ss, bluegreen, brown, secchi
 
-term_dbrda_df <- as.data.frame(anova_dbrda_term) |>
+margin_dbrda_df <- as.data.frame(anova_dbrda_margin) |>
   rownames_to_column("term") |>
   rename(F_value = F, P_value = `Pr(>F)`) |>
   filter(!term %in% "Residual")  |>
   dplyr::select(-c(Df)) |>
   mutate(F_value = round(F_value, 2))
 
+#add total model variance because summing the marginal variance only includes unique not shared variance
+total_SS_dbrda <- cap_mod$CCA$tot.chi 
+
 #add %var explained by each term
-total_SS_dbrda <- sum(term_dbrda_df$SumOfSqs)  # sum of all constrained variance
-term_dbrda_df <- term_dbrda_df |>
+margin_dbrda_df <- margin_dbrda_df |>
   mutate(Variance_pct = round(100 * SumOfSqs / total_SS_dbrda, 1)) |>
   select(-SumOfSqs) |>
   arrange(-Variance_pct)
-#write.csv(term_dbrda_df, "Output/dbRDA_term_ANOVA.csv", row.names=FALSE)
+#write.csv(margin_dbrda_df, "Output/dbRDA_margin_ANOVA.csv", row.names=FALSE)
 
 cap_R2 <- RsquareAdj(cap_mod)$r.squared
 cap_R2adj <- RsquareAdj(cap_mod)$adj.r.squared
-
-envfit_cap <- envfit(cap_mod, all_drivers_num, permutations = 999)
 
 # extract site scores
 rda_sites <- vegan::scores(rda_mod, display = "sites", 
@@ -182,20 +193,20 @@ summary(pro)
 
 protest_res <- protest(rda_sites[,c("RDA1","RDA2")], cap_sites[,c("RDA1","RDA2")], 
                        permutations = 999)
-#significant procrustus correlation (0.9797) so ordinations are similar
+#significant procrustus correlation (0.9745) so ordinations are similar
 
-# envfit
-env_vec_rda <- as.data.frame(vegan::scores(envfit_rda, display = "vectors")) |> 
-  rownames_to_column("variable") |> 
-  mutate(Significant = ifelse(variable %in% rownames(anova_rda_term)[
-    which(anova_rda_term$`Pr(>F)` < 0.05)], "yes", "no"),
-         RDA1_end = RDA1 * 2, RDA2_end = RDA2 * 2)
+# biplot scores
+env_vec_rda <- as.data.frame(vegan::scores(rda_mod, display = "bp")) |>
+  rownames_to_column("variable") |>
+  mutate(Significant = ifelse(variable %in% rownames(anova_rda_margin)[
+    which(anova_rda_margin$`Pr(>F)` < 0.05)], "yes", "no"),
+    RDA1_end = RDA1 * 2, RDA2_end = RDA2 * 2)
 
-env_vec_cap <- as.data.frame(vegan::scores(envfit_cap, display = "vectors")) |> 
+env_vec_cap <- as.data.frame(vegan::scores(cap_mod, display = "bp")) |> 
   rownames_to_column("variable") |> 
   rename(RDA1 = CAP1, RDA2 = CAP2) |>
-  mutate(Significant = ifelse(variable %in% rownames(anova_dbrda_term)[
-    which(anova_dbrda_term$`Pr(>F)` < 0.05)], "yes", "no"),
+  mutate(Significant = ifelse(variable %in% rownames(anova_dbrda_margin)[
+    which(anova_dbrda_margin$`Pr(>F)` < 0.05)], "yes", "no"),
     RDA1_end = RDA1 * 2, RDA2_end = RDA2 * 2)
 
 rda_pct1 <- axis_rda_df$Variance_explained[1] 
@@ -252,7 +263,7 @@ p_cap <- make_plot(cap_sites, cap_species, env_vec_cap,
 
 #-----------------------------------------------------------------------------
 #variance partitioning to see whether physical or chemcial drivers explain more variance
-# Table S8
+# Table S7
 # Define variable groups
 physical_vars <- c("Temp_C_hypo", "waterlevel", "therm_depth", "oxy_depth", 
                    "SS", "secchi")  
@@ -263,7 +274,7 @@ chemical_vars <- c("TN_ugL_epi", "TN_ugL_hypo", "TP_ugL_epi", "TP_ugL_hypo",
 
 met_vars <- c("Shortwave", "RelHum", "WindSpeed", "Rain")
 
-# Function to calculate % variance explained by group (varpart-style)
+# Function to calculate % variance explained by group
 group_varpart <- function(comm, env_data, group1_vars, group2_vars) {
   # Filter to only vars present in data
   g1 <- intersect(group1_vars, colnames(env_data))
@@ -291,11 +302,18 @@ plot(rda_vp, digits = 2, Xnames = c("Physical", "Chemical", "Meteorological"))
 summary(rda_vp)
 
 varpart_table <- data.frame(
-  Component = c("Physical (unique)", "Chemical (unique)", "Shared (physical + chemical)", "Residual"),
+  Component = c("Physical (unique)", "Chemical (unique)", "Meteorological (unique)", 
+                "Physical + Chemical", "Physical + Meteorological", 
+                "Chemical + Meteorological", "Physical + Chemical + Meteorological", 
+                 "Residual"),
   Adj_R2 = c(
     round(rda_vp$part$indfract$Adj.R.square[1], 3),  # [a] unique physical
     round(rda_vp$part$indfract$Adj.R.square[2], 3),  # [b] unique chemical
-    round(rda_vp$part$indfract$Adj.R.square[4], 3),  # [d] shared
+    round(rda_vp$part$indfract$Adj.R.square[3], 3),  # [c] unique met
+    round(rda_vp$part$indfract$Adj.R.square[4], 3),  # [d] p+c
+    round(rda_vp$part$indfract$Adj.R.square[5], 3),  # [e] p+m
+    round(rda_vp$part$indfract$Adj.R.square[6], 3),  # [f] c+m
+    round(rda_vp$part$indfract$Adj.R.square[7], 3),  # [g] p+c+m
     round(rda_vp$part$indfract$Adj.R.square[8], 3)   # [h] residual
   ))
 #write.csv(varpart_table, "Output/RDA_varpart_grouped.csv", row.names = FALSE)

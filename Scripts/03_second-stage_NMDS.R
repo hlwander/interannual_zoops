@@ -381,7 +381,7 @@ site_scores <- as.data.frame(vegan::scores(NMDS_bray_second, display = "sites"))
 #assign years
 site_scores$year <- c(unique(monthly_zoops_nmds$year))
 
-# compute Euclidean distance matrix across the first 3 NMDS dims (Table S5)
+# compute Euclidean distance matrix across the first 3 NMDS dims (Table 1)
 dist_mat <- as.matrix(dist(site_scores[, c(1,2,3)], method = "euclidean"))
 
 # find the most similar pair (smallest non-zero distance)
@@ -440,8 +440,8 @@ env_drivers_only <- env_drivers |> dplyr::select(-c(month,year,DateTime))
 # run envfit (use permutations to get p-values)
 set.seed(3)
 ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
-                       choices = c(1,2),type = "n")
-ef <- envfit(ord, env_drivers_only, permutations = 999, na.rm = TRUE)
+                       choices = c(1:3),type = "n")
+ef <- envfit(ord, env_drivers_only, permutations = 999, na.rm = TRUE, choices = 1:3)
 
 #pull out vectors; multiply by sqrt(r2) to get correct magnitudes
 scores <- data.frame(ef$vectors$arrows * sqrt(ef$vectors$r),
@@ -449,9 +449,9 @@ scores <- data.frame(ef$vectors$arrows * sqrt(ef$vectors$r),
                      env = rownames(ef$vectors$arrows))
 
 #round scores and order by increasing p-val (Table S3)
-scores[, 1:2] <- round(scores[, 1:2], 4)
+scores[, 1:3] <- round(scores[, 1:3], 4)
 scores <- scores[order(scores$pvals), ]
-#write.csv(scores, "Output/envfit_NMDS_2vs1.csv", row.names = FALSE)
+#write.csv(scores, "Output/envfit_NMDS.csv", row.names = FALSE)
 
 #scale arrows by significance
 min_mult <- 0.3  # shorter arrows for non-significant variables
@@ -488,22 +488,6 @@ ggpubr::ggarrange(year_with_env_12, month_with_env_12, ncol=2, common.legend = F
 
 #----------------------------------------------------------------------------#
 # same for axis 3 vs 1
-
-# run envfit 
-set.seed(3)
-ord <- vegan::ordiplot(NMDS_bray_first,display = c('sites'),
-                       choices = c(1,3),type = "n")
-ef <- envfit(ord, env_drivers_only, permutations = 999, na.rm = TRUE)
-
-#pull out vectors; multiply by sqrt(r2) to get correct magnitudes
-scores <- data.frame(ef$vectors$arrows * sqrt(ef$vectors$r),
-                     pvals = round(ef$vectors$pvals,3),
-                     env = rownames(ef$vectors$arrows))
-
-#round scores and order by increasing p-value (Table S4)
-scores[, 1:2] <- round(scores[, 1:2], 4)
-scores <- scores[order(scores$pvals), ]
-#write.csv(scores, "Output/envfit_NMDS_3vs1.csv", row.names = FALSE)
 
 #scale arrows by significance
 min_mult <- 0.3  # shorter arrows for non-significant variables
@@ -553,14 +537,19 @@ zoops_plus_drivers_yearly <- bind_cols(monthly_zoops_nmds, ss_env[
   summarise_at(vars(-month), funs(mean(., na.rm=TRUE)))
 
 ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
-                       choices = c(1,2),type = "n")
+                       choices = c(1:3),type = "n")
 #fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(12:32)])
+fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(12:32)], choices = c(1:3))
 
 #pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
 scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
                      pvals=(fit_env$vectors)$pvals)
 scores <- cbind(scores, env = rownames(scores))
+
+#round scores and order by increasing p-val (Table S4)
+scores[, 1:3] <- round(scores[, 1:3], 4)
+scores <- scores[order(scores$pvals), ]
+#write.csv(scores, "Output/ss_envfit_NMDS.csv", row.names = FALSE)
 
 #plot drivers w/ second stage NMDS (Figure S6)
 ss_year <- ggordiplots::gg_ordiplot(ord, unique(monthly_zoops_nmds$year),
@@ -596,16 +585,6 @@ env_plot1 <- ss_year$plot + geom_point() + theme_bw() +
                   size = 1.5, box.padding = 0.2, max.overlaps=Inf)
 
 #axis 1 vs. 3
-ord <- vegan::ordiplot(NMDS_bray_second,display = c('sites'),
-                       choices = c(1,3),type = "n")
-#fit environmental drivers onto ordination
-fit_env <- envfit(ord, zoops_plus_drivers_yearly[,c(12:32)])
-
-#pull out vectors - need to multiply by the sqrt of r2 to get magnitude!
-scores <- data.frame((fit_env$vectors)$arrows * sqrt(fit_env$vectors$r), 
-                     pvals=(fit_env$vectors)$pvals)
-scores <- cbind(scores, env = rownames(scores))
-
 ss_year <- ggordiplots::gg_ordiplot(ord, unique(monthly_zoops_nmds$year),
                                     kind = "sd", ellipse=FALSE, hull = TRUE, 
                                     plot = FALSE, pt.size=0.9) 
