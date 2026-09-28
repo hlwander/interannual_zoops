@@ -80,7 +80,7 @@ axis_rda_df <- as.data.frame(anova_rda_axis) |>
 eig <- eigenvals(rda_mod)
 axis_rda_df <- axis_rda_df |>
   mutate(Variance_explained = round(100 * eig[1:nrow(axis_rda_df)] / sum(eig), 1))
-#write.csv(axis_rda_df, "Output/RDA_axis_ANOVA.csv", row.names=FALSE)
+#write.csv(axis_rda_df, "Output/tables/RDA_axis_ANOVA.csv", row.names=FALSE)
 
 #term (Table 2)
 set.seed(123) #using margin so order does not matter
@@ -102,7 +102,7 @@ margin_rda_df <- margin_rda_df |>
   mutate(Variance_pct = round(100 * Variance / total_SS_rda, 1)) |>
   select(-Variance) |>
   arrange(-Variance_pct)
-#write.csv(margin_rda_df, "Output/RDA_margin_ANOVA.csv", row.names=FALSE)
+#write.csv(margin_rda_df, "Output/tables/RDA_margin_ANOVA.csv", row.names=FALSE)
 
 #------------------------------------------------------------------------------#
 #now db rda
@@ -131,7 +131,7 @@ axis_dbrda_df <- as.data.frame(anova_dbrda_axis) |>
   mutate(Variance_pct = round(100 * SumOfSqs / sum(SumOfSqs, na.rm = TRUE), 1))|>
   dplyr::select(axis, F_value, P_value, Variance_pct)|>
   mutate(F_value = round(F_value, 2))
-#write.csv(axis_dbrda_df, "Output/dbRDA_axis_ANOVA.csv", row.names=FALSE)
+#write.csv(axis_dbrda_df, "Output/tables/dbRDA_axis_ANOVA.csv", row.names=FALSE)
 
 #term (Table 3)
 set.seed(123)
@@ -153,7 +153,7 @@ margin_dbrda_df <- margin_dbrda_df |>
   mutate(Variance_pct = round(100 * SumOfSqs / total_SS_dbrda, 1)) |>
   select(-SumOfSqs) |>
   arrange(-Variance_pct)
-#write.csv(margin_dbrda_df, "Output/dbRDA_margin_ANOVA.csv", row.names=FALSE)
+#write.csv(margin_dbrda_df, "Output/tables/dbRDA_margin_ANOVA.csv", row.names=FALSE)
 
 cap_R2 <- RsquareAdj(cap_mod)$r.squared
 cap_R2adj <- RsquareAdj(cap_mod)$adj.r.squared
@@ -316,4 +316,4 @@ varpart_table <- data.frame(
     round(rda_vp$part$indfract$Adj.R.square[7], 3),  # [g] p+c+m
     round(rda_vp$part$indfract$Adj.R.square[8], 3)   # [h] residual
   ))
-#write.csv(varpart_table, "Output/RDA_varpart_grouped.csv", row.names = FALSE)
+#write.csv(varpart_table, "Output/tables/RDA_varpart_grouped.csv", row.names = FALSE)

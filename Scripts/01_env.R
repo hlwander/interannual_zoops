@@ -8,6 +8,7 @@ pacman::p_load(tidyverse, NatParksPalettes, rLakeAnalyzer,
 
 #------------------------------------------------------------------------------#
 #Pull in environmental data for 2014-2023
+#Note that as of Aug 2026, EDI data packages cannot be read in without an authentication token
 
 #read in zoop df to get dates
 zoop <- read.csv("Output/all_zoops_dens.csv")
@@ -420,4 +421,4 @@ summary_table <- data.frame(
   pct_missing = sapply(all_drivers_num, function(x) mean(is.na(x)) * 100)) |>
   filter(!variable %in% c("DOY", "Month", "Year")) |>
   mutate(across(where(is.numeric), ~ round(.x, 2)))
-write.csv(summary_table, "Output/env_var_summary.csv", row.names = F)
+#write.csv(summary_table, "Output/env_var_summary.csv", row.names = F)

@@ -12,6 +12,7 @@ zoop_dens <- read.csv("Output/zoop_raw_dens.csv", header=TRUE) |>
   mutate(DateTime = as.Date(DateTime),
          year = format(DateTime, "%Y"),
          month = format(DateTime, "%b")) 
+
 year <- zoop_dens$year
 
 zoop_dens_trans <- read.csv("Output/zoop_dens_trans.csv", header=TRUE)
@@ -31,6 +32,7 @@ summary(indval)
 #create a table summarizing ISA results
 indicators <- list(
   "Chydorus" = c(2014),
+  "Diaphanosoma" = c(2014),
   "Synchaeta" = c(2019, 2020),
   "Ascomorpha" = c(2014, 2015, 2016),
   "Conochiloides" = c(2020, 2021, 2023),
@@ -65,12 +67,42 @@ simper_tbl <- bind_rows(
   as_tibble() |>
   relocate(Comparison, Taxon)
 
-# Top taxa for each year-pair comparison
-top_simper <- simper_tbl |>
-  group_by(Comparison) |>
-  arrange(desc(average), .by_group = TRUE) |>
-  dplyr::slice_head(n = 11) |>
-  ungroup()
+#Figure S7 - heatmap of year-pair contributions
+taxon_order <- simper_mean |>
+  arrange(mean_contrib) |>      
+  pull(Taxon)
+
+# Comparison order: sorted so year pairs run chronologically
+comp_order <- sort(unique(simper_tbl$Comparison))
+
+simper_heat <- simper_tbl |>
+  complete(Taxon, Comparison) |>   # fills any missing taxon x comparison with NA
+  mutate(
+    Taxon      = factor(Taxon, levels = taxon_order),
+    Comparison = factor(Comparison, levels = comp_order))
+
+ggplot(simper_heat, aes(x = Comparison, y = Taxon, fill = average)) +
+  geom_tile(color = "white", linewidth = 0.3) +
+  scale_fill_viridis_c(
+    option   = "C",
+    trans    = "sqrt",
+    breaks   = c(0.001, 0.01, 0.05, 0.10),
+    labels   = scales::label_number(accuracy = 0.001),
+    na.value = "grey90",
+    name     = "Contribution to\nBray-Curtis dissimilarity") +
+  labs(x = "Year-pair comparison", y = NULL) +
+  theme_minimal(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        panel.grid  = element_blank())
+#ggsave("Figures/SIMPER_year_pairs.jpg", width = 8, height = 6, dpi = 300)
+
+# Get mean contribution per taxa
+simper_mean <- simper_tbl |>
+  group_by(Taxon) |>
+  summarise(mean_contrib = mean(average, na.rm = TRUE),
+            se_contrib   = sd(average, na.rm = TRUE) / sqrt(n()),
+            .groups = "drop") |>
+  arrange(desc(mean_contrib)) 
 
 #------------------------------------------------------------------------------#
 # Joint ISA + SIMPER figure
@@ -82,10 +114,14 @@ taxa_cols <- c(
   "Ceriodaphnia"  = "#B7ABBC",
   "Chydorus"      = "#F9ECE8",
   "Conochiloides" = "#FCC893",
-  "Diaphanosoma"  = "grey95", 
+  "Diaphanosoma"  = "#F2A07B", 
   "Gastropus"     = "#FEB424",
-  "Synchaeta"     = "grey95",
+  "Hexarthra"     = "grey95",
+  "Synchaeta"     = "#EE8412",
   "Trichocerca"   = "#D8511D",
+  "Lecane"        = "grey95",
+  "Lepadella"     = "grey95",
+  "Monostyla"     = "grey95",
   "Polyarthra"    = "grey95",
   "Nauplii"       = "grey95",
   "Keratella"     = "grey95",
@@ -94,6 +130,7 @@ taxa_cols <- c(
   "Cyclopoida"    = "grey95",
   "Calanoida"     = "grey95",
   "Conochilus"    = "grey95",
+  "Collotheca"    = "grey95",
   "Asplanchna"    = "grey95") 
 
 taxa_order <- names(taxa_cols) 
@@ -103,7 +140,7 @@ taxa_order <- names(taxa_cols)
 
 all_years <- c(2014, 2015, 2016, 2019, 2020, 2021, 2023)
 
-overlap_taxa <- intersect(names(indicators), unique(top_simper$Taxon))
+overlap_taxa <- intersect(names(indicators), taxon_order)
 
 isa_long <- tibble(
   Taxon = rep(names(indicators), lengths(indicators)),
@@ -146,14 +183,6 @@ pA <- ggplot(isa_long, aes(x = Year, y = Taxon)) +
     plot.subtitle = element_text(size = 8, colour = "grey50"))
 
 # ── PANEL B: SIMPER — mean contribution across all pairwise comparisons ───────
-# Aggregate to avoid showing all 21 pairwise bars
-
-simper_mean <- top_simper |>
-  group_by(Taxon) |>
-  summarise(
-    mean_contrib = mean(average, na.rm = TRUE),
-    se_contrib   = sd(average, na.rm = TRUE) / sqrt(n()),
-    .groups = "drop") 
 
 pB <- ggplot(simper_mean, aes(x = mean_contrib, y = Taxon, fill = Taxon)) +
   geom_col(width = 0.65) +
@@ -162,10 +191,10 @@ pB <- ggplot(simper_mean, aes(x = mean_contrib, y = Taxon, fill = Taxon)) +
                 width = 0.25, colour = "grey40", linewidth = 0.4) +
   scale_fill_manual(values = c(taxa_cols, Other = "grey95"), guide = "none") +
   scale_x_continuous(expand = expansion(mult = c(0, 0.15)),
-                     labels = scales::percent_format(accuracy = 1)) +
+                     labels = scales::label_number(accuracy = 0.01)) +
   labs(x = "Mean contribution to Bray–Curtis dissimilarity",
        y = "", title = "B  SIMPER",
-       subtitle = "Mean ± SE across all pairwise year comparisons  ★ = ISA indicator") +
+       subtitle = "Mean ± SE across all pairwise year comparisons") +
   theme_minimal(base_size = 10) +
   theme(
     panel.grid.major.y = element_blank(),
@@ -192,8 +221,7 @@ isa_table <- indval$sign |>
     A      = round(mapply(function(tax, idx) indval$A[tax, idx], Taxon, index), 3),
     B      = round(mapply(function(tax, idx) indval$B[tax, idx], Taxon, index), 3),
     p      = round(p.value, 3)) |>
-  filter(A > 0.75 | B > 0.75,
-         p < 0.05) |> 
+  filter(p < 0.05) |> 
   select(Taxon, `Associated years`, IndVal, A, B, p) |>
   arrange(match(Taxon, taxa_order))
-#write.csv(isa_table, "Output/isa_table.csv", row.names = FALSE)
+#write.csv(isa_table, "Output/tables/isa_table.csv", row.names = FALSE)

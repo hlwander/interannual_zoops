@@ -8,7 +8,7 @@ This repository contains three main folders: 1) Output contains zooplankton and 
 
 # Instructions to reproduce figures and analyses
 
-1.  Run `01_env.R` to summarize environmental data across months and years that correspond to zooplankton sampling days (Table S1).
+1.  Run `01_env.R` to summarize environmental data across months and years that correspond to zooplankton sampling days (Table S1). Note that EDI access tokens are required to run this script as of August 2026. All data files needed to run the downstream scripts listed below are saved in the `/Output` folder (skip to step 2 to rerun without authentication token).
 2.  Run `02_zoop_dens.R` to summarize zooplankton data and generate zooplankton density figures (Figures 1, S1, and S2, Table S2)
 3.  Run `03_second_stage_NMDS.R` to reproduce the first and second-stage Non-metric MultiDimensional Scaling analysis and figures (Figures 2, 3, S3, S4, S5, and S6; Table 1, S3, and S4)
 4.  Run `04_zoop_RDA.R` to reprodice redundnacy analyses and figure (Figure 4; Tables 2, 3, S5, S6, and S7)

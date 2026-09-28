@@ -400,7 +400,7 @@ rownames(dist_mat) <- site_scores$year
 colnames(dist_mat) <- site_scores$year
 
 dist_mat <- round(dist_mat,2)
-#write.csv(dist_mat, "Output/ss_year_distances.csv")
+#write.csv(dist_mat, "Output/tables/ss_year_distances.csv")
 #-----------------------------------------------------------#
 #read in env csv
 env_drivers <- read.csv("./Output/all_drivers.csv") |> 
@@ -451,7 +451,7 @@ scores <- data.frame(ef$vectors$arrows * sqrt(ef$vectors$r),
 #round scores and order by increasing p-val (Table S3)
 scores[, 1:3] <- round(scores[, 1:3], 4)
 scores <- scores[order(scores$pvals), ]
-#write.csv(scores, "Output/envfit_NMDS.csv", row.names = FALSE)
+#write.csv(scores, "Output/tables/envfit_NMDS.csv", row.names = FALSE)
 
 #scale arrows by significance
 min_mult <- 0.3  # shorter arrows for non-significant variables
@@ -549,7 +549,7 @@ scores <- cbind(scores, env = rownames(scores))
 #round scores and order by increasing p-val (Table S4)
 scores[, 1:3] <- round(scores[, 1:3], 4)
 scores <- scores[order(scores$pvals), ]
-#write.csv(scores, "Output/ss_envfit_NMDS.csv", row.names = FALSE)
+#write.csv(scores, "Output/tables/ss_envfit_NMDS.csv", row.names = FALSE)
 
 #plot drivers w/ second stage NMDS (Figure S6)
 ss_year <- ggordiplots::gg_ordiplot(ord, unique(monthly_zoops_nmds$year),

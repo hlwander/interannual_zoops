@@ -233,7 +233,7 @@ zoop_summary_table <- all_zoops |>
          frequency_occurrence = round(100 * n_dates_present / n_total_dates, 1)) |>
   arrange(desc(percent_contribution)) |>
   select(Taxon, frequency_occurrence, percent_contribution)
-#write.csv(zoop_summary_table, "Output/zoop_percent_contribution.csv", row.names = FALSE)
+#write.csv(zoop_summary_table, "Output/tables/zoop_percent_contribution.csv", row.names = FALSE)
 
 #for plotting
 zoops_10_groups <- zoops_10_groups |>
